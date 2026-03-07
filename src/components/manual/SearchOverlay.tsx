@@ -15,16 +15,49 @@ interface SearchableItem {
 const SearchOverlay = ({ open, onClose, onNavigate }: SearchOverlayProps) => {
   const [query, setQuery] = useState("");
   const [results, setResults] = useState<SearchableItem[]>([]);
+  const [indexReady, setIndexReady] = useState(false);
+  const indexRef = useRef<SearchableItem[]>([]);
   const inputRef = useRef<HTMLInputElement>(null);
+
+  // Build search index from DOM — runs once when overlay opens and index is empty
+  const buildIndex = useCallback(() => {
+    if (indexRef.current.length > 0) { setIndexReady(true); return; }
+
+    // Small delay to ensure lazy chunks are rendered
+    setTimeout(() => {
+      const sections = document.querySelectorAll(".manual-page section[id]");
+      const items: SearchableItem[] = [];
+
+      sections.forEach(section => {
+        const id = section.id;
+        if (id === "cover") return;
+        const chLabel = section.querySelector(".ch-label-tag")?.textContent?.trim() || id;
+
+        const selectors = ".script-text, .obj-q, .obj-branch-text, .audio-text, .prose, .check-text, h3, h4, .key-phrase, .callout p, .fu-msg, .step-body p, .step-body h4, .profile-card h4, .profile-card p, .mind-card h4, .mind-card p, .ponto-content h4, .ponto-content p, .phrase-item";
+        const elements = section.querySelectorAll(selectors);
+
+        elements.forEach(el => {
+          const text = el.textContent?.trim() || "";
+          if (text.length > 8) {
+            items.push({ text: text.substring(0, 250), chapter: chLabel, sectionId: id });
+          }
+        });
+      });
+
+      indexRef.current = items;
+      setIndexReady(true);
+    }, 200);
+  }, []);
 
   useEffect(() => {
     if (open) {
+      buildIndex();
       setTimeout(() => inputRef.current?.focus(), 100);
     } else {
       setQuery("");
       setResults([]);
     }
-  }, [open]);
+  }, [open, buildIndex]);
 
   useEffect(() => {
     const handleKey = (e: KeyboardEvent) => {
@@ -38,26 +71,18 @@ const SearchOverlay = ({ open, onClose, onNavigate }: SearchOverlayProps) => {
   const search = useCallback((q: string) => {
     if (q.length < 2) { setResults([]); return; }
     const lower = q.toLowerCase();
-    
-    // Search through all text content in manual sections
-    const sections = document.querySelectorAll(".manual-page section[id]");
-    const found: SearchableItem[] = [];
-    
-    sections.forEach(section => {
-      const id = section.id;
-      if (id === "cover") return;
-      const chLabel = section.querySelector(".ch-label-tag")?.textContent?.trim() || id;
-      
-      const elements = section.querySelectorAll(".script-text, .obj-q, .audio-text, .prose, .check-text, h3, h4, .key-phrase, .callout p");
-      elements.forEach(el => {
-        const text = el.textContent?.trim() || "";
-        if (text.toLowerCase().includes(lower) && text.length > 10) {
-          found.push({ text: text.substring(0, 200), chapter: chLabel, sectionId: id });
-        }
-      });
+    const found = indexRef.current.filter(item => item.text.toLowerCase().includes(lower));
+
+    // Deduplicate by text similarity
+    const seen = new Set<string>();
+    const unique = found.filter(item => {
+      const key = item.text.substring(0, 80).toLowerCase();
+      if (seen.has(key)) return false;
+      seen.add(key);
+      return true;
     });
-    
-    setResults(found.slice(0, 20));
+
+    setResults(unique.slice(0, 20));
   }, []);
 
   const handleInput = (val: string) => {
@@ -89,7 +114,12 @@ const SearchOverlay = ({ open, onClose, onNavigate }: SearchOverlayProps) => {
         </div>
         <div className="search-results">
           {query.length < 2 && (
-            <div className="search-hint">Digite para buscar em todo o manual</div>
+            <div className="search-hint">
+              {indexReady
+                ? `Digite para buscar em ${indexRef.current.length} itens do manual`
+                : "Indexando conteúdo…"
+              }
+            </div>
           )}
           {query.length >= 2 && results.length === 0 && (
             <div className="search-empty">Nenhum resultado para "<strong>{query}</strong>"</div>

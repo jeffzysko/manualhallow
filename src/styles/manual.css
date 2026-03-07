@@ -368,6 +368,24 @@
 .manual-page .search-empty { text-align: center; padding: 48px 24px; color: var(--gray); font-size: 15px; }
 .manual-page .search-hint { text-align: center; padding: 16px; color: var(--gray2); font-size: 12px; }
 
+/* FAVORITES OVERLAY */
+.manual-page .fav-overlay-box { max-width: 540px; }
+.manual-page .fav-overlay-header { display: flex; align-items: center; justify-content: space-between; padding: 16px 20px 12px; border-bottom: 1px solid var(--border2); }
+.manual-page .fav-overlay-title { font-size: 22px; color: var(--gold); margin: 0; }
+.manual-page .fav-overlay-close { background: none; border: none; color: var(--gray); font-size: 20px; cursor: pointer; padding: 4px; transition: color 0.2s; }
+.manual-page .fav-overlay-close:hover { color: var(--white); }
+.manual-page .fav-overlay-list { padding: 8px 0; max-height: 60vh; overflow-y: auto; }
+.manual-page .fav-overlay-empty { color: var(--gray); font-size: 14px; text-align: center; padding: 32px 20px; }
+.manual-page .fav-overlay-empty span { font-size: 12px; display: block; margin-top: 4px; color: var(--gray2); }
+.manual-page .fav-overlay-item { display: flex; align-items: center; justify-content: space-between; padding: 14px 20px; border-bottom: 1px solid var(--border2); cursor: pointer; transition: background 0.15s; }
+.manual-page .fav-overlay-item:hover { background: rgba(255,255,255,0.03); }
+.manual-page .fav-overlay-item:last-child { border-bottom: none; }
+.manual-page .fav-overlay-item-info { flex: 1; min-width: 0; }
+.manual-page .fav-overlay-item-title { color: var(--white); font-size: 14px; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.manual-page .fav-overlay-item-chapter { color: var(--gray2); font-size: 11px; margin-top: 2px; }
+.manual-page .fav-overlay-item-remove { background: none; border: none; color: var(--red); font-size: 12px; cursor: pointer; padding: 4px 8px; flex-shrink: 0; opacity: 0.7; transition: opacity 0.15s; }
+.manual-page .fav-overlay-item-remove:hover { opacity: 1; }
+
 /* COLLAPSIBLE */
 .manual-page .section-toggle { width: 100%; background: none; border: none; cursor: pointer; display: flex; align-items: center; justify-content: space-between; padding: 12px 0 0; color: inherit; font-family: inherit; text-align: left; }
 .manual-page .collapse-hint { font-size: 11px; color: var(--gray2); letter-spacing: 1px; margin-left: 12px; font-weight: 400; text-transform: uppercase; }
@@ -833,6 +851,12 @@
   .manual-page .fav-footer-bar { padding: 5px 10px; margin-top: 6px; }
   .manual-page .fav-footer-label { font-size: 9px; max-width: 65%; }
   .manual-page .fav-footer-btn { padding: 3px 8px; font-size: 10px; }
+
+  /* Favorites overlay */
+  .manual-page .fav-overlay-header { padding: 12px 14px 10px; }
+  .manual-page .fav-overlay-title { font-size: 18px; }
+  .manual-page .fav-overlay-item { padding: 10px 14px; }
+  .manual-page .fav-overlay-item-title { font-size: 13px; }
 
   /* Chapter read check */
   .manual-page .chapter-read-check { font-size: 11px; padding: 5px 12px; }

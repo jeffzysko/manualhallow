@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
+import CHAPTERS from "@/data/chapters";
 
 interface Note {
   id: string;
@@ -9,18 +10,6 @@ interface Note {
   content: string;
   updated_at: string;
 }
-
-const CHAPTERS = [
-  { id: "ch1", label: "01 · O Jogo do Premium", color: "var(--ch1)" },
-  { id: "ch2", label: "02 · Diagnóstico", color: "var(--ch2)" },
-  { id: "ch3", label: "03 · Espelhamento", color: "var(--ch3)" },
-  { id: "ch4", label: "04 · Escada do SIM", color: "var(--ch4)" },
-  { id: "ch5", label: "05 · Valor & Preço", color: "var(--ch5)" },
-  { id: "ch6", label: "06 · Persuasão", color: "var(--ch6)" },
-  { id: "ch7", label: "07 · Fechamento", color: "var(--ch7)" },
-  { id: "ch8", label: "08 · Experiência", color: "var(--ch8)" },
-  { id: "ch9", label: "09 · Planejamento", color: "var(--ch1)" },
-];
 
 interface NotesDrawerProps {
   open: boolean;
@@ -82,15 +71,15 @@ const NotesDrawer = ({ open, onClose }: NotesDrawerProps) => {
     setSaving(false);
   }, [user, activeChapter, draft, fetchNotes]);
 
+  // Auto-save with proper deps
   useEffect(() => {
-    const timer = setTimeout(() => {
-      const existing = notes.find(n => n.section_id === activeChapter);
-      if (draft !== (existing?.content || "")) {
-        saveNote();
-      }
-    }, 1500);
+    if (!open || !user) return;
+    const existing = notes.find(n => n.section_id === activeChapter);
+    if (draft === (existing?.content || "")) return;
+
+    const timer = setTimeout(() => { saveNote(); }, 1500);
     return () => clearTimeout(timer);
-  }, [draft]);
+  }, [draft, open, user, activeChapter, notes, saveNote]);
 
   const notesForChapter = (chId: string) => notes.some(n => n.section_id === chId && n.content.trim());
   const totalNotes = notes.filter(n => n.content.trim()).length;
@@ -183,7 +172,7 @@ const NotesDrawer = ({ open, onClose }: NotesDrawerProps) => {
                   )}
                 </span>
                 {draft.trim() && (
-                  <button className="nd-editor__delete" onClick={() => { setDraft(""); saveNote(); }}>
+                  <button className="nd-editor__delete" onClick={() => { setDraft(""); }}>
                     <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                       <polyline points="3 6 5 6 21 6" /><path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2" />
                     </svg>
@@ -194,7 +183,6 @@ const NotesDrawer = ({ open, onClose }: NotesDrawerProps) => {
             </div>
           </>
         ) : (
-          /* All Notes View */
           <div className="nd-all">
             {totalNotes === 0 ? (
               <div className="nd-all__empty">
