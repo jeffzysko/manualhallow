@@ -1,6 +1,5 @@
 import { useState, ReactNode } from "react";
 import FavoriteButton from "./FavoriteButton";
-import SectionNote from "./SectionNote";
 import { useFavoritesContext } from "@/contexts/FavoritesContext";
 
 interface CollapsibleChapterProps {
@@ -15,10 +14,12 @@ interface CollapsibleChapterProps {
   bgStyle?: string;
   tldr?: string[];
   children: ReactNode;
+  isRead?: boolean;
+  onToggleRead?: () => void;
 }
 
 const CollapsibleChapter = ({
-  id, num, numBg, numColor = "#000", tag, tagColor, title, lead, bgStyle = "var(--bg)", tldr, children
+  id, num, numBg, numColor = "#000", tag, tagColor, title, lead, bgStyle = "var(--bg)", tldr, children, isRead, onToggleRead
 }: CollapsibleChapterProps) => {
   const [collapsed, setCollapsed] = useState(true);
   const { isFavorite, toggleFavorite, isLoggedIn } = useFavoritesContext();
@@ -47,6 +48,18 @@ const CollapsibleChapter = ({
               onClick={() => toggleFavorite(id, chapterLabel, `Capítulo ${num}`)}
               className="chapter-fav-btn"
             />
+          )}
+          {isLoggedIn && onToggleRead && (
+            <button
+              className={`chapter-read-check${isRead ? " chapter-read-check--done" : ""}`}
+              onClick={onToggleRead}
+              title={isRead ? "Marcar como não lido" : "Marcar como lido"}
+            >
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={isRead ? "3" : "2"} strokeLinecap="round" strokeLinejoin="round">
+                <polyline points="20 6 9 17 4 12" />
+              </svg>
+              <span>{isRead ? "Lido" : "Marcar como lido"}</span>
+            </button>
           )}
         </div>
 
@@ -87,9 +100,6 @@ const CollapsibleChapter = ({
             </div>
           )}
           {children}
-          {isLoggedIn && (
-            <SectionNote sectionId={id} chapterId={`Capítulo ${num}`} />
-          )}
         </div>
       </div>
     </section>
