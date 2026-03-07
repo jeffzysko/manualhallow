@@ -1,10 +1,14 @@
 import { useState, useCallback, useEffect, useRef, lazy, Suspense } from "react";
+import { useNavigate as useRouterNavigate } from "react-router-dom";
 import "@/styles/manual.css";
 import ManualCover from "@/components/manual/ManualCover";
 import ManualTOC from "@/components/manual/ManualTOC";
 import CollapsibleChapter from "@/components/manual/CollapsibleChapter";
 import BottomTabBar from "@/components/manual/BottomTabBar";
 import SearchOverlay from "@/components/manual/SearchOverlay";
+import FavoritesOverlay from "@/components/manual/FavoritesOverlay";
+import { useAuth } from "@/contexts/AuthContext";
+import { useFavorites } from "@/hooks/useFavorites";
 
 const Chapter1Content = lazy(() => import("@/components/manual/chapters/Chapter1Content"));
 const Chapter2Content = lazy(() => import("@/components/manual/chapters/Chapter2Content"));
@@ -19,8 +23,12 @@ const AppendixContent = lazy(() => import("@/components/manual/chapters/Appendix
 
 const ManualPage = () => {
   const [searchOpen, setSearchOpen] = useState(false);
+  const [favoritesOpen, setFavoritesOpen] = useState(false);
   const [scriptsMode, setScriptsMode] = useState(false);
   const [scrollProgress, setScrollProgress] = useState(0);
+  const { user, signOut } = useAuth();
+  const { favorites, isFavorite, toggleFavorite } = useFavorites();
+  const routerNavigate = useRouterNavigate();
 
   const rafRef = useRef(0);
   useEffect(() => {
@@ -59,6 +67,18 @@ const ManualPage = () => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   }, []);
 
+  const handleOpenFavorites = useCallback(() => {
+    if (!user) {
+      routerNavigate("/auth");
+      return;
+    }
+    setFavoritesOpen(true);
+  }, [user, routerNavigate]);
+
+  const handleRemoveFavorite = useCallback((itemId: string) => {
+    toggleFavorite(itemId, "", "");
+  }, [toggleFavorite]);
+
   const tldr: Record<string, string[]> = {
     ch1: ["O cliente não compra produto — compra risco evitado e previsibilidade", "Preço premium se sustenta quando o valor percebido supera a âncora de custo", "Nunca entre na guerra de preço; entre na lógica risco × transformação"],
     ch2: ["Diagnóstico bom = entender cenário + critério de decisão + próximo passo", "Use SPIN: Situação → Problema → Implicação → Ganho", "Follow-up sempre com avanço de valor, nunca com 'e aí?'"],
@@ -75,7 +95,26 @@ const ManualPage = () => {
     <div className="manual-page">
       <div className="progress-bar" style={{ transform: `scaleX(${scrollProgress / 100})` }} />
 
+      {/* Auth bar */}
+      <div className="auth-bar">
+        {user ? (
+          <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+            <span style={{ color: "var(--gray)", fontSize: 12 }}>{user.email}</span>
+            <button onClick={signOut} className="auth-bar-btn">Sair</button>
+          </div>
+        ) : (
+          <button onClick={() => routerNavigate("/auth")} className="auth-bar-btn">Entrar</button>
+        )}
+      </div>
+
       <SearchOverlay open={searchOpen} onClose={() => setSearchOpen(false)} onNavigate={navigate} />
+      <FavoritesOverlay
+        open={favoritesOpen}
+        onClose={() => setFavoritesOpen(false)}
+        favorites={favorites}
+        onNavigate={navigate}
+        onRemove={handleRemoveFavorite}
+      />
 
       <main role="main">
         <ManualCover />
@@ -131,7 +170,7 @@ const ManualPage = () => {
         onScrollTop={scrollToTop}
         onOpenDrawer={() => navigate("toc")}
         onOpenSearch={() => setSearchOpen(true)}
-        onOpenFavorites={() => {}}
+        onOpenFavorites={handleOpenFavorites}
         onToggleScripts={() => setScriptsMode(!scriptsMode)}
         scriptsMode={scriptsMode}
       />
