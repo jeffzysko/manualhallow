@@ -6,7 +6,7 @@ import { useEffect } from "react";
 import "@/styles/manual.css";
 
 const AuthPage = () => {
-  const [isLogin, setIsLogin] = useState(true);
+  const [mode, setMode] = useState<"login" | "signup" | "recovery">("login");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [fullName, setFullName] = useState("");
@@ -26,11 +26,11 @@ const AuthPage = () => {
     setMessage("");
     setLoading(true);
 
-    if (isLogin) {
+    if (mode === "login") {
       const { error } = await supabase.auth.signInWithPassword({ email, password });
       if (error) setError(error.message);
       else navigate("/");
-    } else {
+    } else if (mode === "signup") {
       const { error } = await supabase.auth.signUp({
         email,
         password,
@@ -41,12 +41,18 @@ const AuthPage = () => {
       });
       if (error) setError(error.message);
       else setMessage("Verifique seu e-mail para confirmar o cadastro.");
+    } else if (mode === "recovery") {
+      const { error } = await supabase.auth.resetPasswordForEmail(email, {
+        redirectTo: `${window.location.origin}/auth?mode=reset`,
+      });
+      if (error) setError(error.message);
+      else setMessage("E-mail de recuperação enviado! Verifique sua caixa de entrada.");
     }
     setLoading(false);
   };
 
   return (
-    <div className="manual-page" style={{ minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center" }}>
+    <div className="manual-page" style={{ minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", paddingTop: 0 }}>
       <div style={{
         background: "var(--card)",
         border: "1px solid var(--border)",
@@ -63,29 +69,36 @@ const AuthPage = () => {
           MANUAL DE VENDAS
         </p>
 
-        <div style={{ display: "flex", gap: 0, marginBottom: 28, borderRadius: 10, overflow: "hidden", border: "1px solid var(--border)" }}>
-          <button
-            onClick={() => { setIsLogin(true); setError(""); setMessage(""); }}
-            style={{
-              flex: 1, padding: "12px 0", fontSize: 13, fontWeight: 600, letterSpacing: 1,
-              background: isLogin ? "var(--gold-dim)" : "transparent",
-              color: isLogin ? "var(--gold)" : "var(--gray)",
-              border: "none", cursor: "pointer",
-            }}
-          >ENTRAR</button>
-          <button
-            onClick={() => { setIsLogin(false); setError(""); setMessage(""); }}
-            style={{
-              flex: 1, padding: "12px 0", fontSize: 13, fontWeight: 600, letterSpacing: 1,
-              background: !isLogin ? "var(--gold-dim)" : "transparent",
-              color: !isLogin ? "var(--gold)" : "var(--gray)",
-              border: "none", cursor: "pointer",
-            }}
-          >CADASTRAR</button>
-        </div>
+        {mode !== "recovery" ? (
+          <div style={{ display: "flex", gap: 0, marginBottom: 28, borderRadius: 10, overflow: "hidden", border: "1px solid var(--border)" }}>
+            <button
+              onClick={() => { setMode("login"); setError(""); setMessage(""); }}
+              style={{
+                flex: 1, padding: "12px 0", fontSize: 13, fontWeight: 600, letterSpacing: 1,
+                background: mode === "login" ? "var(--gold-dim)" : "transparent",
+                color: mode === "login" ? "var(--gold)" : "var(--gray)",
+                border: "none", cursor: "pointer",
+              }}
+            >ENTRAR</button>
+            <button
+              onClick={() => { setMode("signup"); setError(""); setMessage(""); }}
+              style={{
+                flex: 1, padding: "12px 0", fontSize: 13, fontWeight: 600, letterSpacing: 1,
+                background: mode === "signup" ? "var(--gold-dim)" : "transparent",
+                color: mode === "signup" ? "var(--gold)" : "var(--gray)",
+                border: "none", cursor: "pointer",
+              }}
+            >CADASTRAR</button>
+          </div>
+        ) : (
+          <div style={{ textAlign: "center", marginBottom: 28 }}>
+            <p style={{ color: "var(--white)", fontSize: 16, fontWeight: 600, marginBottom: 8 }}>Recuperar Senha</p>
+            <p style={{ color: "var(--gray)", fontSize: 13 }}>Informe seu e-mail para receber o link de redefinição.</p>
+          </div>
+        )}
 
         <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: 14 }}>
-          {!isLogin && (
+          {mode === "signup" && (
             <input
               type="text"
               placeholder="Nome completo"
@@ -109,18 +122,20 @@ const AuthPage = () => {
               padding: "14px 16px", color: "var(--white)", fontSize: 14, outline: "none",
             }}
           />
-          <input
-            type="password"
-            placeholder="Senha"
-            value={password}
-            onChange={e => setPassword(e.target.value)}
-            required
-            minLength={6}
-            style={{
-              background: "var(--bg)", border: "1px solid var(--border)", borderRadius: 10,
-              padding: "14px 16px", color: "var(--white)", fontSize: 14, outline: "none",
-            }}
-          />
+          {mode !== "recovery" && (
+            <input
+              type="password"
+              placeholder="Senha"
+              value={password}
+              onChange={e => setPassword(e.target.value)}
+              required
+              minLength={6}
+              style={{
+                background: "var(--bg)", border: "1px solid var(--border)", borderRadius: 10,
+                padding: "14px 16px", color: "var(--white)", fontSize: 14, outline: "none",
+              }}
+            />
+          )}
 
           {error && <p style={{ color: "var(--red)", fontSize: 13 }}>{error}</p>}
           {message && <p style={{ color: "var(--green)", fontSize: 13 }}>{message}</p>}
@@ -134,9 +149,29 @@ const AuthPage = () => {
               opacity: loading ? 0.6 : 1, marginTop: 4,
             }}
           >
-            {loading ? "Aguarde..." : isLogin ? "Entrar" : "Criar conta"}
+            {loading ? "Aguarde..." : mode === "login" ? "Entrar" : mode === "signup" ? "Criar conta" : "Enviar link"}
           </button>
         </form>
+
+        {/* Recovery / Back links */}
+        <div style={{ textAlign: "center", marginTop: 20 }}>
+          {mode === "login" && (
+            <button
+              onClick={() => { setMode("recovery"); setError(""); setMessage(""); }}
+              style={{ background: "none", border: "none", color: "var(--gold)", fontSize: 13, cursor: "pointer", textDecoration: "underline", opacity: 0.8 }}
+            >
+              Esqueci minha senha
+            </button>
+          )}
+          {mode === "recovery" && (
+            <button
+              onClick={() => { setMode("login"); setError(""); setMessage(""); }}
+              style={{ background: "none", border: "none", color: "var(--gold)", fontSize: 13, cursor: "pointer", textDecoration: "underline", opacity: 0.8 }}
+            >
+              Voltar para o login
+            </button>
+          )}
+        </div>
       </div>
     </div>
   );
