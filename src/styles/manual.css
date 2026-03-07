@@ -495,6 +495,11 @@
   .manual-page .compare-cell:last-child { border-bottom: none; }
   .manual-page .compare-cell.label { font-size: 11px; }
 
+  /* Stats */
+  .manual-page .stats-row { grid-template-columns: 1fr; gap: 10px; }
+  .manual-page .stat-box { padding: 18px; }
+  .manual-page .stat-num { font-size: 32px; }
+
   /* Grids */
   .manual-page .col-2 { grid-template-columns: 1fr; gap: 12px; }
   .manual-page .cert-grid { grid-template-columns: 1fr; gap: 12px; }
