@@ -5368,7 +5368,7 @@ const searchIndex = [];
 const INITIAL_VISIBLE = 999; // Show all chapters (no lazy hide)
 let chapterIndex = 0;
 
-document.querySelectorAll('section[id]:not(#cover):not(#toc):not(#appendix)').forEach(section => {
+document.querySelectorAll('section[id]:not(#cover):not(#toc)').forEach(section => {
   const pageWrap = section.querySelector('.page-wrap');
   if (!pageWrap) return;
 
