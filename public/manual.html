@@ -1529,8 +1529,35 @@ body.scripts-mode .scripts-banner { display: block; }
   overflow: hidden;
   transition: max-height .4s cubic-bezier(0.4,0,0.2,1), opacity .3s ease;
   max-height: 9999px; opacity: 1;
-  display: flex; flex-direction: column; gap: 40px;
+  display: flex; flex-direction: column;
   padding-top: 24px;
+}
+/* Spacing between major blocks — cards, callouts, dividers get top margin */
+.section-collapsible > .card,
+.section-collapsible > .card-script,
+.section-collapsible > .card-obj,
+.section-collapsible > .card-check,
+.section-collapsible > .card-audio,
+.section-collapsible > .callout,
+.section-collapsible > .sec-divider,
+.section-collapsible > .sec-divider-gold,
+.section-collapsible > .steps,
+.section-collapsible > .col-2,
+.section-collapsible > .compare-table,
+.section-collapsible > .followup-wrap,
+.section-collapsible > .chapter-tldr,
+.section-collapsible > table,
+.section-collapsible > .key-phrase {
+  margin-top: 32px;
+}
+/* Titles and text stay close to each other */
+.section-collapsible > h3 + .prose,
+.section-collapsible > h3 + .lead,
+.section-collapsible > h3 + p,
+.section-collapsible > h4 + .prose,
+.section-collapsible > h4 + .lead,
+.section-collapsible > h4 + p {
+  margin-top: 4px;
 }
 .section-collapsible.collapsed { max-height: 0; opacity: 0; padding-top: 0; }
 .chapter-header-wrap { padding: 60px 0 0; }
