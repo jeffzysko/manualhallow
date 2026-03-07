@@ -5,6 +5,7 @@ import ManualCover from "@/components/manual/ManualCover";
 import ManualTOC from "@/components/manual/ManualTOC";
 import CollapsibleChapter from "@/components/manual/CollapsibleChapter";
 import BottomTabBar from "@/components/manual/BottomTabBar";
+import TopHeader from "@/components/manual/TopHeader";
 import SearchOverlay from "@/components/manual/SearchOverlay";
 import FavoritesOverlay from "@/components/manual/FavoritesOverlay";
 import { useAuth } from "@/contexts/AuthContext";
