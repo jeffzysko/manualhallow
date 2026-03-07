@@ -440,7 +440,7 @@
   .manual-page .section-gap { padding: 48px 0; }
 
   /* Cover */
-  .manual-page .cover-inner { padding: 48px clamp(24px, 6vw, 48px) 40px; gap: 24px; min-height: auto; }
+  .manual-page .cover-inner { padding: 48px 28px 40px; gap: 24px; min-height: auto; }
   .manual-page .cover-title { font-size: clamp(32px, 9vw, 48px); }
   .manual-page .cover-subtitle { font-size: 11px; letter-spacing: 2px; margin-bottom: 24px; }
   .manual-page .cover-desc { font-size: 14px; margin-bottom: 32px; }
