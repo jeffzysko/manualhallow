@@ -5365,7 +5365,7 @@ document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
 // ===== COLLAPSIBLE CHAPTERS + LAZY LOADING =====
 // Build search index while wrapping collapsible content
 const searchIndex = [];
-const INITIAL_VISIBLE = 3; // Show first 3 chapters immediately
+const INITIAL_VISIBLE = 999; // Show all chapters (no lazy hide)
 let chapterIndex = 0;
 
 document.querySelectorAll('section[id]:not(#cover):not(#toc):not(#appendix)').forEach(section => {
