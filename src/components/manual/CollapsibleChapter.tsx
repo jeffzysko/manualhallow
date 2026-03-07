@@ -20,9 +20,10 @@ interface CollapsibleChapterProps {
 }
 
 const CollapsibleChapter = ({
-  id, num, numBg, numColor = "#000", tag, tagColor, title, lead, bgStyle = "var(--bg)", tldr, children, isRead, onToggleRead
+  id, num, numBg, numColor = "#000", tag, tagColor, title, lead, bgStyle = "var(--bg)", tldr, children, isRead, onToggleRead, scriptsMode = false
 }: CollapsibleChapterProps) => {
   const [collapsed, setCollapsed] = useState(true);
+  const isCollapsed = scriptsMode ? false : collapsed;
   const { isFavorite, toggleFavorite, isLoggedIn } = useFavoritesContext();
 
   // Extract plain text from title for favorite label
