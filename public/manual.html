@@ -1187,6 +1187,28 @@ body { padding-bottom: 96px; }
 }
 .pdf-modal-cancel:hover { color: var(--white); }
 
+/* ===== LAZY LOAD TRIGGER ===== */
+.lazy-load-trigger {
+  display: flex; justify-content: center; padding: 48px 24px 80px;
+}
+.lazy-load-trigger button {
+  display: flex; align-items: center; gap: 10px;
+  background: var(--card2); border: 1px solid var(--border);
+  color: var(--gold-light); font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 15px; font-weight: 600; padding: 16px 32px;
+  border-radius: 14px; cursor: pointer;
+  transition: background .2s, border-color .2s, transform .2s;
+}
+.lazy-load-trigger button:hover {
+  background: rgba(201,169,106,0.1); border-color: var(--gold);
+  transform: translateY(-2px);
+}
+.lazy-load-trigger .lazy-count {
+  background: var(--gold-dim); color: var(--gold);
+  font-size: 12px; font-weight: 700; padding: 2px 8px;
+  border-radius: 10px; min-width: 24px; text-align: center;
+}
+
 /* FAB responsive handled in main media queries above */
 @media print {
   #progress-bar, .bottom-tab-bar, .search-overlay, .scripts-banner, .pdf-modal { display: none !important; }
