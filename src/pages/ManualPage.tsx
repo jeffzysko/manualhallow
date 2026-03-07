@@ -22,14 +22,21 @@ const ManualPage = () => {
   const [scriptsMode, setScriptsMode] = useState(false);
   const [scrollProgress, setScrollProgress] = useState(0);
 
+  const rafRef = useRef(0);
   useEffect(() => {
     const handleScroll = () => {
-      const h = document.documentElement;
-      const progress = (h.scrollTop / (h.scrollHeight - h.clientHeight)) * 100;
-      setScrollProgress(Math.min(progress, 100));
+      cancelAnimationFrame(rafRef.current);
+      rafRef.current = requestAnimationFrame(() => {
+        const h = document.documentElement;
+        const progress = (h.scrollTop / (h.scrollHeight - h.clientHeight)) * 100;
+        setScrollProgress(Math.min(progress, 100));
+      });
     };
     window.addEventListener("scroll", handleScroll, { passive: true });
-    return () => window.removeEventListener("scroll", handleScroll);
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+      cancelAnimationFrame(rafRef.current);
+    };
   }, []);
 
   useEffect(() => {
