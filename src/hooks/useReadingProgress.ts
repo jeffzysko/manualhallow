@@ -1,18 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
-
-const CHAPTERS = [
-  { id: "ch1", label: "01 · O Jogo do Premium" },
-  { id: "ch2", label: "02 · Diagnóstico" },
-  { id: "ch3", label: "03 · Espelhamento" },
-  { id: "ch4", label: "04 · Escada do SIM" },
-  { id: "ch5", label: "05 · Valor & Preço" },
-  { id: "ch6", label: "06 · Persuasão" },
-  { id: "ch7", label: "07 · Fechamento" },
-  { id: "ch8", label: "08 · Experiência" },
-  { id: "ch9", label: "09 · Planejamento" },
-];
+import CHAPTERS from "@/data/chapters";
 
 export function useReadingProgress() {
   const { user } = useAuth();
@@ -41,14 +30,12 @@ export function useReadingProgress() {
     setProgress(prev => ({ ...prev, [chapterId]: newVal }));
 
     if (current) {
-      // Was completed, now uncomplete
       await supabase
         .from("reading_progress")
         .update({ completed: false, completed_at: null })
         .eq("user_id", user.id)
         .eq("chapter_id", chapterId);
     } else {
-      // Mark as completed (upsert)
       await supabase
         .from("reading_progress")
         .upsert({
