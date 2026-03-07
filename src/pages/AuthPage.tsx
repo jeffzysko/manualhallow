@@ -43,7 +43,7 @@ const AuthPage = () => {
       else setMessage("Verifique seu e-mail para confirmar o cadastro.");
     } else if (mode === "recovery") {
       const { error } = await supabase.auth.resetPasswordForEmail(email, {
-        redirectTo: `${window.location.origin}/auth?mode=reset`,
+        redirectTo: `${window.location.origin}/reset-password`,
       });
       if (error) setError(error.message);
       else setMessage("E-mail de recuperação enviado! Verifique sua caixa de entrada.");
