@@ -5635,6 +5635,224 @@ function drawerNavTo(hash) {
   document.querySelectorAll('.drawer-nav-item').forEach(item => item.classList.remove('active'));
   event.currentTarget.classList.add('active');
 }
+
+// ===== CHAPTER TL;DR MINI-RESUMOS =====
+const chapterTLDR = {
+  ch1: [
+    'O cliente não compra produto — compra risco evitado e previsibilidade',
+    'Preço premium se sustenta quando o valor percebido supera a âncora de custo',
+    'Nunca entre na guerra de preço; entre na lógica risco × transformação'
+  ],
+  ch2: [
+    'Diagnóstico bom = entender cenário + critério de decisão + próximo passo',
+    'Use SPIN: Situação → Problema → Implicação → Ganho',
+    'Follow-up sempre com avanço de valor, nunca com "e aí?"'
+  ],
+  ch3: [
+    'Espelhamento acontece em 3 níveis: palavras, ritmo e emoção',
+    'Reflita o vocabulário e tom do cliente para gerar confiança em minutos',
+    'Espelhar é entender, não manipular — faça com ética'
+  ],
+  ch4: [
+    'Microcompromissos reduzem resistência e tornam o "sim" final natural',
+    'Cada confirmação pequena gera consistência psicológica',
+    'Use a técnica Rotular + Validar + Perguntar em cada interação'
+  ],
+  ch5: [
+    'Preço só entra quando já existe: cenário + critério + encaixe',
+    'Ancoragem positiva antes do valor: mostre o que está incluso primeiro',
+    'Use a fórmula: custo da inação > investimento na solução'
+  ],
+  ch6: [
+    'Reciprocidade, prova social e escassez são os 3 gatilhos mais eficazes',
+    'Urgência real (agenda limitada) funciona melhor que pressão artificial',
+    'Autoridade se constrói com dados e cases, não com autopromoção'
+  ],
+  ch7: [
+    'Fechamento premium = próximo passo claro, não pedido de compra',
+    'Os 3 melhores: por próximo passo, por escolha, por resumo',
+    'Nunca deixe o cliente sem saber o que fazer depois'
+  ],
+  ch8: [
+    'Pós-venda gera recompra e indicações — é o início do próximo ciclo',
+    'Follow-up de entrega cria confiança e previne cancelamentos',
+    'Cada cliente satisfeito vale 3 indicações em média'
+  ],
+  chacc: [
+    'Acessórios aumentam ticket médio em 20-40% sem nova captação',
+    'Apresente como complemento natural, não como venda adicional',
+    'Vincule cada acessório ao cenário e necessidade já identificados'
+  ],
+  ch9: [
+    'Metas claras geram foco — sem meta, sem direção',
+    'Acompanhe semanalmente, não apenas no final do mês',
+    'Celebre conquistas intermediárias para manter motivação'
+  ],
+  chps: [
+    'Provas sociais eliminam objeções antes delas surgirem',
+    'Use relatos reais de clientes com contexto similar ao lead',
+    'Fotos e vídeos de antes/depois são 3× mais persuasivos que texto'
+  ],
+  choa: [
+    'Cada objeção de acessório tem uma resposta específica e testada',
+    'LED, clorador, aquecimento e cascata — aborde pelo benefício, não pela feature',
+    'Resistência a acessórios geralmente é falta de conexão com o cenário'
+  ],
+  chlf: [
+    'Lead frio precisa de reativação com valor, não com cobrança',
+    'A cadência ideal é: valor → curiosidade → urgência suave',
+    'Após 3 tentativas sem resposta, entre em modo passivo com conteúdo'
+  ],
+  chgf: [
+    'Fotos boas aceleram o diagnóstico e aumentam a confiança do cliente',
+    'Peça sempre: visão geral, detalhe do espaço e referência de medida',
+    'Ensine o cliente a tirar fotos — ele não sabe o que você precisa ver'
+  ],
+  chtp: [
+    'A proposta deve parecer carta pessoal, não catálogo genérico',
+    'Estrutura: cenário do cliente → recomendação → inclusos → investimento → próximo passo',
+    'Validade real (7 dias) cria micro-urgência sem pressão'
+  ]
+};
+
+// Inject TL;DR cards after each chapter header
+document.querySelectorAll('section[id]:not(#cover):not(#toc):not(#appendix):not(#footer)').forEach(section => {
+  const id = section.id;
+  const points = chapterTLDR[id];
+  if (!points) return;
+  
+  const header = section.querySelector('.chapter-header');
+  if (!header) return;
+  
+  const tldr = document.createElement('div');
+  tldr.className = 'chapter-tldr reveal';
+  tldr.innerHTML = `
+    <div class="chapter-tldr-header">
+      <span class="chapter-tldr-badge">TL;DR</span>
+      <span class="chapter-tldr-title">Pontos-chave</span>
+    </div>
+    <ul class="chapter-tldr-list">
+      ${points.map(p => `<li>${p}</li>`).join('')}
+    </ul>
+  `;
+  
+  // Insert after the chapter header
+  header.insertAdjacentElement('afterend', tldr);
+});
+
+// ===== FAVORITES SYSTEM =====
+let favorites = [];
+try {
+  const saved = localStorage.getItem('hallow-favorites');
+  if (saved) favorites = JSON.parse(saved);
+} catch(e) {}
+
+function saveFavorites() {
+  try { localStorage.setItem('hallow-favorites', JSON.stringify(favorites)); } catch(e) {}
+}
+
+const STAR_SVG = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>';
+
+// Add favorite buttons to all script and objection cards
+let favIdx = 0;
+document.querySelectorAll('.card-script, .card-obj, .card-audio, .card-check, .card').forEach(card => {
+  // Skip cards inside non-chapter sections
+  const section = card.closest('section[id]');
+  if (!section || section.id === 'cover' || section.id === 'toc') return;
+  
+  const cardId = 'fav-' + favIdx++;
+  card.dataset.favId = cardId;
+  card.style.position = 'relative';
+  
+  // Get text preview
+  const textEl = card.querySelector('.script-text, .obj-q, .audio-text, .check-text, h4, p');
+  const text = textEl ? textEl.textContent.trim().substring(0, 120) : '';
+  
+  // Get chapter label
+  const chLabel = section.querySelector('.ch-label-tag')?.textContent?.trim() || section.id;
+  
+  const btn = document.createElement('button');
+  btn.className = 'fav-btn' + (favorites.some(f => f.id === cardId) ? ' favorited' : '');
+  btn.innerHTML = STAR_SVG;
+  btn.title = 'Favoritar';
+  btn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    const idx = favorites.findIndex(f => f.id === cardId);
+    if (idx >= 0) {
+      favorites.splice(idx, 1);
+      btn.classList.remove('favorited');
+    } else {
+      favorites.push({ id: cardId, text, chapter: chLabel, sectionId: section.id });
+      btn.classList.add('favorited');
+      // Little animation
+      btn.style.transform = 'scale(1.3)';
+      setTimeout(() => btn.style.transform = '', 200);
+    }
+    saveFavorites();
+  });
+  
+  card.appendChild(btn);
+});
+
+function openFavPanel() {
+  const panel = document.getElementById('fav-panel');
+  const list = document.getElementById('fav-list');
+  panel.classList.add('open');
+  
+  if (favorites.length === 0) {
+    list.innerHTML = '<div class="fav-empty">Nenhum favorito salvo ainda.<br>Toque no ⭐ dos cards para salvar.</div>';
+    return;
+  }
+  
+  list.innerHTML = favorites.map((f, i) =>
+    `<div class="fav-item" data-fav-idx="${i}">
+      <div class="fav-item-star">⭐</div>
+      <div>
+        <div class="fav-item-chapter">${f.chapter}</div>
+        <div class="fav-item-text">${f.text}</div>
+      </div>
+    </div>`
+  ).join('');
+  
+  list.querySelectorAll('.fav-item').forEach((el, i) => {
+    el.addEventListener('click', () => {
+      closeFavPanel();
+      const fav = favorites[i];
+      const card = document.querySelector(`[data-fav-id="${fav.id}"]`);
+      if (card) {
+        const coll = card.closest('.section-collapsible');
+        if (coll && coll.classList.contains('collapsed')) {
+          coll.classList.remove('collapsed');
+          const btn = coll.closest('.page-wrap')?.querySelector('.section-toggle');
+          if (btn) {
+            btn.setAttribute('aria-expanded', 'true');
+            const hint = btn.querySelector('.collapse-hint');
+            if (hint) hint.textContent = 'Recolher';
+          }
+        }
+        setTimeout(() => {
+          card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          card.style.transition = 'box-shadow .3s';
+          card.style.boxShadow = '0 0 0 2px rgba(201,169,106,0.5), 0 0 20px rgba(201,169,106,0.15)';
+          setTimeout(() => { card.style.boxShadow = ''; }, 2000);
+        }, 200);
+      }
+    });
+  });
+}
+
+function closeFavPanel() {
+  document.getElementById('fav-panel').classList.remove('open');
+}
+
+document.getElementById('fav-panel').addEventListener('click', e => {
+  if (e.target === document.getElementById('fav-panel')) closeFavPanel();
+});
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape' && document.getElementById('fav-panel').classList.contains('open')) closeFavPanel();
+});
+
 </script>
 </body>
 </html>
