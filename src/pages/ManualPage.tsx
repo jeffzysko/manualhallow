@@ -1,21 +1,21 @@
-import { useState, useCallback, useEffect } from "react";
+import { useState, useCallback, useEffect, useRef, lazy, Suspense } from "react";
 import "@/styles/manual.css";
 import ManualCover from "@/components/manual/ManualCover";
 import ManualTOC from "@/components/manual/ManualTOC";
 import CollapsibleChapter from "@/components/manual/CollapsibleChapter";
 import BottomTabBar from "@/components/manual/BottomTabBar";
-
 import SearchOverlay from "@/components/manual/SearchOverlay";
-import Chapter1Content from "@/components/manual/chapters/Chapter1Content";
-import Chapter2Content from "@/components/manual/chapters/Chapter2Content";
-import Chapter3Content from "@/components/manual/chapters/Chapter3Content";
-import Chapter4Content from "@/components/manual/chapters/Chapter4Content";
-import Chapter5Content from "@/components/manual/chapters/Chapter5Content";
-import Chapter6Content from "@/components/manual/chapters/Chapter6Content";
-import Chapter7Content from "@/components/manual/chapters/Chapter7Content";
-import Chapter8Content from "@/components/manual/chapters/Chapter8Content";
-import Chapter9Content from "@/components/manual/chapters/Chapter9Content";
-import AppendixContent from "@/components/manual/chapters/AppendixContent";
+
+const Chapter1Content = lazy(() => import("@/components/manual/chapters/Chapter1Content"));
+const Chapter2Content = lazy(() => import("@/components/manual/chapters/Chapter2Content"));
+const Chapter3Content = lazy(() => import("@/components/manual/chapters/Chapter3Content"));
+const Chapter4Content = lazy(() => import("@/components/manual/chapters/Chapter4Content"));
+const Chapter5Content = lazy(() => import("@/components/manual/chapters/Chapter5Content"));
+const Chapter6Content = lazy(() => import("@/components/manual/chapters/Chapter6Content"));
+const Chapter7Content = lazy(() => import("@/components/manual/chapters/Chapter7Content"));
+const Chapter8Content = lazy(() => import("@/components/manual/chapters/Chapter8Content"));
+const Chapter9Content = lazy(() => import("@/components/manual/chapters/Chapter9Content"));
+const AppendixContent = lazy(() => import("@/components/manual/chapters/AppendixContent"));
 
 const ManualPage = () => {
   const [searchOpen, setSearchOpen] = useState(false);
