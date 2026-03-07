@@ -4,7 +4,7 @@ import ManualCover from "@/components/manual/ManualCover";
 import ManualTOC from "@/components/manual/ManualTOC";
 import CollapsibleChapter from "@/components/manual/CollapsibleChapter";
 import BottomTabBar from "@/components/manual/BottomTabBar";
-import MobileDrawer from "@/components/manual/MobileDrawer";
+
 import SearchOverlay from "@/components/manual/SearchOverlay";
 import Chapter1Content from "@/components/manual/chapters/Chapter1Content";
 import Chapter2Content from "@/components/manual/chapters/Chapter2Content";
@@ -18,7 +18,6 @@ import Chapter9Content from "@/components/manual/chapters/Chapter9Content";
 import AppendixContent from "@/components/manual/chapters/AppendixContent";
 
 const ManualPage = () => {
-  const [drawerOpen, setDrawerOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const [scriptsMode, setScriptsMode] = useState(false);
   const [scrollProgress, setScrollProgress] = useState(0);
@@ -69,11 +68,6 @@ const ManualPage = () => {
     <div className="manual-page">
       <div className="progress-bar" style={{ width: `${scrollProgress}%` }} />
 
-      <button className="hamburger-btn" onClick={() => setDrawerOpen(true)} aria-label="Menu">
-        <svg viewBox="0 0 24 24"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
-      </button>
-
-      <MobileDrawer open={drawerOpen} onClose={() => setDrawerOpen(false)} onNavigate={navigate} activeSection="" />
       <SearchOverlay open={searchOpen} onClose={() => setSearchOpen(false)} onNavigate={navigate} />
 
       <main role="main">
@@ -126,7 +120,7 @@ const ManualPage = () => {
 
       <BottomTabBar
         onScrollTop={scrollToTop}
-        onOpenDrawer={() => setDrawerOpen(true)}
+        onOpenDrawer={() => navigate("toc")}
         onOpenSearch={() => setSearchOpen(true)}
         onOpenFavorites={() => {}}
         onToggleScripts={() => setScriptsMode(!scriptsMode)}
