@@ -16,6 +16,7 @@ interface CollapsibleChapterProps {
   children: ReactNode;
   isRead?: boolean;
   onToggleRead?: () => void;
+  scriptsMode?: boolean;
 }
 
 const CollapsibleChapter = ({
