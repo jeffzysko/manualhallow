@@ -13,15 +13,18 @@ const FavoritableCard = ({ id, label, chapter, children, className = "" }: Favor
   const { isFavorite, toggleFavorite, isLoggedIn } = useFavoritesContext();
 
   return (
-    <div className={`favoritable-card ${className}`} style={{ position: "relative" }}>
-      {children}
+    <div className={`favoritable-card ${className}`}>
       {isLoggedIn && (
-        <FavoriteButton
-          active={isFavorite(id)}
-          onClick={() => toggleFavorite(id, label, chapter)}
-          className="element-fav-btn"
-        />
+        <div className="favoritable-card-header">
+          <span className="favoritable-card-label">{label}</span>
+          <FavoriteButton
+            active={isFavorite(id)}
+            onClick={() => toggleFavorite(id, label, chapter)}
+            className="element-fav-btn"
+          />
+        </div>
       )}
+      {children}
     </div>
   );
 };
