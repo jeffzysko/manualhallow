@@ -1311,6 +1311,8 @@
 }
 
 /* ═══════════════ SCRIPTS MODE ═══════════════ */
+
+/* Force expand all collapsed sections */
 .manual-page.scripts-mode .section-collapsible.collapsed {
   max-height: 9999px !important;
   opacity: 1 !important;
@@ -1323,28 +1325,86 @@
   display: none !important;
 }
 
-/* In scripts mode, show ALL content — chapters auto-expand via scriptsMode prop */
+/* Hide cover, TOC and footer */
+.manual-page.scripts-mode #cover,
+.manual-page.scripts-mode #toc,
+.manual-page.scripts-mode #footer {
+  display: none !important;
+}
+
+/* Hide ALL content inside chapters by default */
+.manual-page.scripts-mode .section-collapsible > * {
+  display: none !important;
+}
+
+/* Show only actionable elements: scripts, objections, audios, followups, phrases, checklists, mental triggers, profiles */
+.manual-page.scripts-mode .section-collapsible .card-script,
+.manual-page.scripts-mode .section-collapsible .card-obj,
+.manual-page.scripts-mode .section-collapsible .card-audio,
+.manual-page.scripts-mode .section-collapsible .followup-wrap,
+.manual-page.scripts-mode .section-collapsible .phrases-grid,
+.manual-page.scripts-mode .section-collapsible .card-check,
+.manual-page.scripts-mode .section-collapsible .mind-grid,
+.manual-page.scripts-mode .section-collapsible .profiles-grid {
+  display: block !important;
+}
+/* Mind-grid and profiles-grid use grid layout */
+.manual-page.scripts-mode .section-collapsible .mind-grid {
+  display: grid !important;
+}
+.manual-page.scripts-mode .section-collapsible .profiles-grid {
+  display: grid !important;
+}
+.manual-page.scripts-mode .section-collapsible .phrases-grid {
+  display: grid !important;
+}
+
+/* Show FavoritableCard wrappers that contain actionable content */
+.manual-page.scripts-mode .section-collapsible .favoritable-card:has(.card-script),
+.manual-page.scripts-mode .section-collapsible .favoritable-card:has(.card-obj),
+.manual-page.scripts-mode .section-collapsible .favoritable-card:has(.card-audio),
+.manual-page.scripts-mode .section-collapsible .favoritable-card:has(.followup-wrap),
+.manual-page.scripts-mode .section-collapsible .favoritable-card:has(.phrases-grid),
+.manual-page.scripts-mode .section-collapsible .favoritable-card:has(.card-check),
+.manual-page.scripts-mode .section-collapsible .favoritable-card:has(.mind-grid) {
+  display: block !important;
+}
+
+/* Show h3 headings that precede actionable content */
+.manual-page.scripts-mode .section-collapsible > h3:has(+ .favoritable-card),
+.manual-page.scripts-mode .section-collapsible > h3:has(+ div .card-script),
+.manual-page.scripts-mode .section-collapsible > h3:has(+ div .card-obj),
+.manual-page.scripts-mode .section-collapsible > h3:has(+ .card-script),
+.manual-page.scripts-mode .section-collapsible > h3:has(+ .card-obj) {
+  display: block !important;
+}
+
+/* Show col-2 wrappers containing scripts */
+.manual-page.scripts-mode .section-collapsible .col-2:has(.card-script),
+.manual-page.scripts-mode .section-collapsible .col-2:has(.card-obj),
+.manual-page.scripts-mode .section-collapsible .col-2:has(.card-audio) {
+  display: grid !important;
+}
+
+/* Show the TL;DR section */
+.manual-page.scripts-mode .section-collapsible .chapter-tldr {
+  display: block !important;
+}
 
 /* Banner indicating scripts mode */
 .manual-page.scripts-mode::before {
-  content: '📋 Modo Scripts — todo o conteúdo expandido';
+  content: '📋 Modo Scripts — apenas scripts, objeções e respostas prontas';
   display: block;
   position: sticky;
   top: 0;
   z-index: 150;
-  background: linear-gradient(135deg, rgba(91,155,213,0.15), rgba(91,155,213,0.08));
-  border-bottom: 1px solid rgba(91,155,213,0.3);
-  color: var(--blue);
+  background: linear-gradient(135deg, rgba(201,169,106,0.18), rgba(201,169,106,0.08));
+  border-bottom: 1px solid rgba(201,169,106,0.3);
+  color: var(--gold);
   text-align: center;
   padding: 10px 16px;
   font-size: 12px;
   font-weight: 600;
   letter-spacing: 0.5px;
   backdrop-filter: blur(12px);
-}
-
-/* Hide cover and TOC in scripts mode */
-.manual-page.scripts-mode #cover,
-.manual-page.scripts-mode #toc {
-  display: none !important;
 }
