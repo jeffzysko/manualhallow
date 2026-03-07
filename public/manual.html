@@ -1092,10 +1092,10 @@ body { padding-bottom: 72px; }
 .pdf-modal {
   position: fixed; inset: 0; z-index: 500;
   background: rgba(0,0,0,0.8); backdrop-filter: blur(10px);
-  display: flex; align-items: center; justify-content: center;
-  opacity: 0; pointer-events: none; transition: opacity .25s;
+  display: none; align-items: center; justify-content: center;
+  transition: opacity .25s;
 }
-.pdf-modal.open { opacity: 1; pointer-events: all; }
+.pdf-modal.open { display: flex; opacity: 1; }
 .pdf-modal-box {
   background: var(--card); border: 1px solid var(--border);
   border-radius: 24px; padding: 48px; max-width: 560px; width: 90%;
