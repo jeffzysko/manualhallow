@@ -41,7 +41,7 @@ const AdminPage = () => {
         setLoading(false);
         return;
       }
-      setStats(data as AdminStats);
+      setStats(data as unknown as AdminStats);
       setLoading(false);
     };
     fetchStats();
