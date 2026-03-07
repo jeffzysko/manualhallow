@@ -1,16 +1,17 @@
-import { useEffect } from "react";
-
 const Index = () => {
-  useEffect(() => {
-    window.location.href = "/manual.html";
-  }, []);
-
   return (
-    <div className="flex min-h-screen items-center justify-center bg-[#09090F]">
-      <p className="text-[#9E9A92] text-sm tracking-widest uppercase animate-pulse">
-        Carregando manual...
-      </p>
-    </div>
+    <iframe
+      src="/manual.html"
+      title="Manual Hallow"
+      style={{
+        position: "fixed",
+        top: 0,
+        left: 0,
+        width: "100vw",
+        height: "100vh",
+        border: "none",
+      }}
+    />
   );
 };
 
