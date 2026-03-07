@@ -85,8 +85,8 @@ body {
   background: var(--bg);
   color: var(--white);
   font-family: 'Plus Jakarta Sans', sans-serif;
-  font-size: 15px;
-  line-height: 1.5;
+  font-size: 16px;
+  line-height: 1.65;
   -webkit-font-smoothing: antialiased;
   overflow-x: hidden;
 }
@@ -101,13 +101,13 @@ body {
 
 h1,h2,h3,h4 { font-family: 'Cormorant Garamond', serif; line-height: 1.2; }
 /* Section-level h3/h4 spacing — only direct children of page-wrap or collapsible */
-.section-collapsible > h3, .page-wrap > h3 { margin-top: 40px; margin-bottom: 16px; }
-.section-collapsible > h4, .page-wrap > h4 { margin-top: 28px; margin-bottom: 12px; }
+.section-collapsible > h3, .page-wrap > h3 { margin-top: 32px; margin-bottom: 8px; }
+.section-collapsible > h4, .page-wrap > h4 { margin-top: 20px; margin-bottom: 6px; }
 /* Inside cards/steps, tighter spacing */
-.card h4, .step h4, .card-obj h4, .card-check h4, .card-audio h4 { margin-top: 0; margin-bottom: 8px; }
-p, li, td, dd, blockquote, .prose, .callout, .card-script-body, .note-box, .pdf-option-desc { line-height: 1.5; }
-.prose { margin-bottom: 16px; }
-.lead { margin-bottom: 24px; }
+.card h4, .step h4, .card-obj h4, .card-check h4, .card-audio h4 { margin-top: 0; margin-bottom: 6px; }
+p, li, td, dd, blockquote, .prose, .callout, .card-script-body, .note-box, .pdf-option-desc { line-height: 1.65; }
+.prose { margin-bottom: 12px; }
+.lead { margin-bottom: 12px; }
 
 /* ===== ORNAMENTAL DIVIDER ===== */
 .ornament {
@@ -284,7 +284,7 @@ p, li, td, dd, blockquote, .prose, .callout, .card-script-body, .note-box, .pdf-
 
 /* ===== CHAPTER HEADER ===== */
 .chapter-header {
-  padding: 80px 0 40px; position: relative;
+  padding: 60px 0 24px; position: relative;
 }
 .chapter-header .ch-num {
   font-family: 'Cormorant Garamond', serif;
@@ -295,7 +295,7 @@ p, li, td, dd, blockquote, .prose, .callout, .card-script-body, .note-box, .pdf-
 }
 .ch-label {
   display: inline-flex; align-items: center; gap: 10px;
-  margin-bottom: 20px;
+  margin-bottom: 12px;
 }
 .ch-label-num {
   width: 32px; height: 32px; border-radius: 8px;
@@ -310,11 +310,11 @@ p, li, td, dd, blockquote, .prose, .callout, .card-script-body, .note-box, .pdf-
 .chapter-header h2 {
   font-family: 'Cormorant Garamond', serif;
   font-size: clamp(40px, 5vw, 64px); font-weight: 600;
-  color: var(--white); line-height: 1.1; margin-bottom: 20px;
+  color: var(--white); line-height: 1.1; margin-bottom: 10px;
   max-width: 700px;
 }
 .chapter-header .lead {
-  font-size: 17px; color: var(--gray); line-height: 1.8;
+  font-size: 17px; color: var(--gray); line-height: 1.7;
   max-width: 600px;
 }
 
@@ -370,7 +370,7 @@ p, li, td, dd, blockquote, .prose, .callout, .card-script-body, .note-box, .pdf-
 }
 .script-who.cliente { color: var(--gray); }
 .script-text {
-  font-size: 14px; color: var(--white); line-height: 1.6;
+  font-size: 15px; color: var(--white); line-height: 1.7;
   background: rgba(255,255,255,0.03); border-radius: 8px;
   padding: 10px 14px; border-left: 2px solid rgba(91,155,213,0.4);
 }
@@ -411,8 +411,8 @@ p, li, td, dd, blockquote, .prose, .callout, .card-script-body, .note-box, .pdf-
 .check-box.checked::after {
   content: '✓'; color: var(--bg); font-size: 11px; font-weight: 700;
 }
-.check-text { font-size: 14px; color: var(--white); line-height: 1.5; }
-.check-sub { font-size: 12px; color: var(--gray); margin-top: 3px; }
+.check-text { font-size: 15px; color: var(--white); line-height: 1.65; }
+.check-sub { font-size: 13px; color: var(--gray); margin-top: 3px; line-height: 1.5; }
 
 /* OBJEÇÃO card */
 .card-obj {
@@ -437,9 +437,9 @@ p, li, td, dd, blockquote, .prose, .callout, .card-script-body, .note-box, .pdf-
   font-size: 20px; color: var(--white); font-weight: 600;
 }
 .obj-q {
-  font-size: 15px; color: var(--gray); margin-bottom: 16px;
+  font-size: 16px; color: var(--gray); margin-bottom: 16px;
   font-style: italic; padding-left: 16px;
-  border-left: 2px solid var(--red-dim);
+  border-left: 2px solid var(--red-dim); line-height: 1.65;
 }
 .obj-branches { display: flex; flex-direction: column; gap: 10px; }
 .obj-branch {
@@ -450,7 +450,7 @@ p, li, td, dd, blockquote, .prose, .callout, .card-script-body, .note-box, .pdf-
   font-size: 10px; letter-spacing: 2px; text-transform: uppercase;
   color: var(--red); font-weight: 700; min-width: 70px; padding-top: 2px;
 }
-.obj-branch-text { font-size: 13px; color: var(--white); line-height: 1.5; }
+.obj-branch-text { font-size: 14px; color: var(--white); line-height: 1.65; }
 
 /* ÁUDIO card */
 .card-audio {
@@ -499,7 +499,7 @@ p, li, td, dd, blockquote, .prose, .callout, .card-script-body, .note-box, .pdf-
   50% { transform: scaleY(0.4); }
 }
 .audio-text {
-  font-size: 14px; color: var(--white); line-height: 1.7;
+  font-size: 15px; color: var(--white); line-height: 1.7;
   font-style: italic;
 }
 
