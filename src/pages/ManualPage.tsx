@@ -5,6 +5,7 @@ import ManualCover from "@/components/manual/ManualCover";
 import ManualTOC from "@/components/manual/ManualTOC";
 import CollapsibleChapter from "@/components/manual/CollapsibleChapter";
 import BottomTabBar from "@/components/manual/BottomTabBar";
+import TopHeader from "@/components/manual/TopHeader";
 import SearchOverlay from "@/components/manual/SearchOverlay";
 import FavoritesOverlay from "@/components/manual/FavoritesOverlay";
 import { useAuth } from "@/contexts/AuthContext";
@@ -97,17 +98,7 @@ const ManualPage = () => {
       <div className="manual-page">
         <div className="progress-bar" style={{ transform: `scaleX(${scrollProgress / 100})` }} />
 
-        {/* Auth bar */}
-        <div className="auth-bar">
-          {user ? (
-            <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-              <span style={{ color: "var(--gray)", fontSize: 12 }}>{user.email}</span>
-              <button onClick={signOut} className="auth-bar-btn">Sair</button>
-            </div>
-          ) : (
-            <button onClick={() => routerNavigate("/auth")} className="auth-bar-btn">Entrar</button>
-          )}
-        </div>
+        <TopHeader />
 
         <SearchOverlay open={searchOpen} onClose={() => setSearchOpen(false)} onNavigate={navigate} />
         <FavoritesOverlay
