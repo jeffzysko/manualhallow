@@ -7,6 +7,7 @@ import { AuthProvider } from "@/contexts/AuthContext";
 import ManualPage from "./pages/ManualPage";
 import AuthPage from "./pages/AuthPage";
 import AdminPage from "./pages/AdminPage";
+import ResetPasswordPage from "./pages/ResetPasswordPage";
 import NotFound from "./pages/NotFound";
 import ProtectedRoute from "./components/ProtectedRoute";
 
