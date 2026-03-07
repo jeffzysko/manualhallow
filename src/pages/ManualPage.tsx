@@ -73,7 +73,7 @@ const ManualPage = () => {
 
   return (
     <div className="manual-page">
-      <div className="progress-bar" style={{ width: `${scrollProgress}%` }} />
+      <div className="progress-bar" style={{ transform: `scaleX(${scrollProgress / 100})` }} />
 
       <SearchOverlay open={searchOpen} onClose={() => setSearchOpen(false)} onNavigate={navigate} />
 
