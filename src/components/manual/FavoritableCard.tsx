@@ -15,14 +15,11 @@ const FavoritableCard = ({ id, label, chapter, children, className = "" }: Favor
   return (
     <div className={`favoritable-card ${className}`}>
       {isLoggedIn && (
-        <div className="favoritable-card-header">
-          <span className="favoritable-card-label">{label}</span>
-          <FavoriteButton
-            active={isFavorite(id)}
-            onClick={() => toggleFavorite(id, label, chapter)}
-            className="element-fav-btn"
-          />
-        </div>
+        <FavoriteButton
+          active={isFavorite(id)}
+          onClick={() => toggleFavorite(id, label, chapter)}
+          className="element-fav-btn"
+        />
       )}
       {children}
     </div>

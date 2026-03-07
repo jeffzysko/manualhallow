@@ -574,26 +574,9 @@
 .manual-page .favorite-btn:hover { background: rgba(201,169,106,0.15); transform: scale(1.15); }
 .manual-page .favorite-btn.active { background: rgba(201,169,106,0.15); }
 .manual-page .chapter-fav-btn { position: absolute; top: 0; right: 0; }
-.manual-page .element-fav-btn { position: static; flex-shrink: 0; }
+.manual-page .element-fav-btn { position: absolute; top: 8px; right: 8px; z-index: 3; background: var(--card2); border: 1px solid var(--border2); border-radius: 50%; padding: 5px; }
+.manual-page .element-fav-btn:hover { background: rgba(201,169,106,0.15); }
 .manual-page .favoritable-card { position: relative; }
-.manual-page .favoritable-card-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 8px;
-  margin-bottom: 6px;
-  padding: 4px 0;
-}
-.manual-page .favoritable-card-label {
-  font-size: 11px;
-  letter-spacing: 1.5px;
-  text-transform: uppercase;
-  color: var(--gray2);
-  font-weight: 600;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
 
 /* UTILITY */
 .manual-page .mt-16 { margin-top: 16px; }
