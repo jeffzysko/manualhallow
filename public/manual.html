@@ -1402,6 +1402,43 @@ body.scripts-mode .scripts-banner { display: block; }
 </head>
 <body>
 
+<!-- ===== HAMBURGER BUTTON (mobile only) ===== -->
+<button class="hamburger-btn" id="hamburger-btn" onclick="openDrawer()" aria-label="Menu">
+  <svg viewBox="0 0 24 24"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+</button>
+
+<!-- ===== MOBILE DRAWER ===== -->
+<div class="mobile-drawer-overlay" id="mobile-drawer-overlay" onclick="closeDrawerOnOverlay(event)">
+  <div class="mobile-drawer" id="mobile-drawer">
+    <div class="drawer-header">
+      <span class="drawer-logo">Hallow</span>
+      <button class="drawer-close" onclick="closeDrawer()" aria-label="Fechar menu">
+        <svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div class="drawer-nav" id="drawer-nav">
+      <button class="drawer-nav-item active" onclick="drawerNavTo('#cover')"><span class="drawer-nav-dot"></span>Capa</button>
+      <button class="drawer-nav-item" onclick="drawerNavTo('#toc')"><span class="drawer-nav-dot"></span>Sumário</button>
+      <button class="drawer-nav-item" onclick="drawerNavTo('#ch1')"><span class="drawer-nav-dot"></span>Premium</button>
+      <button class="drawer-nav-item" onclick="drawerNavTo('#ch2')"><span class="drawer-nav-dot"></span>Diagnóstico</button>
+      <button class="drawer-nav-item" onclick="drawerNavTo('#ch3')"><span class="drawer-nav-dot"></span>Espelhamento</button>
+      <button class="drawer-nav-item" onclick="drawerNavTo('#ch4')"><span class="drawer-nav-dot"></span>Escada do SIM</button>
+      <button class="drawer-nav-item" onclick="drawerNavTo('#ch5')"><span class="drawer-nav-dot"></span>Valor</button>
+      <button class="drawer-nav-item" onclick="drawerNavTo('#ch6')"><span class="drawer-nav-dot"></span>Persuasão</button>
+      <button class="drawer-nav-item" onclick="drawerNavTo('#ch7')"><span class="drawer-nav-dot"></span>Fechamento</button>
+      <button class="drawer-nav-item" onclick="drawerNavTo('#ch8')"><span class="drawer-nav-dot"></span>Fidelização</button>
+      <button class="drawer-nav-item" onclick="drawerNavTo('#chacc')"><span class="drawer-nav-dot"></span>Acessórios</button>
+      <button class="drawer-nav-item" onclick="drawerNavTo('#ch9')"><span class="drawer-nav-dot"></span>Metas 2026</button>
+      <button class="drawer-nav-item" onclick="drawerNavTo('#appendix')"><span class="drawer-nav-dot"></span>Apêndices</button>
+      <button class="drawer-nav-item" onclick="drawerNavTo('#chps')"><span class="drawer-nav-dot"></span>Provas Sociais</button>
+      <button class="drawer-nav-item" onclick="drawerNavTo('#choa')"><span class="drawer-nav-dot"></span>Objeções Acessórios</button>
+      <button class="drawer-nav-item" onclick="drawerNavTo('#chlf')"><span class="drawer-nav-dot"></span>Lead Frio</button>
+      <button class="drawer-nav-item" onclick="drawerNavTo('#chgf')"><span class="drawer-nav-dot"></span>Guia de Fotos</button>
+      <button class="drawer-nav-item" onclick="drawerNavTo('#chtp')"><span class="drawer-nav-dot"></span>Template Proposta</button>
+    </div>
+  </div>
+</div>
+
 <!-- ===== SIDEBAR NAV ===== -->
 <nav class="sidenav" id="sidenav">
   <div class="sidenav-logo">H</div>
