@@ -98,17 +98,7 @@ const ManualPage = () => {
       <div className="manual-page">
         <div className="progress-bar" style={{ transform: `scaleX(${scrollProgress / 100})` }} />
 
-        {/* Auth bar */}
-        <div className="auth-bar">
-          {user ? (
-            <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-              <span style={{ color: "var(--gray)", fontSize: 12 }}>{user.email}</span>
-              <button onClick={signOut} className="auth-bar-btn">Sair</button>
-            </div>
-          ) : (
-            <button onClick={() => routerNavigate("/auth")} className="auth-bar-btn">Entrar</button>
-          )}
-        </div>
+        <TopHeader />
 
         <SearchOverlay open={searchOpen} onClose={() => setSearchOpen(false)} onNavigate={navigate} />
         <FavoritesOverlay
