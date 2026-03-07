@@ -5031,11 +5031,13 @@ function toggleScriptsMode() {
   document.body.classList.toggle('scripts-mode', scriptsMode);
   const btn = document.getElementById('btn-scripts');
   btn.classList.toggle('active', scriptsMode);
-  btn.querySelector('svg + *') || btn.childNodes;
-  // Update button label
-  const textNode = Array.from(btn.childNodes).find(n => n.nodeType === 3);
-  if (textNode) textNode.textContent = scriptsMode ? ' Sair' : ' Scripts';
+  const label = btn.querySelector('span');
+  if (label) label.textContent = scriptsMode ? 'Sair' : 'Scripts';
   if (scriptsMode) window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function scrollToTop() {
+  window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 </script>
 </body>
