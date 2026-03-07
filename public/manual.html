@@ -5190,6 +5190,42 @@ function toggleScriptsMode() {
 function scrollToTop() {
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
+
+// ===== MOBILE DRAWER =====
+function openDrawer() {
+  document.getElementById('mobile-drawer-overlay').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function closeDrawer() {
+  document.getElementById('mobile-drawer-overlay').classList.remove('open');
+  document.body.style.overflow = '';
+}
+function closeDrawerOnOverlay(e) {
+  if (e.target === document.getElementById('mobile-drawer-overlay')) closeDrawer();
+}
+function drawerNavTo(hash) {
+  closeDrawer();
+  setTimeout(() => {
+    const el = document.querySelector(hash);
+    if (el) {
+      // Expand if collapsed
+      const coll = el.closest('.section-collapsible');
+      if (coll && coll.classList.contains('collapsed')) {
+        coll.classList.remove('collapsed');
+        const btn = coll.closest('.page-wrap')?.querySelector('.section-toggle');
+        if (btn) {
+          btn.setAttribute('aria-expanded', 'true');
+          const hint = btn.querySelector('.collapse-hint');
+          if (hint) hint.textContent = 'Recolher';
+        }
+      }
+      el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  }, 100);
+  // Update active state
+  document.querySelectorAll('.drawer-nav-item').forEach(item => item.classList.remove('active'));
+  event.currentTarget.classList.add('active');
+}
 </script>
 </body>
 </html>
