@@ -1505,12 +1505,18 @@ body.scripts-mode .scripts-banner { display: block; }
 
 /* ===== FAVORITES SYSTEM ===== */
 .fav-btn {
-  position: absolute; top: 12px; right: 12px;
-  background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08);
-  border-radius: 10px; width: 36px; height: 36px;
+  position: absolute; top: 8px; right: 8px;
+  background: rgba(15,16,24,0.7); border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 8px; width: 32px; height: 32px;
   display: flex; align-items: center; justify-content: center;
   cursor: pointer; transition: all .2s; z-index: 5;
-  color: var(--gray2);
+  color: var(--gray2); opacity: 0; pointer-events: none;
+}
+/* Show on card hover */
+.card:hover .fav-btn, .card-script:hover .fav-btn, .card-obj:hover .fav-btn,
+.card-audio:hover .fav-btn, .card-check:hover .fav-btn,
+.fav-btn.favorited {
+  opacity: 1; pointer-events: all;
 }
 .fav-btn:hover { background: rgba(201,169,106,0.12); border-color: rgba(201,169,106,0.2); color: var(--gold); }
 .fav-btn.favorited {
