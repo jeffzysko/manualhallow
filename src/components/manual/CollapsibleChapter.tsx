@@ -1,4 +1,6 @@
 import { useState, ReactNode } from "react";
+import FavoriteButton from "./FavoriteButton";
+import { useFavoritesContext } from "@/contexts/FavoritesContext";
 
 interface CollapsibleChapterProps {
   id: string;
@@ -18,11 +20,15 @@ const CollapsibleChapter = ({
   id, num, numBg, numColor = "#000", tag, tagColor, title, lead, bgStyle = "var(--bg)", tldr, children
 }: CollapsibleChapterProps) => {
   const [collapsed, setCollapsed] = useState(true);
+  const { isFavorite, toggleFavorite, isLoggedIn } = useFavoritesContext();
+
+  // Extract plain text from title for favorite label
+  const chapterLabel = `Cap. ${num.replace(/^0/, "")} — ${tag}`;
 
   return (
-    <section id={id} style={{ background: bgStyle }}>
+    <section id={id} style={{ background: bgStyle, position: "relative" }}>
       <div className="page-wrap section-gap">
-        <div className="chapter-header">
+        <div className="chapter-header" style={{ position: "relative" }}>
           <div className="ch-num">{num}</div>
           <div className="ch-label">
             <div className="ch-label-num" style={{ background: numBg, color: numColor }}>
@@ -33,6 +39,14 @@ const CollapsibleChapter = ({
           <h2 dangerouslySetInnerHTML={{ __html: typeof title === "string" ? title : "" }} />
           {typeof title !== "string" && title}
           <p className="lead">{lead}</p>
+
+          {isLoggedIn && (
+            <FavoriteButton
+              active={isFavorite(id)}
+              onClick={() => toggleFavorite(id, chapterLabel, `Capítulo ${num}`)}
+              className="chapter-fav-btn"
+            />
+          )}
         </div>
 
         <button
