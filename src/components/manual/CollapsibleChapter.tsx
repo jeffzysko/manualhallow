@@ -14,10 +14,12 @@ interface CollapsibleChapterProps {
   bgStyle?: string;
   tldr?: string[];
   children: ReactNode;
+  isRead?: boolean;
+  onToggleRead?: () => void;
 }
 
 const CollapsibleChapter = ({
-  id, num, numBg, numColor = "#000", tag, tagColor, title, lead, bgStyle = "var(--bg)", tldr, children
+  id, num, numBg, numColor = "#000", tag, tagColor, title, lead, bgStyle = "var(--bg)", tldr, children, isRead, onToggleRead
 }: CollapsibleChapterProps) => {
   const [collapsed, setCollapsed] = useState(true);
   const { isFavorite, toggleFavorite, isLoggedIn } = useFavoritesContext();
