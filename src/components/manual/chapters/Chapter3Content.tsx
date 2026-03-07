@@ -45,18 +45,18 @@ const Chapter3Content = () => (
     <h3 className="display mb-24 mt-40" style={{fontSize:28, color:'var(--white)'}}>Técnica: Rotular + Validar + Perguntar</h3>
     <div className="card reveal" style={{borderColor:'rgba(201,169,106,0.2)'}}>
       <p className="prose" style={{marginBottom:24}}>Estrutura de 1 mensagem premium — use consistentemente para criar ritmo de conversa:</p>
-      <div style={{display:'grid', gridTemplateColumns:'repeat(3, 1fr)', gap:16}}>
-        <div style={{textAlign:'center', padding:24, background:'var(--gold-dim)', borderRadius:12}}>
+      <div className="mobile-rvp-grid" style={{display:'grid', gridTemplateColumns:'repeat(auto-fit, minmax(200px, 1fr))', gap:16}}>
+        <div style={{textAlign:'center', padding:20, background:'var(--gold-dim)', borderRadius:12}}>
           <div style={{fontSize:32, marginBottom:12}}>🏷️</div>
           <div style={{fontSize:11, letterSpacing:2, textTransform:'uppercase', color:'var(--gold)', fontWeight:700, marginBottom:8}}>Rótulo</div>
           <div style={{fontSize:13, color:'var(--white)'}}>"Pelo que você me disse, parece que o principal é X…"</div>
         </div>
-        <div style={{textAlign:'center', padding:24, background:'var(--green-dim)', borderRadius:12}}>
+        <div style={{textAlign:'center', padding:20, background:'var(--green-dim)', borderRadius:12}}>
           <div style={{fontSize:32, marginBottom:12}}>✅</div>
           <div style={{fontSize:11, letterSpacing:2, textTransform:'uppercase', color:'var(--green)', fontWeight:700, marginBottom:8}}>Validação</div>
           <div style={{fontSize:13, color:'var(--white)'}}>"Entendo total / faz sentido."</div>
         </div>
-        <div style={{textAlign:'center', padding:24, background:'var(--blue-dim)', borderRadius:12}}>
+        <div style={{textAlign:'center', padding:20, background:'var(--blue-dim)', borderRadius:12}}>
           <div style={{fontSize:32, marginBottom:12}}>❓</div>
           <div style={{fontSize:11, letterSpacing:2, textTransform:'uppercase', color:'var(--blue)', fontWeight:700, marginBottom:8}}>Pergunta</div>
           <div style={{fontSize:13, color:'var(--white)'}}>"É mais por Y ou por Z?"</div>
