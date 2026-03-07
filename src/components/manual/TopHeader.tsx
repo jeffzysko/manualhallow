@@ -25,6 +25,14 @@ const TopHeader = () => {
     return () => document.removeEventListener("mousedown", handleClickOutside, true);
   }, [menuOpen]);
 
+  const [isAdmin, setIsAdmin] = useState(false);
+  useEffect(() => {
+    if (!user) return;
+    supabase.rpc("has_role", { _user_id: user.id, _role: "admin" }).then(({ data }) => {
+      setIsAdmin(!!data);
+    });
+  }, [user]);
+
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 20);
     window.addEventListener("scroll", onScroll, { passive: true });
