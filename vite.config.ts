@@ -66,6 +66,12 @@ export default defineConfig(({ mode }) => ({
         categories: ["business", "education"],
         icons: [
           {
+            src: "/pwa-180x180.png",
+            sizes: "180x180",
+            type: "image/png",
+            purpose: "any",
+          },
+          {
             src: "/pwa-192x192.png",
             sizes: "192x192",
             type: "image/png",
@@ -78,7 +84,7 @@ export default defineConfig(({ mode }) => ({
             purpose: "any",
           },
           {
-            src: "/pwa-512x512.png",
+            src: "/pwa-maskable-512.png",
             sizes: "512x512",
             type: "image/png",
             purpose: "maskable",
