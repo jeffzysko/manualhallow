@@ -9,7 +9,43 @@
 <meta name="apple-mobile-web-app-title" content="Manual Hallow">
 <link rel="apple-touch-icon" href="/pwa-192x192.png">
 <link rel="manifest" href="/manifest.webmanifest">
+
+<!-- SEO Meta Tags -->
 <title>Manual de Atendimento e Vendas — Padrão Hallow</title>
+<meta name="description" content="Manual completo de atendimento e vendas Hallow. Scripts, objeções, técnicas de fechamento, follow-up e treinamento para equipes de alta performance.">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://manualhallow.lovable.app/">
+
+<!-- Open Graph / Facebook -->
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://manualhallow.lovable.app/">
+<meta property="og:title" content="Manual de Atendimento e Vendas — Padrão Hallow">
+<meta property="og:description" content="Scripts, objeções, técnicas de fechamento e treinamento completo para equipes de vendas de alta performance.">
+<meta property="og:image" content="https://manualhallow.lovable.app/pwa-512x512.png">
+<meta property="og:locale" content="pt_BR">
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Manual de Atendimento e Vendas — Padrão Hallow">
+<meta name="twitter:description" content="Scripts, objeções, técnicas de fechamento e treinamento completo para equipes de vendas.">
+<meta name="twitter:image" content="https://manualhallow.lovable.app/pwa-512x512.png">
+
+<!-- JSON-LD Structured Data -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebPage",
+  "name": "Manual de Atendimento e Vendas — Padrão Hallow",
+  "description": "Manual completo de atendimento e vendas com scripts, objeções, técnicas de fechamento e treinamento.",
+  "url": "https://manualhallow.lovable.app/",
+  "inLanguage": "pt-BR",
+  "publisher": {
+    "@type": "Organization",
+    "name": "Hallow"
+  }
+}
+</script>
+
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,600&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
 /* ===== CSS RESET & VARIABLES ===== */
@@ -1384,12 +1420,61 @@ body.scripts-mode .scripts-banner { display: block; }
   margin-left: 12px; font-weight: 400; text-transform: uppercase;
 }
 
+/* ===== PREFERS-REDUCED-MOTION ===== */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+  html { scroll-behavior: auto; }
+  .reveal { opacity: 1 !important; transform: none !important; }
+}
+
+/* ===== CHAPTER PROGRESS TRACKER ===== */
+.chapter-progress {
+  display: flex; align-items: center; gap: 10px;
+  margin-top: 12px;
+}
+.chapter-progress-bar {
+  flex: 1; height: 4px; background: rgba(255,255,255,0.06);
+  border-radius: 4px; overflow: hidden;
+}
+.chapter-progress-fill {
+  height: 100%; width: 0%;
+  background: linear-gradient(90deg, var(--gold), var(--gold-light));
+  border-radius: 4px;
+  transition: width 0.3s ease;
+}
+.chapter-progress-label {
+  font-size: 11px; color: var(--gray2); font-weight: 600;
+  min-width: 32px; text-align: right;
+  font-family: 'JetBrains Mono', monospace;
+}
+
+/* ===== SKIP TO CONTENT (A11y) ===== */
+.skip-to-content {
+  position: absolute; top: -100px; left: 16px;
+  background: var(--gold); color: #000;
+  padding: 12px 24px; border-radius: 8px;
+  font-weight: 700; font-size: 14px; z-index: 9999;
+  transition: top 0.2s;
+  text-decoration: none;
+}
+.skip-to-content:focus {
+  top: 16px;
+}
+
 /* print + responsive handled above */
 </style>
 </head>
 <body>
 
-<!-- ===== HAMBURGER BUTTON (mobile only) ===== -->
+<!-- Skip to Content (Accessibility) -->
+<a href="#toc" class="skip-to-content">Pular para o conteúdo</a>
+
+
 <button class="hamburger-btn" id="hamburger-btn" onclick="openDrawer()" aria-label="Menu">
   <svg viewBox="0 0 24 24"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
 </button>
@@ -1426,7 +1511,7 @@ body.scripts-mode .scripts-banner { display: block; }
   </div>
 </div>
 
-<div class="main-content">
+<main class="main-content" role="main" id="main-content" aria-label="Conteúdo principal do manual">
 
 <!-- Progress Bar -->
 <div id="progress-bar"></div>
@@ -4334,7 +4419,7 @@ body.scripts-mode .scripts-banner { display: block; }
   </div>
 </footer>
 
-</div><!-- /main-content -->
+</main><!-- /main-content -->
 
 <script>
 // ===== PDF MODAL =====
@@ -4969,6 +5054,72 @@ window.addEventListener('scroll', () => {
   const pct = docHeight > 0 ? (scrollTop / docHeight) * 100 : 0;
   progressBar.style.width = pct + '%';
 });
+
+// ===== CHAPTER PROGRESS TRACKER =====
+// Add progress bars to each chapter header and track reading progress
+const chapterSections = document.querySelectorAll('section[id]:not(#cover):not(#toc):not(#appendix)');
+const chapterProgress = {};
+
+// Load saved progress
+try {
+  const saved = localStorage.getItem('hallow-chapter-progress');
+  if (saved) Object.assign(chapterProgress, JSON.parse(saved));
+} catch(e) {}
+
+// Inject progress bar into each chapter header
+chapterSections.forEach(section => {
+  const header = section.querySelector('.chapter-header');
+  if (!header) return;
+  const id = section.id;
+  const pctSaved = chapterProgress[id] || 0;
+
+  const progressDiv = document.createElement('div');
+  progressDiv.className = 'chapter-progress';
+  progressDiv.setAttribute('role', 'progressbar');
+  progressDiv.setAttribute('aria-label', 'Progresso de leitura do capítulo');
+  progressDiv.setAttribute('aria-valuenow', String(Math.round(pctSaved)));
+  progressDiv.setAttribute('aria-valuemin', '0');
+  progressDiv.setAttribute('aria-valuemax', '100');
+  progressDiv.innerHTML = `
+    <div class="chapter-progress-bar"><div class="chapter-progress-fill" style="width:${pctSaved}%"></div></div>
+    <span class="chapter-progress-label">${Math.round(pctSaved)}%</span>
+  `;
+  header.appendChild(progressDiv);
+});
+
+// Update chapter progress on scroll
+let progressTick = false;
+window.addEventListener('scroll', () => {
+  if (progressTick) return;
+  progressTick = true;
+  requestAnimationFrame(() => {
+    progressTick = false;
+    const vh = window.innerHeight;
+    chapterSections.forEach(section => {
+      const id = section.id;
+      const rect = section.getBoundingClientRect();
+      const sectionH = section.offsetHeight;
+      if (sectionH === 0) return;
+
+      // How much of the section has scrolled past the viewport top
+      const scrolledPast = Math.max(0, -rect.top + vh * 0.3);
+      const pct = Math.min(100, Math.max(chapterProgress[id] || 0, (scrolledPast / sectionH) * 100));
+      chapterProgress[id] = pct;
+
+      const bar = section.querySelector('.chapter-progress-fill');
+      const label = section.querySelector('.chapter-progress-label');
+      if (bar) bar.style.width = pct + '%';
+      if (label) label.textContent = Math.round(pct) + '%';
+
+      const progressDiv = section.querySelector('.chapter-progress');
+      if (progressDiv) progressDiv.setAttribute('aria-valuenow', String(Math.round(pct)));
+    });
+
+    // Save periodically
+    try { localStorage.setItem('hallow-chapter-progress', JSON.stringify(chapterProgress)); } catch(e) {}
+  });
+});
+
 
 // ===== NAV DOTS =====
 function navTo(id) {
