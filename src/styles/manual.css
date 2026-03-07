@@ -1313,6 +1313,8 @@
   max-height: 9999px !important;
   opacity: 1 !important;
   pointer-events: all !important;
+  padding-top: 24px !important;
+  overflow: visible !important;
 }
 .manual-page.scripts-mode .section-toggle,
 .manual-page.scripts-mode .expand-cta {
