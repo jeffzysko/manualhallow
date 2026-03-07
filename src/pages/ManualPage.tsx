@@ -30,8 +30,10 @@ const ManualPage = () => {
   const [favoritesOpen, setFavoritesOpen] = useState(false);
   const [scriptsMode, setScriptsMode] = useState(false);
   const [scrollProgress, setScrollProgress] = useState(0);
+  const [notesOpen, setNotesOpen] = useState(false);
   const { user, signOut } = useAuth();
   const { favorites, isFavorite, toggleFavorite } = useFavorites();
+  const { progress, toggleChapter } = useReadingProgress();
   const routerNavigate = useRouterNavigate();
 
   const rafRef = useRef(0);
