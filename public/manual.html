@@ -98,11 +98,14 @@ body {
 .mono  { font-family: 'JetBrains Mono', monospace; }
 
 h1,h2,h3,h4 { font-family: 'Cormorant Garamond', serif; line-height: 1.2; }
-h3 { margin-top: 48px; margin-bottom: 24px; }
-h4 { margin-top: 32px; margin-bottom: 16px; }
+/* Section-level h3/h4 spacing — only direct children of page-wrap or collapsible */
+.section-collapsible > h3, .page-wrap > h3 { margin-top: 40px; margin-bottom: 16px; }
+.section-collapsible > h4, .page-wrap > h4 { margin-top: 28px; margin-bottom: 12px; }
+/* Inside cards/steps, tighter spacing */
+.card h4, .step h4, .card-obj h4, .card-check h4, .card-audio h4 { margin-top: 0; margin-bottom: 8px; }
 p, li, td, dd, blockquote, .prose, .callout, .card-script-body, .note-box, .pdf-option-desc { line-height: 1.5; }
-.prose { margin-bottom: 24px; }
-.lead { margin-bottom: 32px; }
+.prose { margin-bottom: 16px; }
+.lead { margin-bottom: 24px; }
 
 /* ===== ORNAMENTAL DIVIDER ===== */
 .ornament {
