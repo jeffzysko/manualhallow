@@ -1327,7 +1327,7 @@
 
 /* Banner indicating scripts mode */
 .manual-page.scripts-mode::before {
-  content: '📋 Modo Scripts — scripts, objeções, áudios e respostas prontas';
+  content: '📋 Modo Scripts — todo o conteúdo expandido';
   display: block;
   position: sticky;
   top: 0;
@@ -1346,37 +1346,5 @@
 /* Hide cover and TOC in scripts mode */
 .manual-page.scripts-mode #cover,
 .manual-page.scripts-mode #toc {
-  display: none !important;
-}
-
-/* Hide lead text in scripts mode */
-.manual-page.scripts-mode .lead {
-  display: none !important;
-}
-
-/* Show h3 headers that label script/objection sections for context */
-.manual-page.scripts-mode .section-collapsible > h3 {
-  display: none !important;
-}
-/* Show h3 only when followed by actionable content */
-.manual-page.scripts-mode .section-collapsible > h3:has(+ .card-script),
-.manual-page.scripts-mode .section-collapsible > h3:has(+ .col-2),
-.manual-page.scripts-mode .section-collapsible > h3:has(+ .card-obj),
-.manual-page.scripts-mode .section-collapsible > h3:has(+ .card-audio),
-.manual-page.scripts-mode .section-collapsible > h3:has(+ .followup-wrap),
-.manual-page.scripts-mode .section-collapsible > h3:has(+ .phrases-grid) {
-  display: block !important;
-}
-
-/* Appendix sections: hide non-actionable content but keep headers for scripts */
-.manual-page.scripts-mode section[id^="ch"] .page-wrap > *:not(.chapter-header):not(.card-script):not(.card-obj):not(.card-audio):not(.followup-wrap):not(.phrases-grid):not(.col-2):not(h3) {
-  display: none !important;
-}
-.manual-page.scripts-mode #appendix .page-wrap > *:not(.chapter-header):not(.card-script):not(.card-obj):not(.card-audio):not(.followup-wrap):not(.phrases-grid):not(.col-2):not(h3) {
-  display: none !important;
-}
-
-/* Hide appendix sections that have no actionable content */
-.manual-page.scripts-mode #chtp {
   display: none !important;
 }
