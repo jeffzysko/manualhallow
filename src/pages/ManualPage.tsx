@@ -112,6 +112,7 @@ const ManualPage = () => {
 
         <main role="main">
           <ManualCover />
+          {user && <ReadingProgressBar />}
           <ManualTOC onNavigate={navigate} />
 
           <Suspense fallback={null}>
