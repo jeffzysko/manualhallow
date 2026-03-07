@@ -3,11 +3,12 @@ interface BottomTabBarProps {
   onOpenDrawer: () => void;
   onOpenSearch: () => void;
   onOpenFavorites: () => void;
+  onOpenNotes: () => void;
   onToggleScripts: () => void;
   scriptsMode: boolean;
 }
 
-const BottomTabBar = ({ onScrollTop, onOpenDrawer, onOpenSearch, onOpenFavorites, onToggleScripts, scriptsMode }: BottomTabBarProps) => (
+const BottomTabBar = ({ onScrollTop, onOpenDrawer, onOpenSearch, onOpenFavorites, onOpenNotes, onToggleScripts, scriptsMode }: BottomTabBarProps) => (
   <nav className="bottom-tab-bar" id="bottom-tab-bar">
     <button className="tab-item" onClick={onScrollTop} aria-label="Início">
       <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
@@ -21,13 +22,13 @@ const BottomTabBar = ({ onScrollTop, onOpenDrawer, onOpenSearch, onOpenFavorites
       <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
       <span>Buscar</span>
     </button>
+    <button className="tab-item" onClick={onOpenNotes} aria-label="Notas">
+      <svg viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+      <span>Notas</span>
+    </button>
     <button className="tab-item" onClick={onOpenFavorites} aria-label="Favoritos">
       <svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" fill="none"/></svg>
       <span>Favoritos</span>
-    </button>
-    <button className={`tab-item${scriptsMode ? " active" : ""}`} onClick={onToggleScripts} aria-label="Scripts">
-      <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
-      <span>{scriptsMode ? "Sair" : "Scripts"}</span>
     </button>
   </nav>
 );
