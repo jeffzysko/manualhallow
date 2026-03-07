@@ -112,10 +112,10 @@ const ManualPage = () => {
           onNavigate={navigate}
           onRemove={handleRemoveFavorite}
         />
+        <NotesDrawer open={notesOpen} onClose={() => setNotesOpen(false)} />
 
         <main role="main">
           <ManualCover />
-          {user && <ReadingProgressBar />}
           <ManualTOC onNavigate={navigate} />
 
           <Suspense fallback={null}>
