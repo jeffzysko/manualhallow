@@ -852,6 +852,12 @@
   .manual-page .fav-footer-label { font-size: 9px; max-width: 65%; }
   .manual-page .fav-footer-btn { padding: 3px 8px; font-size: 10px; }
 
+  /* Favorites overlay */
+  .manual-page .fav-overlay-header { padding: 12px 14px 10px; }
+  .manual-page .fav-overlay-title { font-size: 18px; }
+  .manual-page .fav-overlay-item { padding: 10px 14px; }
+  .manual-page .fav-overlay-item-title { font-size: 13px; }
+
   /* Chapter read check */
   .manual-page .chapter-read-check { font-size: 11px; padding: 5px 12px; }
 
