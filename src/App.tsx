@@ -7,6 +7,7 @@ import { AuthProvider } from "@/contexts/AuthContext";
 import ManualPage from "./pages/ManualPage";
 import AuthPage from "./pages/AuthPage";
 import NotFound from "./pages/NotFound";
+import ProtectedRoute from "./components/ProtectedRoute";
 
 const queryClient = new QueryClient();
 
