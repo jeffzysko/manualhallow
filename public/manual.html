@@ -2,8 +2,13 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover">
 <meta name="theme-color" content="#09090F">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Manual Hallow">
+<link rel="apple-touch-icon" href="/pwa-192x192.png">
+<link rel="manifest" href="/manifest.webmanifest">
 <title>Manual de Atendimento e Vendas — Padrão Hallow</title>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,600&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
@@ -863,14 +868,19 @@ h1,h2,h3,h4 { font-family: 'Cormorant Garamond', serif; line-height: 1.2; }
    ============================================= */
 @media (max-width: 640px) {
 
-  /* LAYOUT */
-  .sidenav { width: 44px; }
-  .sidenav-logo { font-size: 14px; }
-  .main-content { margin-left: 44px; }
-  .page-wrap { padding: 0 18px; }
+  /* LAYOUT — hide sidenav, full width */
+  .sidenav { display: none; }
+  .main-content { margin-left: 0; }
+  .page-wrap { padding: 0 16px; }
 
-  /* Bottom tab bar mobile adjustments */
-  .bottom-tab-bar { padding-left: 44px; }
+  /* HAMBURGER BUTTON */
+  .hamburger-btn { display: flex !important; }
+
+  /* MOBILE DRAWER */
+  .mobile-drawer-overlay { display: block; }
+
+  /* Bottom tab bar — add Sumário tab, full width */
+  .bottom-tab-bar { padding-left: 0; }
   .tab-item { font-size: 9px; padding: 8px 0 6px; }
   .tab-item svg { width: 20px; height: 20px; }
 
@@ -889,7 +899,7 @@ h1,h2,h3,h4 { font-family: 'Cormorant Garamond', serif; line-height: 1.2; }
   #search-input { font-size: 16px; } /* prevents iOS auto-zoom */
 
   /* COVER */
-  .cover-inner { padding: 52px 16px 64px 60px; gap: 24px; }
+  .cover-inner { padding: 52px 16px 64px 16px; gap: 24px; }
   .cover-title { font-size: clamp(32px, 9vw, 52px); }
 
   /* TOC */
@@ -897,12 +907,12 @@ h1,h2,h3,h4 { font-family: 'Cormorant Garamond', serif; line-height: 1.2; }
   .toc-item { padding: 16px; }
   .toc-arrow { display: none; }
 
-  /* SCRIPTS — the min-width on script-who causes overflow, fix only that */
+  /* SCRIPTS */
   .script-who { min-width: 52px !important; font-size: 9px; }
   .card-script-body { padding: 18px; }
   .card-script-header { padding: 12px 16px; font-size: 11px; }
 
-  /* COMPARE TABLE — 3 col is too tight, go 1 col with label prefix */
+  /* COMPARE TABLE */
   .compare-head { display: none; }
   .compare-row {
     display: flex; flex-direction: column;
@@ -912,7 +922,7 @@ h1,h2,h3,h4 { font-family: 'Cormorant Garamond', serif; line-height: 1.2; }
   .compare-cell { border-right: none !important; border-bottom: 1px solid var(--border2); }
   .compare-cell:last-child { border-bottom: none; }
 
-  /* RUBRIC TABLE — 4 col impossible on mobile */
+  /* RUBRIC TABLE */
   .rubric-head { display: none; }
   .rubric-row {
     display: flex; flex-direction: column;
@@ -927,14 +937,22 @@ h1,h2,h3,h4 { font-family: 'Cormorant Garamond', serif; line-height: 1.2; }
   .rubric-cell.c2::before { content: "2 — "; color: var(--green); font-weight: 700; }
   .rubric-score-legend { flex-direction: column; gap: 8px; }
 
-  /* GRIDS that are genuinely too wide at 3+ col */
+  /* GRIDS */
   .season-grid  { grid-template-columns: 1fr; }
   .phrases-grid { grid-template-columns: 1fr; gap: 12px; }
   .acc-grid     { grid-template-columns: 1fr 1fr; gap: 10px; }
   .col-2        { grid-template-columns: 1fr; }
 
+  /* SECTION GAP reduce on mobile */
+  .section-gap { padding: 60px 0; }
+  .section-gap-sm { padding: 40px 0; }
+
+  /* CHAPTER HEADERS */
+  .chapter-header h2 { font-size: clamp(28px, 7vw, 42px) !important; }
+  .ch-num { font-size: clamp(48px, 14vw, 72px) !important; }
+
   /* FOOTER */
-  footer .page-wrap { padding: 40px 18px; }
+  footer .page-wrap { padding: 40px 16px; }
 }
 
 /* ===== BOTTOM TAB BAR (Apple-style) ===== */
@@ -973,6 +991,102 @@ body { padding-bottom: 72px; }
 
 /* Legacy fab classes hidden */
 .fab-pdf, .fab-search, .fab-scripts { display: none !important; }
+
+/* ===== HAMBURGER BUTTON (mobile only) ===== */
+.hamburger-btn {
+  display: none;
+  position: fixed; top: 16px; left: 16px; z-index: 300;
+  width: 44px; height: 44px;
+  background: rgba(15,16,24,0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(201,169,106,0.18);
+  border-radius: 12px;
+  align-items: center; justify-content: center;
+  cursor: pointer; color: var(--gold);
+  -webkit-tap-highlight-color: transparent;
+  transition: background .2s, border-color .2s;
+}
+.hamburger-btn:hover { border-color: var(--gold); }
+.hamburger-btn svg {
+  width: 20px; height: 20px; fill: none;
+  stroke: currentColor; stroke-width: 2;
+  stroke-linecap: round; stroke-linejoin: round;
+}
+
+/* ===== MOBILE DRAWER ===== */
+.mobile-drawer-overlay {
+  display: none;
+  position: fixed; inset: 0; z-index: 250;
+  background: rgba(0,0,0,0.6);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  opacity: 0; pointer-events: none;
+  transition: opacity .3s;
+}
+.mobile-drawer-overlay.open { opacity: 1; pointer-events: auto; }
+
+.mobile-drawer {
+  position: fixed; left: 0; top: 0; bottom: 0; z-index: 260;
+  width: 280px; max-width: 85vw;
+  background: var(--bg2);
+  border-right: 1px solid rgba(201,169,106,0.15);
+  transform: translateX(-100%);
+  transition: transform .35s cubic-bezier(.22,1,.36,1);
+  display: flex; flex-direction: column;
+  padding: 0; overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+.mobile-drawer-overlay.open .mobile-drawer { transform: translateX(0); }
+
+.drawer-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 20px 20px 16px;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+}
+.drawer-logo {
+  font-family: 'Cormorant Garamond', serif;
+  color: var(--gold); font-size: 18px; font-weight: 700;
+  letter-spacing: 4px; text-transform: uppercase;
+}
+.drawer-close {
+  width: 32px; height: 32px; border-radius: 8px;
+  background: rgba(255,255,255,0.06); border: none;
+  color: var(--gray); cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: background .2s, color .2s;
+}
+.drawer-close:hover { background: rgba(201,169,106,0.15); color: var(--gold); }
+.drawer-close svg {
+  width: 16px; height: 16px; fill: none;
+  stroke: currentColor; stroke-width: 2;
+  stroke-linecap: round; stroke-linejoin: round;
+}
+
+.drawer-nav { padding: 12px 12px 24px; display: flex; flex-direction: column; gap: 2px; }
+.drawer-nav-item {
+  display: flex; align-items: center; gap: 12px;
+  padding: 12px 16px; border-radius: 10px;
+  background: none; border: none; color: var(--gray);
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 14px; font-weight: 500;
+  cursor: pointer; text-align: left; width: 100%;
+  transition: background .2s, color .2s;
+  -webkit-tap-highlight-color: transparent;
+}
+.drawer-nav-item:hover, .drawer-nav-item:focus { background: rgba(201,169,106,0.08); color: var(--white); }
+.drawer-nav-item.active { background: rgba(201,169,106,0.12); color: var(--gold); font-weight: 600; }
+.drawer-nav-dot {
+  width: 8px; height: 8px; border-radius: 50%;
+  background: currentColor; opacity: 0.5; flex-shrink: 0;
+}
+
+/* Hide Sumário tab on desktop — only visible on mobile */
+.tab-sumario-mobile { display: none; }
+@media (max-width: 640px) {
+  .tab-sumario-mobile { display: flex; }
+}
+}
 
 /* PDF modal overlay */
 .pdf-modal {
@@ -1300,6 +1414,43 @@ body.scripts-mode .scripts-banner { display: block; }
 </head>
 <body>
 
+<!-- ===== HAMBURGER BUTTON (mobile only) ===== -->
+<button class="hamburger-btn" id="hamburger-btn" onclick="openDrawer()" aria-label="Menu">
+  <svg viewBox="0 0 24 24"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+</button>
+
+<!-- ===== MOBILE DRAWER ===== -->
+<div class="mobile-drawer-overlay" id="mobile-drawer-overlay" onclick="closeDrawerOnOverlay(event)">
+  <div class="mobile-drawer" id="mobile-drawer">
+    <div class="drawer-header">
+      <span class="drawer-logo">Hallow</span>
+      <button class="drawer-close" onclick="closeDrawer()" aria-label="Fechar menu">
+        <svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div class="drawer-nav" id="drawer-nav">
+      <button class="drawer-nav-item active" onclick="drawerNavTo('#cover')"><span class="drawer-nav-dot"></span>Capa</button>
+      <button class="drawer-nav-item" onclick="drawerNavTo('#toc')"><span class="drawer-nav-dot"></span>Sumário</button>
+      <button class="drawer-nav-item" onclick="drawerNavTo('#ch1')"><span class="drawer-nav-dot"></span>Premium</button>
+      <button class="drawer-nav-item" onclick="drawerNavTo('#ch2')"><span class="drawer-nav-dot"></span>Diagnóstico</button>
+      <button class="drawer-nav-item" onclick="drawerNavTo('#ch3')"><span class="drawer-nav-dot"></span>Espelhamento</button>
+      <button class="drawer-nav-item" onclick="drawerNavTo('#ch4')"><span class="drawer-nav-dot"></span>Escada do SIM</button>
+      <button class="drawer-nav-item" onclick="drawerNavTo('#ch5')"><span class="drawer-nav-dot"></span>Valor</button>
+      <button class="drawer-nav-item" onclick="drawerNavTo('#ch6')"><span class="drawer-nav-dot"></span>Persuasão</button>
+      <button class="drawer-nav-item" onclick="drawerNavTo('#ch7')"><span class="drawer-nav-dot"></span>Fechamento</button>
+      <button class="drawer-nav-item" onclick="drawerNavTo('#ch8')"><span class="drawer-nav-dot"></span>Fidelização</button>
+      <button class="drawer-nav-item" onclick="drawerNavTo('#chacc')"><span class="drawer-nav-dot"></span>Acessórios</button>
+      <button class="drawer-nav-item" onclick="drawerNavTo('#ch9')"><span class="drawer-nav-dot"></span>Metas 2026</button>
+      <button class="drawer-nav-item" onclick="drawerNavTo('#appendix')"><span class="drawer-nav-dot"></span>Apêndices</button>
+      <button class="drawer-nav-item" onclick="drawerNavTo('#chps')"><span class="drawer-nav-dot"></span>Provas Sociais</button>
+      <button class="drawer-nav-item" onclick="drawerNavTo('#choa')"><span class="drawer-nav-dot"></span>Objeções Acessórios</button>
+      <button class="drawer-nav-item" onclick="drawerNavTo('#chlf')"><span class="drawer-nav-dot"></span>Lead Frio</button>
+      <button class="drawer-nav-item" onclick="drawerNavTo('#chgf')"><span class="drawer-nav-dot"></span>Guia de Fotos</button>
+      <button class="drawer-nav-item" onclick="drawerNavTo('#chtp')"><span class="drawer-nav-dot"></span>Template Proposta</button>
+    </div>
+  </div>
+</div>
+
 <!-- ===== SIDEBAR NAV ===== -->
 <nav class="sidenav" id="sidenav">
   <div class="sidenav-logo">H</div>
@@ -1394,6 +1545,10 @@ body.scripts-mode .scripts-banner { display: block; }
   <button class="tab-item" onclick="scrollToTop()" aria-label="Início">
     <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
     <span>Início</span>
+  </button>
+  <button class="tab-item tab-sumario-mobile" onclick="openDrawer()" aria-label="Sumário">
+    <svg viewBox="0 0 24 24"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="15" y2="12"/><line x1="3" y1="18" x2="18" y2="18"/></svg>
+    <span>Sumário</span>
   </button>
   <button class="tab-item" onclick="openSearch()" aria-label="Buscar">
     <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
@@ -5039,6 +5194,42 @@ function toggleScriptsMode() {
 
 function scrollToTop() {
   window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// ===== MOBILE DRAWER =====
+function openDrawer() {
+  document.getElementById('mobile-drawer-overlay').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function closeDrawer() {
+  document.getElementById('mobile-drawer-overlay').classList.remove('open');
+  document.body.style.overflow = '';
+}
+function closeDrawerOnOverlay(e) {
+  if (e.target === document.getElementById('mobile-drawer-overlay')) closeDrawer();
+}
+function drawerNavTo(hash) {
+  closeDrawer();
+  setTimeout(() => {
+    const el = document.querySelector(hash);
+    if (el) {
+      // Expand if collapsed
+      const coll = el.closest('.section-collapsible');
+      if (coll && coll.classList.contains('collapsed')) {
+        coll.classList.remove('collapsed');
+        const btn = coll.closest('.page-wrap')?.querySelector('.section-toggle');
+        if (btn) {
+          btn.setAttribute('aria-expanded', 'true');
+          const hint = btn.querySelector('.collapse-hint');
+          if (hint) hint.textContent = 'Recolher';
+        }
+      }
+      el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  }, 100);
+  // Update active state
+  document.querySelectorAll('.drawer-nav-item').forEach(item => item.classList.remove('active'));
+  event.currentTarget.classList.add('active');
 }
 </script>
 </body>
