@@ -337,7 +337,7 @@ p, li, td, dd, blockquote, .prose, .callout, .card-script-body, .note-box, .pdf-
 /* SCRIPT card */
 .card-script {
   background: var(--script-bg); border: 1px solid rgba(91,155,213,0.25);
-  border-radius: 16px; margin-bottom: 32px; overflow: hidden;
+  border-radius: 16px; overflow: hidden;
 }
 .card-script-header {
   background: rgba(91,155,213,0.12); border-bottom: 1px solid rgba(91,155,213,0.2);
@@ -415,7 +415,7 @@ p, li, td, dd, blockquote, .prose, .callout, .card-script-body, .note-box, .pdf-
 /* OBJEÇÃO card */
 .card-obj {
   background: var(--card); border: 1px solid rgba(224,92,92,0.25);
-  border-radius: 16px; padding: 32px; margin-bottom: 32px;
+  border-radius: 16px; padding: 32px;
   position: relative; overflow: hidden;
 }
 .card-obj::before {
@@ -1487,8 +1487,10 @@ body.scripts-mode .scripts-banner { display: block; }
   overflow: hidden;
   transition: max-height .4s cubic-bezier(0.4,0,0.2,1), opacity .3s ease;
   max-height: 9999px; opacity: 1;
+  display: flex; flex-direction: column; gap: 40px;
+  padding-top: 24px;
 }
-.section-collapsible.collapsed { max-height: 0; opacity: 0; }
+.section-collapsible.collapsed { max-height: 0; opacity: 0; padding-top: 0; }
 .chapter-header-wrap { padding: 60px 0 0; }
 
 /* ===== CHAPTER TL;DR CARD ===== */
@@ -5368,7 +5370,7 @@ const searchIndex = [];
 const INITIAL_VISIBLE = 999; // Show all chapters (no lazy hide)
 let chapterIndex = 0;
 
-document.querySelectorAll('section[id]:not(#cover):not(#toc):not(#appendix)').forEach(section => {
+document.querySelectorAll('section[id]:not(#cover):not(#toc)').forEach(section => {
   const pageWrap = section.querySelector('.page-wrap');
   if (!pageWrap) return;
 
