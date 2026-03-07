@@ -863,14 +863,19 @@ h1,h2,h3,h4 { font-family: 'Cormorant Garamond', serif; line-height: 1.2; }
    ============================================= */
 @media (max-width: 640px) {
 
-  /* LAYOUT */
-  .sidenav { width: 44px; }
-  .sidenav-logo { font-size: 14px; }
-  .main-content { margin-left: 44px; }
-  .page-wrap { padding: 0 18px; }
+  /* LAYOUT — hide sidenav, full width */
+  .sidenav { display: none; }
+  .main-content { margin-left: 0; }
+  .page-wrap { padding: 0 16px; }
 
-  /* Bottom tab bar mobile adjustments */
-  .bottom-tab-bar { padding-left: 44px; }
+  /* HAMBURGER BUTTON */
+  .hamburger-btn { display: flex !important; }
+
+  /* MOBILE DRAWER */
+  .mobile-drawer-overlay { display: block; }
+
+  /* Bottom tab bar — add Sumário tab, full width */
+  .bottom-tab-bar { padding-left: 0; }
   .tab-item { font-size: 9px; padding: 8px 0 6px; }
   .tab-item svg { width: 20px; height: 20px; }
 
@@ -889,7 +894,7 @@ h1,h2,h3,h4 { font-family: 'Cormorant Garamond', serif; line-height: 1.2; }
   #search-input { font-size: 16px; } /* prevents iOS auto-zoom */
 
   /* COVER */
-  .cover-inner { padding: 52px 16px 64px 60px; gap: 24px; }
+  .cover-inner { padding: 52px 16px 64px 16px; gap: 24px; }
   .cover-title { font-size: clamp(32px, 9vw, 52px); }
 
   /* TOC */
@@ -897,12 +902,12 @@ h1,h2,h3,h4 { font-family: 'Cormorant Garamond', serif; line-height: 1.2; }
   .toc-item { padding: 16px; }
   .toc-arrow { display: none; }
 
-  /* SCRIPTS — the min-width on script-who causes overflow, fix only that */
+  /* SCRIPTS */
   .script-who { min-width: 52px !important; font-size: 9px; }
   .card-script-body { padding: 18px; }
   .card-script-header { padding: 12px 16px; font-size: 11px; }
 
-  /* COMPARE TABLE — 3 col is too tight, go 1 col with label prefix */
+  /* COMPARE TABLE */
   .compare-head { display: none; }
   .compare-row {
     display: flex; flex-direction: column;
@@ -912,7 +917,7 @@ h1,h2,h3,h4 { font-family: 'Cormorant Garamond', serif; line-height: 1.2; }
   .compare-cell { border-right: none !important; border-bottom: 1px solid var(--border2); }
   .compare-cell:last-child { border-bottom: none; }
 
-  /* RUBRIC TABLE — 4 col impossible on mobile */
+  /* RUBRIC TABLE */
   .rubric-head { display: none; }
   .rubric-row {
     display: flex; flex-direction: column;
@@ -927,14 +932,22 @@ h1,h2,h3,h4 { font-family: 'Cormorant Garamond', serif; line-height: 1.2; }
   .rubric-cell.c2::before { content: "2 — "; color: var(--green); font-weight: 700; }
   .rubric-score-legend { flex-direction: column; gap: 8px; }
 
-  /* GRIDS that are genuinely too wide at 3+ col */
+  /* GRIDS */
   .season-grid  { grid-template-columns: 1fr; }
   .phrases-grid { grid-template-columns: 1fr; gap: 12px; }
   .acc-grid     { grid-template-columns: 1fr 1fr; gap: 10px; }
   .col-2        { grid-template-columns: 1fr; }
 
+  /* SECTION GAP reduce on mobile */
+  .section-gap { padding: 60px 0; }
+  .section-gap-sm { padding: 40px 0; }
+
+  /* CHAPTER HEADERS */
+  .chapter-header h2 { font-size: clamp(28px, 7vw, 42px) !important; }
+  .ch-num { font-size: clamp(48px, 14vw, 72px) !important; }
+
   /* FOOTER */
-  footer .page-wrap { padding: 40px 18px; }
+  footer .page-wrap { padding: 40px 16px; }
 }
 
 /* ===== BOTTOM TAB BAR (Apple-style) ===== */
