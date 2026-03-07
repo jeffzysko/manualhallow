@@ -176,6 +176,7 @@ const ManualPage = () => {
         scriptsMode={scriptsMode}
       />
     </div>
+    </FavoritesContext.Provider>
   );
 };
 
