@@ -60,7 +60,6 @@ const CollapsibleChapter = ({
               </svg>
               <span>{isRead ? "Lido" : "Marcar como lido"}</span>
             </button>
-          )
           )}
         </div>
 
