@@ -49,6 +49,19 @@ const CollapsibleChapter = ({
               className="chapter-fav-btn"
             />
           )}
+          {isLoggedIn && onToggleRead && (
+            <button
+              className={`chapter-read-check${isRead ? " chapter-read-check--done" : ""}`}
+              onClick={onToggleRead}
+              title={isRead ? "Marcar como não lido" : "Marcar como lido"}
+            >
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={isRead ? "3" : "2"} strokeLinecap="round" strokeLinejoin="round">
+                <polyline points="20 6 9 17 4 12" />
+              </svg>
+              <span>{isRead ? "Lido" : "Marcar como lido"}</span>
+            </button>
+          )
+          )}
         </div>
 
         <button
