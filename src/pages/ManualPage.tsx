@@ -57,7 +57,7 @@ const ManualPage = () => {
     ch1: ["O cliente não compra produto — compra risco evitado e previsibilidade", "Preço premium se sustenta quando o valor percebido supera a âncora de custo", "Nunca entre na guerra de preço; entre na lógica risco × transformação"],
     ch2: ["Diagnóstico bom = entender cenário + critério de decisão + próximo passo", "Use SPIN: Situação → Problema → Implicação → Ganho", "Follow-up sempre com avanço de valor, nunca com 'e aí?'"],
     ch3: ["Espelhamento acontece em 3 níveis: palavras, ritmo e emoção", "Reflita o vocabulário e tom do cliente para gerar confiança em minutos", "Espelhar é entender, não manipular — faça com ética"],
-    ch4: ["Microcompromissos reduzem resistência e tornam o "sim" final natural", "Cada confirmação pequena gera consistência psicológica", "Use a técnica Rotular + Validar + Perguntar em cada interação"],
+    ch4: ["Microcompromissos reduzem resistência e tornam o 'sim' final natural", "Cada confirmação pequena gera consistência psicológica", "Use a técnica Rotular + Validar + Perguntar em cada interação"],
     ch5: ["Preço só entra quando já existe: cenário + critério + encaixe", "Ancoragem positiva antes do valor: mostre o que está incluso primeiro", "Use a fórmula: custo da inação > investimento na solução"],
     ch6: ["Reciprocidade, prova social e escassez são os 3 gatilhos mais eficazes", "Urgência real (agenda limitada) funciona melhor que pressão artificial", "Autoridade se constrói com dados e cases, não com autopromoção"],
     ch7: ["Fechamento premium = próximo passo claro, não pedido de compra", "Os 3 melhores: por próximo passo, por escolha, por resumo", "Nunca deixe o cliente sem saber o que fazer depois"],
