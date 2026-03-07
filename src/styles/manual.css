@@ -1307,3 +1307,60 @@
   color: var(--gray);
   line-height: 1.5;
 }
+
+/* ═══════════════ SCRIPTS MODE ═══════════════ */
+.manual-page.scripts-mode .section-collapsible.collapsed {
+  max-height: 9999px !important;
+  opacity: 1 !important;
+  pointer-events: all !important;
+}
+.manual-page.scripts-mode .section-toggle,
+.manual-page.scripts-mode .expand-cta {
+  display: none !important;
+}
+
+/* Hide non-script content in scripts mode — hide everything, then show scripts */
+.manual-page.scripts-mode .section-collapsible > * {
+  display: none !important;
+}
+.manual-page.scripts-mode .section-collapsible .card-script {
+  display: block !important;
+}
+/* Show wrapper divs that contain scripts (like .col-2) */
+.manual-page.scripts-mode .section-collapsible > .col-2:has(.card-script),
+.manual-page.scripts-mode .section-collapsible > div:has(.card-script) {
+  display: block !important;
+}
+/* But hide non-script siblings inside those wrappers */
+.manual-page.scripts-mode .col-2 > *:not(.card-script) {
+  display: none !important;
+}
+
+/* Banner indicating scripts mode */
+.manual-page.scripts-mode::before {
+  content: '📋 Modo Scripts — mostrando apenas scripts de cada capítulo';
+  display: block;
+  position: sticky;
+  top: 0;
+  z-index: 150;
+  background: linear-gradient(135deg, rgba(91,155,213,0.15), rgba(91,155,213,0.08));
+  border-bottom: 1px solid rgba(91,155,213,0.3);
+  color: var(--blue);
+  text-align: center;
+  padding: 10px 16px;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  backdrop-filter: blur(12px);
+}
+
+/* Hide cover and TOC in scripts mode */
+.manual-page.scripts-mode #cover,
+.manual-page.scripts-mode #toc {
+  display: none !important;
+}
+
+/* Hide lead text and ch-num background in scripts mode */
+.manual-page.scripts-mode .lead {
+  display: none !important;
+}

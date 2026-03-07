@@ -99,7 +99,7 @@ const ManualPage = () => {
 
   return (
     <FavoritesContext.Provider value={{ isFavorite, toggleFavorite, isLoggedIn: !!user }}>
-      <div className="manual-page">
+      <div className={`manual-page${scriptsMode ? " scripts-mode" : ""}`}>
         <div className="progress-bar" style={{ transform: `scaleX(${scrollProgress / 100})` }} />
 
         <TopHeader />
