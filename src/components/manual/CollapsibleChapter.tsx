@@ -1,6 +1,5 @@
 import { useState, ReactNode } from "react";
 import FavoriteButton from "./FavoriteButton";
-import SectionNote from "./SectionNote";
 import { useFavoritesContext } from "@/contexts/FavoritesContext";
 
 interface CollapsibleChapterProps {
