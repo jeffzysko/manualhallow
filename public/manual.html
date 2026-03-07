@@ -5734,6 +5734,8 @@ function drawerNavTo(hash) {
   setTimeout(() => {
     const el = document.querySelector(hash);
     if (el) {
+      // Reveal if lazy-loaded
+      if (typeof revealChapter === 'function') revealChapter(el);
       // Find and expand the collapsible section
       let coll = el.querySelector('.section-collapsible') || el.closest('.section-collapsible');
       if (coll && coll.classList.contains('collapsed')) {
