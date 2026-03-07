@@ -1,3 +1,5 @@
+import FavoritableCard from "../FavoritableCard";
+
 const Chapter8Content = () => (
   <>
     <h3 className="display mb-24" style={{fontSize:28, color:'var(--white)'}}>Os 7 Pontos de Ouro da Experiência</h3>
@@ -12,40 +14,44 @@ const Chapter8Content = () => (
     </div>
 
     <h3 className="display mb-24 mt-40" style={{fontSize:28, color:'var(--white)'}}>Mensagens de Pós-venda · Prontas</h3>
-    <div className="followup-wrap reveal">
-      <div className="followup-row"><div className="fu-day">D+7</div><div className="fu-msg"><span className="fu-tag">uso</span>"Como foi a primeira semana? Alguma dúvida de uso ou manutenção?"</div></div>
-      <div className="followup-row"><div className="fu-day">D+30</div><div className="fu-msg"><span className="fu-tag">avaliação</span>"O que você mais curtiu até agora? Posso te pedir uma avaliação?"</div></div>
-      <div className="followup-row"><div className="fu-day">D+90</div><div className="fu-msg"><span className="fu-tag">indicação</span>"Se você indicar alguém, eu cuido pessoalmente do atendimento pra manter o padrão."</div></div>
-    </div>
+    <FavoritableCard id="ch8-followup-posvenda" label="Follow-up: Pós-venda D+7 a D+90" chapter="Capítulo 08">
+      <div className="followup-wrap reveal">
+        <div className="followup-row"><div className="fu-day">D+7</div><div className="fu-msg"><span className="fu-tag">uso</span>"Como foi a primeira semana? Alguma dúvida de uso ou manutenção?"</div></div>
+        <div className="followup-row"><div className="fu-day">D+30</div><div className="fu-msg"><span className="fu-tag">avaliação</span>"O que você mais curtiu até agora? Posso te pedir uma avaliação?"</div></div>
+        <div className="followup-row"><div className="fu-day">D+90</div><div className="fu-msg"><span className="fu-tag">indicação</span>"Se você indicar alguém, eu cuido pessoalmente do atendimento pra manter o padrão."</div></div>
+      </div>
+    </FavoritableCard>
 
     <h3 className="display mb-24 mt-40" style={{fontSize:28, color:'var(--white)'}}>Jornada do Cliente · Identificar em 30 Segundos</h3>
-    <div className="compare-table reveal">
-      <div className="compare-head">
-        <div className="compare-head-cell" style={{color:'var(--gray)'}}>Sinais que ele dá</div>
-        <div className="compare-head-cell" style={{color:'var(--gold)'}}>Fase onde está</div>
-        <div className="compare-head-cell" style={{color:'var(--blue)'}}>O que ele precisa</div>
+    <FavoritableCard id="ch8-jornada" label="Tabela: Jornada do Cliente" chapter="Capítulo 08">
+      <div className="compare-table reveal">
+        <div className="compare-head">
+          <div className="compare-head-cell" style={{color:'var(--gray)'}}>Sinais que ele dá</div>
+          <div className="compare-head-cell" style={{color:'var(--gold)'}}>Fase onde está</div>
+          <div className="compare-head-cell" style={{color:'var(--blue)'}}>O que ele precisa</div>
+        </div>
+        <div className="compare-row">
+          <div className="compare-cell" style={{color:'var(--gray)'}}>Faz perguntas gerais sobre opções</div>
+          <div className="compare-cell" style={{color:'var(--gold)'}}>🔍 Explorando</div>
+          <div className="compare-cell" style={{color:'var(--blue)'}}>Visão e exemplos inspiradores</div>
+        </div>
+        <div className="compare-row">
+          <div className="compare-cell" style={{color:'var(--gray)'}}>Fala "tá caro" / menciona concorrente</div>
+          <div className="compare-cell" style={{color:'var(--gold)'}}>⚖️ Comparando</div>
+          <div className="compare-cell" style={{color:'var(--blue)'}}>Régua de comparação justa</div>
+        </div>
+        <div className="compare-row">
+          <div className="compare-cell" style={{color:'var(--gray)'}}>Pergunta prazo, instalação, garantia</div>
+          <div className="compare-cell" style={{color:'var(--gold)'}}>🎯 Decidindo</div>
+          <div className="compare-cell" style={{color:'var(--blue)'}}>Segurança e plano de execução</div>
+        </div>
+        <div className="compare-row">
+          <div className="compare-cell" style={{color:'var(--gray)'}}>Pede contrato ou forma de pagamento</div>
+          <div className="compare-cell" style={{color:'var(--gold)'}}>💳 Comprando</div>
+          <div className="compare-cell" style={{color:'var(--blue)'}}>Clareza e agendamento rápido</div>
+        </div>
       </div>
-      <div className="compare-row">
-        <div className="compare-cell" style={{color:'var(--gray)'}}>Faz perguntas gerais sobre opções</div>
-        <div className="compare-cell" style={{color:'var(--gold)'}}>🔍 Explorando</div>
-        <div className="compare-cell" style={{color:'var(--blue)'}}>Visão e exemplos inspiradores</div>
-      </div>
-      <div className="compare-row">
-        <div className="compare-cell" style={{color:'var(--gray)'}}>Fala "tá caro" / menciona concorrente</div>
-        <div className="compare-cell" style={{color:'var(--gold)'}}>⚖️ Comparando</div>
-        <div className="compare-cell" style={{color:'var(--blue)'}}>Régua de comparação justa</div>
-      </div>
-      <div className="compare-row">
-        <div className="compare-cell" style={{color:'var(--gray)'}}>Pergunta prazo, instalação, garantia</div>
-        <div className="compare-cell" style={{color:'var(--gold)'}}>🎯 Decidindo</div>
-        <div className="compare-cell" style={{color:'var(--blue)'}}>Segurança e plano de execução</div>
-      </div>
-      <div className="compare-row">
-        <div className="compare-cell" style={{color:'var(--gray)'}}>Pede contrato ou forma de pagamento</div>
-        <div className="compare-cell" style={{color:'var(--gold)'}}>💳 Comprando</div>
-        <div className="compare-cell" style={{color:'var(--blue)'}}>Clareza e agendamento rápido</div>
-      </div>
-    </div>
+    </FavoritableCard>
   </>
 );
 

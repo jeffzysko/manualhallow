@@ -1,3 +1,5 @@
+import FavoritableCard from "../FavoritableCard";
+
 const Chapter9Content = () => (
   <>
     <h3 className="display mb-24" style={{fontSize:28, color:'var(--white)'}}>KPIs Essenciais · O que Importa</h3>
@@ -23,22 +25,26 @@ const Chapter9Content = () => (
     </div>
 
     <h3 className="display mb-16 mt-40" style={{fontSize:22, color:'var(--white)'}}>Use a Sazonalidade como Argumento de Venda</h3>
-    <div className="followup-wrap reveal">
-      <div className="followup-row"><div className="fu-day" style={{fontSize:10}}>Abr–Jun</div><div className="fu-msg"><span className="fu-tag">antecipação</span>"Quem decide agora garante agenda de instalação sem concorrer com o pico de outubro."</div></div>
-      <div className="followup-row"><div className="fu-day" style={{fontSize:10}}>Jul–Set</div><div className="fu-msg"><span className="fu-tag">urgência</span>"A agenda de instalação para o verão começa a fechar agora. Quer garantir sua janela?"</div></div>
-      <div className="followup-row"><div className="fu-day" style={{fontSize:10}}>Out–Dez</div><div className="fu-msg"><span className="fu-tag">escassez real</span>"Estou com [X] instalações na fila. Preciso confirmar até [data] para garantir entrega antes do verão."</div></div>
-      <div className="followup-row"><div className="fu-day" style={{fontSize:10}}>Jan–Mar</div><div className="fu-msg"><span className="fu-tag">reativação</span>"Boa notícia: temos janela de instalação sem fila agora."</div></div>
-    </div>
+    <FavoritableCard id="ch9-followup-sazonal" label="Follow-up: Sazonalidade como Argumento" chapter="Capítulo 09">
+      <div className="followup-wrap reveal">
+        <div className="followup-row"><div className="fu-day" style={{fontSize:10}}>Abr–Jun</div><div className="fu-msg"><span className="fu-tag">antecipação</span>"Quem decide agora garante agenda de instalação sem concorrer com o pico de outubro."</div></div>
+        <div className="followup-row"><div className="fu-day" style={{fontSize:10}}>Jul–Set</div><div className="fu-msg"><span className="fu-tag">urgência</span>"A agenda de instalação para o verão começa a fechar agora. Quer garantir sua janela?"</div></div>
+        <div className="followup-row"><div className="fu-day" style={{fontSize:10}}>Out–Dez</div><div className="fu-msg"><span className="fu-tag">escassez real</span>"Estou com [X] instalações na fila. Preciso confirmar até [data] para garantir entrega antes do verão."</div></div>
+        <div className="followup-row"><div className="fu-day" style={{fontSize:10}}>Jan–Mar</div><div className="fu-msg"><span className="fu-tag">reativação</span>"Boa notícia: temos janela de instalação sem fila agora."</div></div>
+      </div>
+    </FavoritableCard>
 
     <h3 className="display mb-24 mt-40" style={{fontSize:28, color:'var(--white)'}}>Ritual Diário · Alta Alavancagem</h3>
-    <div className="card-check reveal">
-      <div className="card-check-header"><div className="card-check-icon">☀️</div><h4>30–45 minutos por dia que mudam o resultado</h4></div>
-      <div className="check-item"><div className="check-box checked"></div><div className="check-text"><strong>Varredura do funil</strong> — quem está em orçamento / comparando / travado</div></div>
-      <div className="check-item"><div className="check-box checked"></div><div className="check-text"><strong>5 follow-ups obrigatórios</strong> — com valor, não "e aí?"</div></div>
-      <div className="check-item"><div className="check-box checked"></div><div className="check-text"><strong>1 convite para visita</strong> para cada lead qualificado ativo</div></div>
-      <div className="check-item"><div className="check-box checked"></div><div className="check-text"><strong>1 prova social enviada</strong> — antes de falar preço quando fizer sentido</div></div>
-      <div className="check-item"><div className="check-box checked"></div><div className="check-text"><strong>Atualizar CRM/planilha</strong> — etapa + próxima ação + data</div></div>
-    </div>
+    <FavoritableCard id="ch9-checklist-ritual" label="Checklist: Ritual Diário" chapter="Capítulo 09">
+      <div className="card-check reveal">
+        <div className="card-check-header"><div className="card-check-icon">☀️</div><h4>30–45 minutos por dia que mudam o resultado</h4></div>
+        <div className="check-item"><div className="check-box checked"></div><div className="check-text"><strong>Varredura do funil</strong> — quem está em orçamento / comparando / travado</div></div>
+        <div className="check-item"><div className="check-box checked"></div><div className="check-text"><strong>5 follow-ups obrigatórios</strong> — com valor, não "e aí?"</div></div>
+        <div className="check-item"><div className="check-box checked"></div><div className="check-text"><strong>1 convite para visita</strong> para cada lead qualificado ativo</div></div>
+        <div className="check-item"><div className="check-box checked"></div><div className="check-text"><strong>1 prova social enviada</strong> — antes de falar preço quando fizer sentido</div></div>
+        <div className="check-item"><div className="check-box checked"></div><div className="check-text"><strong>Atualizar CRM/planilha</strong> — etapa + próxima ação + data</div></div>
+      </div>
+    </FavoritableCard>
 
     <h3 className="display mb-24 mt-40" style={{fontSize:28, color:'var(--white)'}}>4 Regras de Gestão · Padrão Splash</h3>
     <div className="steps reveal">
