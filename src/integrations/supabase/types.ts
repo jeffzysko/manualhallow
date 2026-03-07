@@ -46,16 +46,19 @@ export type Database = {
           created_at: string
           full_name: string | null
           id: string
+          is_active: boolean
         }
         Insert: {
           created_at?: string
           full_name?: string | null
           id: string
+          is_active?: boolean
         }
         Update: {
           created_at?: string
           full_name?: string | null
           id?: string
+          is_active?: boolean
         }
         Relationships: []
       }
@@ -86,6 +89,36 @@ export type Database = {
         }
         Relationships: []
       }
+      user_notes: {
+        Row: {
+          chapter_id: string
+          content: string
+          created_at: string
+          id: string
+          section_id: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          chapter_id?: string
+          content?: string
+          created_at?: string
+          id?: string
+          section_id: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          chapter_id?: string
+          content?: string
+          created_at?: string
+          id?: string
+          section_id?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       user_roles: {
         Row: {
           id: string
@@ -109,6 +142,11 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      admin_list_users: { Args: never; Returns: Json }
+      admin_toggle_user: {
+        Args: { active: boolean; target_user_id: string }
+        Returns: undefined
+      }
       get_admin_stats: { Args: never; Returns: Json }
       has_role: {
         Args: {
