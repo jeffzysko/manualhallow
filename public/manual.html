@@ -1505,20 +1505,33 @@ body.scripts-mode .scripts-banner { display: block; }
 
 /* ===== FAVORITES SYSTEM ===== */
 .fav-btn {
-  position: absolute; top: 12px; right: 12px;
-  background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08);
-  border-radius: 10px; width: 36px; height: 36px;
+  position: absolute; top: 8px; right: 8px;
+  background: rgba(15,16,24,0.75); border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 8px; width: 30px; height: 30px;
   display: flex; align-items: center; justify-content: center;
   cursor: pointer; transition: all .2s; z-index: 5;
-  color: var(--gray2);
+  color: var(--gray2); opacity: 0; pointer-events: none;
 }
-.fav-btn:hover { background: rgba(201,169,106,0.12); border-color: rgba(201,169,106,0.2); color: var(--gold); }
+/* Show on card hover or always on touch devices */
+.card:hover .fav-btn, .card-script:hover .fav-btn, .card-obj:hover .fav-btn,
+.card-audio:hover .fav-btn, .card-check:hover .fav-btn,
+.fav-btn.favorited {
+  opacity: 1; pointer-events: all;
+}
+@media (hover: none) {
+  .fav-btn { opacity: 0.7; pointer-events: all; }
+}
+/* Script cards: position inside header bar */
+.card-script .fav-btn { top: 6px; right: 10px; background: rgba(0,0,0,0.4); }
+/* Obj cards: move below the tag row */
+.card-obj .fav-btn { top: 10px; right: 10px; }
+.fav-btn:hover { background: rgba(201,169,106,0.15); border-color: rgba(201,169,106,0.25); color: var(--gold); }
 .fav-btn.favorited {
   background: rgba(201,169,106,0.15); border-color: rgba(201,169,106,0.3);
   color: var(--gold);
 }
 .fav-btn.favorited svg { fill: var(--gold); }
-.fav-btn svg { width: 18px; height: 18px; transition: transform .2s; }
+.fav-btn svg { width: 16px; height: 16px; transition: transform .2s; }
 .fav-btn:active svg { transform: scale(1.3); }
 
 /* Favorites tab in bottom bar */
@@ -5718,17 +5731,17 @@ const chapterTLDR = {
   ]
 };
 
-// Inject TL;DR cards after each chapter header
+// Inject TL;DR cards as first child of each collapsible section
 document.querySelectorAll('section[id]:not(#cover):not(#toc):not(#appendix):not(#footer)').forEach(section => {
   const id = section.id;
   const points = chapterTLDR[id];
   if (!points) return;
   
-  const header = section.querySelector('.chapter-header');
-  if (!header) return;
+  const collapsible = section.querySelector('.section-collapsible');
+  if (!collapsible) return;
   
   const tldr = document.createElement('div');
-  tldr.className = 'chapter-tldr reveal';
+  tldr.className = 'chapter-tldr';
   tldr.innerHTML = `
     <div class="chapter-tldr-header">
       <span class="chapter-tldr-badge">TL;DR</span>
@@ -5739,8 +5752,8 @@ document.querySelectorAll('section[id]:not(#cover):not(#toc):not(#appendix):not(
     </ul>
   `;
   
-  // Insert after the chapter header
-  header.insertAdjacentElement('afterend', tldr);
+  // Insert as first child of collapsible content
+  collapsible.insertBefore(tldr, collapsible.firstChild);
 });
 
 // ===== FAVORITES SYSTEM =====
