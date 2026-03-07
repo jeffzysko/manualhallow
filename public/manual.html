@@ -1767,7 +1767,7 @@ body.scripts-mode .scripts-banner { display: block; }
     <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
     <span>Início</span>
   </button>
-  <button class="tab-item tab-sumario-mobile" onclick="openDrawer()" aria-label="Sumário">
+  <button class="tab-item" onclick="openDrawer()" aria-label="Sumário">
     <svg viewBox="0 0 24 24"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="15" y2="12"/><line x1="3" y1="18" x2="18" y2="18"/></svg>
     <span>Sumário</span>
   </button>
@@ -5633,8 +5633,8 @@ function drawerNavTo(hash) {
   setTimeout(() => {
     const el = document.querySelector(hash);
     if (el) {
-      // Expand if collapsed
-      const coll = el.closest('.section-collapsible');
+      // Find and expand the collapsible section
+      let coll = el.querySelector('.section-collapsible') || el.closest('.section-collapsible');
       if (coll && coll.classList.contains('collapsed')) {
         coll.classList.remove('collapsed');
         const btn = coll.closest('.page-wrap')?.querySelector('.section-toggle');
@@ -5642,14 +5642,16 @@ function drawerNavTo(hash) {
           btn.setAttribute('aria-expanded', 'true');
           const hint = btn.querySelector('.collapse-hint');
           if (hint) hint.textContent = 'Recolher';
+          const icon = btn.querySelector('.toggle-icon svg');
+          if (icon) icon.style.transform = '';
         }
       }
       el.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
-  }, 100);
+  }, 150);
   // Update active state
   document.querySelectorAll('.drawer-nav-item').forEach(item => item.classList.remove('active'));
-  event.currentTarget.classList.add('active');
+  if (event && event.currentTarget) event.currentTarget.classList.add('active');
 }
 
 // ===== CHAPTER TL;DR MINI-RESUMOS =====
