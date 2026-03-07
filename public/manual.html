@@ -5436,6 +5436,16 @@ document.querySelectorAll('section[id]:not(#cover):not(#toc)').forEach(section =
   afterHeader.forEach(el => collapsible.appendChild(el));
   pageWrap.appendChild(collapsible);
 
+  // Add expand CTA bar below collapsible
+  const expandCta = document.createElement('div');
+  expandCta.className = 'expand-cta';
+  expandCta.innerHTML = `
+    <svg class="expand-cta-icon" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
+    <span class="expand-cta-text">Toque para ler este capítulo</span>
+    <svg class="expand-cta-icon" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
+  `;
+  pageWrap.appendChild(expandCta);
+
   // Start all chapters COLLAPSED by default
   collapsible.classList.add('collapsed');
 
@@ -5447,15 +5457,20 @@ document.querySelectorAll('section[id]:not(#cover):not(#toc)').forEach(section =
   toggleBtn.querySelector('.toggle-icon svg').style.transform = 'rotate(180deg)';
   chapterHeader.appendChild(toggleBtn);
 
-  toggleBtn.addEventListener('click', () => {
+  function toggleChapter(forceExpand) {
     const expanded = toggleBtn.getAttribute('aria-expanded') === 'true';
-    toggleBtn.setAttribute('aria-expanded', String(!expanded));
-    collapsible.classList.toggle('collapsed', expanded);
+    const shouldCollapse = forceExpand ? false : expanded;
+    toggleBtn.setAttribute('aria-expanded', String(!shouldCollapse));
+    collapsible.classList.toggle('collapsed', shouldCollapse);
+    expandCta.classList.toggle('hidden', !shouldCollapse);
     const hint = toggleBtn.querySelector('.collapse-hint');
     const icon = toggleBtn.querySelector('.toggle-icon svg');
-    hint.textContent = expanded ? 'Expandir' : 'Recolher';
-    icon.style.transform = expanded ? 'rotate(180deg)' : '';
-  });
+    hint.textContent = shouldCollapse ? 'Expandir' : 'Recolher';
+    icon.style.transform = shouldCollapse ? 'rotate(180deg)' : '';
+  }
+
+  toggleBtn.addEventListener('click', () => toggleChapter());
+  expandCta.addEventListener('click', () => toggleChapter(true));
 
   // Build search index from this section
   collapsible.querySelectorAll('.script-text, .card-obj .obj-q, .card-obj .obj-branch-text, .audio-text, .fu-msg, .check-text, .ponto-content p, .prose, .lead, h3.display, h4').forEach(el => {
