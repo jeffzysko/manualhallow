@@ -1212,19 +1212,6 @@ body { padding-bottom: 72px; }
 }
 
 /* ===== QUICK SCRIPTS MODE ===== */
-.fab-scripts {
-  position: fixed; bottom: 88px; right: 24px; z-index: 200;
-  background: var(--card2); color: var(--white); border: 1px solid var(--border);
-  border-radius: 100px; padding: 12px 20px;
-  font-family: 'Plus Jakarta Sans', sans-serif;
-  font-size: 12px; font-weight: 700; letter-spacing: 1px;
-  cursor: pointer; display: flex; align-items: center; gap: 8px;
-  box-shadow: 0 8px 24px rgba(0,0,0,0.4);
-  transition: transform .2s, border-color .2s, background .2s;
-}
-.fab-scripts:hover { transform: translateY(-2px); border-color: var(--gold); }
-.fab-scripts.active { background: var(--gold); color: var(--bg); border-color: var(--gold); }
-.fab-scripts svg { width: 14px; height: 14px; fill: none; stroke: currentColor; stroke-width: 2; }
 
 /* Quick scripts mode — hide everything that's not a script */
 body.scripts-mode .prose,
