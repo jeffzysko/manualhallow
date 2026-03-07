@@ -93,7 +93,7 @@ const ManualPage = () => {
   };
 
   return (
-    <div className="manual-page">
+    <FavoritesContext.Provider value={{ isFavorite, toggleFavorite, isLoggedIn: !!user }}>
       <div className="progress-bar" style={{ transform: `scaleX(${scrollProgress / 100})` }} />
 
       {/* Auth bar */}
