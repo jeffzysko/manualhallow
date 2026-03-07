@@ -1,12 +1,28 @@
 import { useAuth } from "@/contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 
 const TopHeader = () => {
   const { user, signOut } = useAuth();
   const navigate = useNavigate();
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+  const avatarRef = useRef<HTMLButtonElement>(null);
+
+  useEffect(() => {
+    if (!menuOpen) return;
+    const handleClickOutside = (e: MouseEvent) => {
+      if (
+        dropdownRef.current && !dropdownRef.current.contains(e.target as Node) &&
+        avatarRef.current && !avatarRef.current.contains(e.target as Node)
+      ) {
+        setMenuOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside, true);
+    return () => document.removeEventListener("mousedown", handleClickOutside, true);
+  }, [menuOpen]);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 20);
@@ -36,6 +52,7 @@ const TopHeader = () => {
         {user ? (
           <div className="top-header__user">
             <button
+              ref={avatarRef}
               className="top-header__avatar"
               onClick={() => setMenuOpen(!menuOpen)}
               aria-label="Menu do usuário"
@@ -44,29 +61,26 @@ const TopHeader = () => {
             </button>
 
             {menuOpen && (
-              <>
-                <div className="top-header__overlay" onClick={() => setMenuOpen(false)} />
-                <div className="top-header__dropdown">
-                  <div className="top-header__dropdown-header">
-                    <div className="top-header__dropdown-avatar">{initials}</div>
-                    <div>
-                      {user.user_metadata?.full_name && (
-                        <p className="top-header__dropdown-name">{user.user_metadata.full_name}</p>
-                      )}
-                      <p className="top-header__dropdown-email">{user.email}</p>
-                    </div>
+              <div ref={dropdownRef} className="top-header__dropdown">
+                <div className="top-header__dropdown-header">
+                  <div className="top-header__dropdown-avatar">{initials}</div>
+                  <div>
+                    {user.user_metadata?.full_name && (
+                      <p className="top-header__dropdown-name">{user.user_metadata.full_name}</p>
+                    )}
+                    <p className="top-header__dropdown-email">{user.email}</p>
                   </div>
-                  <div className="top-header__dropdown-divider" />
-                  <button className="top-header__dropdown-btn" onClick={handleSignOut}>
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                      <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
-                      <polyline points="16 17 21 12 16 7" />
-                      <line x1="21" y1="12" x2="9" y2="12" />
-                    </svg>
-                    Sair da conta
-                  </button>
                 </div>
-              </>
+                <div className="top-header__dropdown-divider" />
+                <button className="top-header__dropdown-btn" onClick={handleSignOut}>
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+                    <polyline points="16 17 21 12 16 7" />
+                    <line x1="21" y1="12" x2="9" y2="12" />
+                  </svg>
+                  Sair da conta
+                </button>
+              </div>
             )}
           </div>
         ) : (
