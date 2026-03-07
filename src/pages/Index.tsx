@@ -1,10 +1,16 @@
+import { useEffect } from "react";
+
 const Index = () => {
+  useEffect(() => {
+    window.location.href = "/manual.html";
+  }, []);
+
   return (
-    <iframe
-      src="/manual.html"
-      title="Manual de Atendimento e Vendas — Padrão Hallow"
-      className="w-full h-screen border-0"
-    />
+    <div className="flex min-h-screen items-center justify-center bg-[#09090F]">
+      <p className="text-[#9E9A92] text-sm tracking-widest uppercase animate-pulse">
+        Carregando manual...
+      </p>
+    </div>
   );
 };
 
