@@ -18,7 +18,6 @@ import Chapter9Content from "@/components/manual/chapters/Chapter9Content";
 import AppendixContent from "@/components/manual/chapters/AppendixContent";
 
 const ManualPage = () => {
-  const [drawerOpen, setDrawerOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const [scriptsMode, setScriptsMode] = useState(false);
   const [scrollProgress, setScrollProgress] = useState(0);
