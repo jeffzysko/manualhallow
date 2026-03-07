@@ -81,6 +81,17 @@ const TopHeader = () => {
                   </div>
                 </div>
                 <div className="top-header__dropdown-divider" />
+                {isAdmin && (
+                  <button className="top-header__dropdown-btn" onClick={() => { setMenuOpen(false); navigate("/admin"); }}>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <rect x="3" y="3" width="7" height="7" />
+                      <rect x="14" y="3" width="7" height="7" />
+                      <rect x="3" y="14" width="7" height="7" />
+                      <rect x="14" y="14" width="7" height="7" />
+                    </svg>
+                    Painel Admin
+                  </button>
+                )}
                 <button className="top-header__dropdown-btn" onClick={handleSignOut}>
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                     <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
