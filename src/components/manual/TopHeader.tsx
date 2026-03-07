@@ -81,7 +81,7 @@ const TopHeader = () => {
                     Sair da conta
                   </button>
                 </div>
-              </>
+              </div>
             )}
           </div>
         ) : (
