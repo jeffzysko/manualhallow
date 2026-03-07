@@ -1187,6 +1187,28 @@ body { padding-bottom: 96px; }
 }
 .pdf-modal-cancel:hover { color: var(--white); }
 
+/* ===== LAZY LOAD TRIGGER ===== */
+.lazy-load-trigger {
+  display: flex; justify-content: center; padding: 48px 24px 80px;
+}
+.lazy-load-trigger button {
+  display: flex; align-items: center; gap: 10px;
+  background: var(--card2); border: 1px solid var(--border);
+  color: var(--gold-light); font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 15px; font-weight: 600; padding: 16px 32px;
+  border-radius: 14px; cursor: pointer;
+  transition: background .2s, border-color .2s, transform .2s;
+}
+.lazy-load-trigger button:hover {
+  background: rgba(201,169,106,0.1); border-color: var(--gold);
+  transform: translateY(-2px);
+}
+.lazy-load-trigger .lazy-count {
+  background: var(--gold-dim); color: var(--gold);
+  font-size: 12px; font-weight: 700; padding: 2px 8px;
+  border-radius: 10px; min-width: 24px; text-align: center;
+}
+
 /* FAB responsive handled in main media queries above */
 @media print {
   #progress-bar, .bottom-tab-bar, .search-overlay, .scripts-banner, .pdf-modal { display: none !important; }
@@ -5340,9 +5362,11 @@ const revealObserver = new IntersectionObserver((entries) => {
 }, { threshold: 0.08, rootMargin: '0px 0px -40px 0px' });
 document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
 
-// ===== COLLAPSIBLE CHAPTERS =====
+// ===== COLLAPSIBLE CHAPTERS + LAZY LOADING =====
 // Build search index while wrapping collapsible content
 const searchIndex = [];
+const INITIAL_VISIBLE = 3; // Show first 3 chapters immediately
+let chapterIndex = 0;
 
 document.querySelectorAll('section[id]:not(#cover):not(#toc):not(#appendix)').forEach(section => {
   const pageWrap = section.querySelector('.page-wrap');
@@ -5350,6 +5374,8 @@ document.querySelectorAll('section[id]:not(#cover):not(#toc):not(#appendix)').fo
 
   const chapterHeader = pageWrap.querySelector('.chapter-header');
   if (!chapterHeader) return;
+
+  const currentChapterIdx = chapterIndex++;
 
   // Gather chapter label for index
   const chLabel = chapterHeader.querySelector('.ch-label-tag')?.textContent?.trim() ||
@@ -5367,6 +5393,12 @@ document.querySelectorAll('section[id]:not(#cover):not(#toc):not(#appendix)').fo
   collapsible.dataset.chapter = chLabel;
   afterHeader.forEach(el => collapsible.appendChild(el));
   pageWrap.appendChild(collapsible);
+
+  // Lazy loading: hide chapters beyond the initial visible count
+  if (currentChapterIdx >= INITIAL_VISIBLE) {
+    section.classList.add('lazy-chapter');
+    section.style.display = 'none';
+  }
 
   // Add toggle button to chapter header
   const toggleBtn = document.createElement('button');
@@ -5397,6 +5429,75 @@ document.querySelectorAll('section[id]:not(#cover):not(#toc):not(#appendix)').fo
     });
   });
 });
+
+// ===== PROGRESSIVE CHAPTER REVEAL =====
+const lazyChapters = Array.from(document.querySelectorAll('.lazy-chapter'));
+let lazyBatchSize = 2;
+
+function revealNextChapters() {
+  const batch = lazyChapters.splice(0, lazyBatchSize);
+  batch.forEach(section => {
+    section.style.display = '';
+    section.classList.remove('lazy-chapter');
+    section.style.opacity = '0';
+    section.style.transform = 'translateY(30px)';
+    requestAnimationFrame(() => {
+      section.style.transition = 'opacity .5s ease, transform .5s ease';
+      section.style.opacity = '1';
+      section.style.transform = 'translateY(0)';
+    });
+  });
+  if (lazyChapters.length === 0 && lazyTrigger) {
+    lazyTrigger.remove();
+    lazyTrigger = null;
+  } else if (lazyTrigger) {
+    const remaining = lazyChapters.length;
+    lazyTrigger.querySelector('.lazy-count').textContent = remaining;
+  }
+}
+
+// Reveal a specific chapter (used by drawer nav and search)
+function revealChapter(sectionEl) {
+  if (!sectionEl || !sectionEl.classList.contains('lazy-chapter')) return;
+  sectionEl.style.display = '';
+  sectionEl.classList.remove('lazy-chapter');
+  sectionEl.style.opacity = '1';
+  sectionEl.style.transform = 'none';
+  const idx = lazyChapters.indexOf(sectionEl);
+  if (idx !== -1) lazyChapters.splice(idx, 1);
+  if (lazyChapters.length === 0 && lazyTrigger) {
+    lazyTrigger.remove();
+    lazyTrigger = null;
+  } else if (lazyTrigger) {
+    lazyTrigger.querySelector('.lazy-count').textContent = lazyChapters.length;
+  }
+}
+
+// Add "Carregar mais" button if there are lazy chapters
+let lazyTrigger = null;
+if (lazyChapters.length > 0) {
+  lazyTrigger = document.createElement('div');
+  lazyTrigger.className = 'lazy-load-trigger';
+  lazyTrigger.innerHTML = `
+    <button onclick="revealNextChapters()">
+      <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="7 13 12 18 17 13"/><polyline points="7 6 12 11 17 6"/></svg>
+      Carregar mais capítulos <span class="lazy-count">${lazyChapters.length}</span>
+    </button>
+  `;
+  // Insert before bottom-tab-bar or at end of main
+  const mainContent = document.getElementById('main-content');
+  if (mainContent) mainContent.appendChild(lazyTrigger);
+
+  // Also auto-reveal on scroll near bottom
+  const scrollRevealObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting && lazyChapters.length > 0) {
+        revealNextChapters();
+      }
+    });
+  }, { rootMargin: '0px 0px 400px 0px' });
+  scrollRevealObserver.observe(lazyTrigger);
+}
 
 // ===== SEARCH =====
 const overlay = document.getElementById('search-overlay');
@@ -5580,14 +5681,19 @@ searchInput.addEventListener('input', () => {
       const idx = parseInt(el.dataset.idx);
       const target = searchIndex[idx].element;
       closeSearch();
+      // Reveal lazy chapter if needed
+      const section = target.closest('section[id]');
+      if (section && typeof revealChapter === 'function') revealChapter(section);
       const coll = target.closest('.section-collapsible');
       if (coll && coll.classList.contains('collapsed')) {
         coll.classList.remove('collapsed');
         const btn = coll.closest('.page-wrap')?.querySelector('.section-toggle');
         if (btn) {
           btn.setAttribute('aria-expanded', 'true');
-          btn.querySelector('.collapse-hint').textContent = 'Recolher';
-          btn.querySelector('.toggle-icon svg').style.transform = '';
+          const hint = btn.querySelector('.collapse-hint');
+          if (hint) hint.textContent = 'Recolher';
+          const icon = btn.querySelector('.toggle-icon svg');
+          if (icon) icon.style.transform = '';
         }
       }
       setTimeout(() => {
@@ -5633,6 +5739,8 @@ function drawerNavTo(hash) {
   setTimeout(() => {
     const el = document.querySelector(hash);
     if (el) {
+      // Reveal if lazy-loaded
+      if (typeof revealChapter === 'function') revealChapter(el);
       // Find and expand the collapsible section
       let coll = el.querySelector('.section-collapsible') || el.closest('.section-collapsible');
       if (coll && coll.classList.contains('collapsed')) {
