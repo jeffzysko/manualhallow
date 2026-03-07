@@ -1364,7 +1364,7 @@
 
 /* Banner indicating scripts mode */
 .manual-page.scripts-mode::before {
-  content: '📋 Modo Scripts — mostrando apenas scripts de cada capítulo';
+  content: '📋 Modo Scripts — scripts, objeções, áudios e respostas prontas';
   display: block;
   position: sticky;
   top: 0;
