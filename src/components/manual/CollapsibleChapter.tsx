@@ -101,9 +101,6 @@ const CollapsibleChapter = ({
             </div>
           )}
           {children}
-          {isLoggedIn && (
-            <SectionNote sectionId={id} chapterId={`Capítulo ${num}`} />
-          )}
         </div>
       </div>
     </section>
