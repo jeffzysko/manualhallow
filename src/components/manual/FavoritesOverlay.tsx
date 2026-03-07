@@ -9,10 +9,8 @@ interface FavoritesOverlayProps {
 }
 
 const FavoritesOverlay = ({ open, onClose, favorites, onNavigate, onRemove }: FavoritesOverlayProps) => {
-  if (!open) return null;
-
   return (
-    <div className="search-overlay" onClick={onClose}>
+    <div className={`search-overlay${open ? " open" : ""}`} onClick={onClose}>
       <div className="search-box" onClick={e => e.stopPropagation()} style={{ maxWidth: 540 }}>
         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "16px 20px 12px", borderBottom: "1px solid var(--border2)" }}>
           <h3 className="display" style={{ fontSize: 22, color: "var(--gold)", margin: 0 }}>★ Favoritos</h3>
