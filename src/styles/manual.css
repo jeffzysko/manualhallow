@@ -574,6 +574,8 @@
 .manual-page .favorite-btn:hover { background: rgba(201,169,106,0.15); transform: scale(1.15); }
 .manual-page .favorite-btn.active { background: rgba(201,169,106,0.15); }
 .manual-page .chapter-fav-btn { position: absolute; top: 0; right: 0; }
+.manual-page .element-fav-btn { position: absolute; top: 8px; right: 8px; z-index: 3; }
+.manual-page .favoritable-card { position: relative; }
 
 /* UTILITY */
 .manual-page .mt-16 { margin-top: 16px; }
