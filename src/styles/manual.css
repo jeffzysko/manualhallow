@@ -436,9 +436,8 @@
 /* RESPONSIVE — MOBILE */
 @media (max-width: 640px) {
   .manual-page { font-size: 15px; padding-bottom: 80px; }
-  .manual-page .page-wrap { padding: 0 16px; }
+  .manual-page .page-wrap { padding: 0 24px; }
   .manual-page .section-gap { padding: 48px 0; }
-  .manual-page .hamburger-btn { display: flex !important; }
 
   /* Cover */
   .manual-page .cover-inner { padding: 48px 16px 40px; gap: 24px; min-height: auto; }
