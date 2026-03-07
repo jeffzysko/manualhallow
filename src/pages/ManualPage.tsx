@@ -8,6 +8,7 @@ import BottomTabBar from "@/components/manual/BottomTabBar";
 import TopHeader from "@/components/manual/TopHeader";
 import SearchOverlay from "@/components/manual/SearchOverlay";
 import FavoritesOverlay from "@/components/manual/FavoritesOverlay";
+import ReadingProgressBar from "@/components/manual/ReadingProgressBar";
 import { useAuth } from "@/contexts/AuthContext";
 import { useFavorites } from "@/hooks/useFavorites";
 import { FavoritesContext } from "@/contexts/FavoritesContext";
