@@ -888,9 +888,13 @@ p, li, td, dd, blockquote, .prose, .callout, .card-script-body, .note-box, .pdf-
   /* MOBILE DRAWER */
   .mobile-drawer-overlay { display: block; }
 
-  /* Bottom tab bar — add Sumário tab, full width */
-  .bottom-tab-bar { padding-left: 0; }
-  .tab-item { font-size: 9px; padding: 8px 0 6px; }
+  /* Bottom tab bar — floating on mobile too */
+  .bottom-tab-bar { 
+    bottom: 12px; min-width: 0; width: calc(100% - 24px);
+    max-width: 100%; border-radius: 18px;
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+  .tab-item { font-size: 9px; padding: 10px 6px 8px; }
   .tab-item svg { width: 20px; height: 20px; }
 
   /* PDF MODAL — bottom sheet feel */
