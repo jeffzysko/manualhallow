@@ -98,7 +98,11 @@ body {
 .mono  { font-family: 'JetBrains Mono', monospace; }
 
 h1,h2,h3,h4 { font-family: 'Cormorant Garamond', serif; line-height: 1.2; }
+h3 { margin-top: 48px; margin-bottom: 24px; }
+h4 { margin-top: 32px; margin-bottom: 16px; }
 p, li, td, dd, blockquote, .prose, .callout, .card-script-body, .note-box, .pdf-option-desc { line-height: 1.5; }
+.prose { margin-bottom: 24px; }
+.lead { margin-bottom: 32px; }
 
 /* ===== ORNAMENTAL DIVIDER ===== */
 .ornament {
@@ -114,9 +118,9 @@ p, li, td, dd, blockquote, .prose, .callout, .card-script-body, .note-box, .pdf-
 .ornament span { color: var(--gold); font-size: 14px; letter-spacing: 3px; }
 
 /* ===== LAYOUT ===== */
-.page-wrap { max-width: 960px; margin: 0 auto; padding: 0 clamp(24px, 6vw, 96px); }
-.section-gap { padding: 100px 0; }
-.section-gap-sm { padding: 60px 0; }
+.page-wrap { max-width: 960px; margin: 0 auto; padding: 0 clamp(28px, 8vw, 120px); }
+.section-gap { padding: 120px 0; }
+.section-gap-sm { padding: 80px 0; }
 
 .main-content { margin-left: 0; }
 
@@ -275,7 +279,7 @@ p, li, td, dd, blockquote, .prose, .callout, .card-script-body, .note-box, .pdf-
 
 /* ===== CHAPTER HEADER ===== */
 .chapter-header {
-  padding: 100px 0 60px; position: relative;
+  padding: 120px 0 80px; position: relative;
 }
 .chapter-header .ch-num {
   font-family: 'Cormorant Garamond', serif;
@@ -311,10 +315,10 @@ p, li, td, dd, blockquote, .prose, .callout, .card-script-body, .note-box, .pdf-
 
 /* ===== SECTION DIVIDER ===== */
 .sec-divider {
-  height: 1px; background: var(--border2); margin: 60px 0;
+  height: 1px; background: var(--border2); margin: 80px 0;
 }
 .sec-divider-gold {
-  height: 1px; margin: 60px 0;
+  height: 1px; margin: 80px 0;
   background: linear-gradient(90deg, transparent, var(--gold), transparent);
 }
 
@@ -323,14 +327,14 @@ p, li, td, dd, blockquote, .prose, .callout, .card-script-body, .note-box, .pdf-
 /* Generic card */
 .card {
   background: var(--card); border: 1px solid var(--border2);
-  border-radius: 16px; padding: 32px; margin-bottom: 24px;
+  border-radius: 16px; padding: 36px; margin-bottom: 32px;
   position: relative; overflow: hidden;
 }
 
 /* SCRIPT card */
 .card-script {
   background: var(--script-bg); border: 1px solid rgba(91,155,213,0.25);
-  border-radius: 16px; margin-bottom: 24px; overflow: hidden;
+  border-radius: 16px; margin-bottom: 32px; overflow: hidden;
 }
 .card-script-header {
   background: rgba(91,155,213,0.12); border-bottom: 1px solid rgba(91,155,213,0.2);
@@ -373,7 +377,7 @@ p, li, td, dd, blockquote, .prose, .callout, .card-script-body, .note-box, .pdf-
 /* CHECKLIST card */
 .card-check {
   background: var(--card); border: 1px solid rgba(92,184,138,0.2);
-  border-radius: 16px; padding: 28px; margin-bottom: 24px;
+  border-radius: 16px; padding: 28px; margin-bottom: 32px;
 }
 .card-check-header {
   display: flex; align-items: center; gap: 12px; margin-bottom: 20px;
@@ -408,7 +412,7 @@ p, li, td, dd, blockquote, .prose, .callout, .card-script-body, .note-box, .pdf-
 /* OBJEÇÃO card */
 .card-obj {
   background: var(--card); border: 1px solid rgba(224,92,92,0.25);
-  border-radius: 16px; padding: 28px; margin-bottom: 24px;
+  border-radius: 16px; padding: 32px; margin-bottom: 32px;
   position: relative; overflow: hidden;
 }
 .card-obj::before {
@@ -447,7 +451,7 @@ p, li, td, dd, blockquote, .prose, .callout, .card-script-body, .note-box, .pdf-
 .card-audio {
   background: linear-gradient(135deg, var(--card), rgba(201,169,106,0.05));
   border: 1px solid var(--border);
-  border-radius: 16px; padding: 28px; margin-bottom: 24px;
+  border-radius: 16px; padding: 28px; margin-bottom: 32px;
   position: relative;
 }
 .card-audio-header {
@@ -497,7 +501,7 @@ p, li, td, dd, blockquote, .prose, .callout, .card-script-body, .note-box, .pdf-
 /* INSIGHT callout */
 .callout {
   border-left: 3px solid var(--gold);
-  padding: 24px 28px; margin: 32px 0;
+  padding: 28px 32px; margin: 40px 0;
   background: var(--gold-dim); border-radius: 0 12px 12px 0;
 }
 .callout p {
@@ -515,16 +519,16 @@ p, li, td, dd, blockquote, .prose, .callout, .card-script-body, .note-box, .pdf-
   font-family: 'Cormorant Garamond', serif;
   font-size: clamp(28px, 3.5vw, 44px); font-weight: 600;
   color: var(--white); line-height: 1.2;
-  padding: 48px 0; border-top: 1px solid var(--border2);
+  padding: 56px 0; border-top: 1px solid var(--border2);
   border-bottom: 1px solid var(--border2);
-  margin: 48px 0;
+  margin: 56px 0;
 }
 .key-phrase em { color: var(--gold); font-style: italic; }
 
 /* COMPARISON TABLE */
 .compare-table {
   border-radius: 16px; overflow: hidden;
-  border: 1px solid var(--border2); margin-bottom: 24px;
+  border: 1px solid var(--border2); margin-bottom: 32px;
 }
 .compare-head {
   display: grid; grid-template-columns: 1fr 1fr 1fr;
