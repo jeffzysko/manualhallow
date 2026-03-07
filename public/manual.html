@@ -888,9 +888,13 @@ p, li, td, dd, blockquote, .prose, .callout, .card-script-body, .note-box, .pdf-
   /* MOBILE DRAWER */
   .mobile-drawer-overlay { display: block; }
 
-  /* Bottom tab bar — add Sumário tab, full width */
-  .bottom-tab-bar { padding-left: 0; }
-  .tab-item { font-size: 9px; padding: 8px 0 6px; }
+  /* Bottom tab bar — floating on mobile too */
+  .bottom-tab-bar { 
+    bottom: 12px; min-width: 0; width: calc(100% - 24px);
+    max-width: 100%; border-radius: 18px;
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+  .tab-item { font-size: 9px; padding: 10px 6px 8px; }
   .tab-item svg { width: 20px; height: 20px; }
 
   /* PDF MODAL — bottom sheet feel */
@@ -964,39 +968,81 @@ p, li, td, dd, blockquote, .prose, .callout, .card-script-body, .note-box, .pdf-
   footer .page-wrap { padding: 40px 16px; }
 }
 
-/* ===== BOTTOM TAB BAR (Apple-style) ===== */
+/* ===== BOTTOM TAB BAR (Floating Glass) ===== */
 .bottom-tab-bar {
-  position: fixed; bottom: 0; left: 0; right: 0; z-index: 200;
+  position: fixed; bottom: 16px; left: 50%; transform: translateX(-50%);
+  z-index: 200;
   display: flex; justify-content: center; align-items: stretch;
   padding: 0; margin: 0;
-  background: rgba(15,16,24,0.82);
-  backdrop-filter: saturate(180%) blur(20px);
-  -webkit-backdrop-filter: saturate(180%) blur(20px);
-  border-top: 1px solid rgba(201,169,106,0.12);
-  padding-bottom: env(safe-area-inset-bottom, 0px);
+  width: auto; max-width: 520px; min-width: 320px;
+  background: rgba(15,16,24,0.72);
+  backdrop-filter: saturate(200%) blur(24px);
+  -webkit-backdrop-filter: saturate(200%) blur(24px);
+  border: 1px solid rgba(201,169,106,0.15);
+  border-radius: 20px;
+  box-shadow:
+    0 8px 32px rgba(0,0,0,0.5),
+    0 2px 8px rgba(0,0,0,0.3),
+    inset 0 1px 0 rgba(255,255,255,0.06),
+    0 0 0 1px rgba(201,169,106,0.08);
+  padding-bottom: 0;
+  overflow: hidden;
+  animation: tab-bar-entrance 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
+
+@keyframes tab-bar-entrance {
+  0% { opacity: 0; transform: translateX(-50%) translateY(40px) scale(0.9); }
+  100% { opacity: 1; transform: translateX(-50%) translateY(0) scale(1); }
+}
+
+/* Glow effect behind the bar */
+.bottom-tab-bar::before {
+  content: '';
+  position: absolute; bottom: -8px; left: 20%; right: 20%; height: 24px;
+  background: radial-gradient(ellipse, rgba(201,169,106,0.15) 0%, transparent 70%);
+  filter: blur(12px);
+  pointer-events: none; z-index: -1;
+}
+
 .tab-item {
   flex: 1; display: flex; flex-direction: column; align-items: center;
   justify-content: center; gap: 4px;
-  padding: 10px 0 8px; cursor: pointer;
+  padding: 12px 12px 10px; cursor: pointer;
   background: none; border: none; color: var(--gray);
   font-family: 'Plus Jakarta Sans', sans-serif;
   font-size: 10px; font-weight: 600; letter-spacing: 0.5px;
-  transition: color .2s;
+  transition: color .2s, transform .2s, background .2s;
   -webkit-tap-highlight-color: transparent;
+  position: relative;
+  border-radius: 16px;
 }
-.tab-item:hover, .tab-item:focus-visible { color: var(--gold-light); }
+.tab-item:hover {
+  color: var(--gold-light);
+  background: rgba(201,169,106,0.08);
+  transform: translateY(-2px);
+}
+.tab-item:active {
+  transform: translateY(0) scale(0.95);
+}
 .tab-item.active { color: var(--gold); }
+.tab-item.active::after {
+  content: '';
+  position: absolute; bottom: 4px; left: 50%; transform: translateX(-50%);
+  width: 4px; height: 4px; border-radius: 50%;
+  background: var(--gold);
+  box-shadow: 0 0 8px rgba(201,169,106,0.6);
+}
 .tab-item svg {
   width: 22px; height: 22px; fill: none;
   stroke: currentColor; stroke-width: 1.8;
   stroke-linecap: round; stroke-linejoin: round;
+  transition: transform .2s;
 }
+.tab-item:hover svg { transform: scale(1.1); }
 .tab-item.active svg { stroke-width: 2.2; }
 
-/* Add bottom padding to body so content isn't hidden behind tab bar */
-body { padding-bottom: 72px; }
-.bottom-tab-bar { padding-left: 0; }
+/* Add bottom padding to body so content isn't hidden behind floating tab bar */
+body { padding-bottom: 96px; }
 
 /* Legacy fab classes hidden */
 .fab-pdf, .fab-search, .fab-scripts { display: none !important; }
