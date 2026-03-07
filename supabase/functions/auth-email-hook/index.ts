@@ -87,7 +87,22 @@ serve(async (req) => {
 
   try {
     const payload = await req.json();
-    const { type, email, confirmation_url, token_hash, redirect_to } = payload;
+    
+    // Supabase auth hook payload format
+    const email = payload?.user?.email || payload?.email;
+    const emailData = payload?.email_data || {};
+    const type = emailData?.email_action_type || payload?.type;
+    const token_hash = emailData?.token_hash || payload?.token_hash;
+    const redirect_to = emailData?.redirect_to || payload?.redirect_to;
+    const confirmation_url = emailData?.confirmation_url || payload?.confirmation_url;
+
+    if (!email) {
+      console.error("No email found in payload:", JSON.stringify(payload));
+      return new Response(
+        JSON.stringify({ error: "No recipient email found" }),
+        { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
 
     let subject: string;
     let heading: string;
