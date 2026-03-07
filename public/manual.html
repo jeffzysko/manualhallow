@@ -5394,17 +5394,15 @@ document.querySelectorAll('section[id]:not(#cover):not(#toc):not(#appendix)').fo
   afterHeader.forEach(el => collapsible.appendChild(el));
   pageWrap.appendChild(collapsible);
 
-  // Lazy loading: hide chapters beyond the initial visible count
-  if (currentChapterIdx >= INITIAL_VISIBLE) {
-    section.classList.add('lazy-chapter');
-    section.style.display = 'none';
-  }
+  // Start all chapters COLLAPSED by default
+  collapsible.classList.add('collapsed');
 
   // Add toggle button to chapter header
   const toggleBtn = document.createElement('button');
   toggleBtn.className = 'section-toggle';
-  toggleBtn.setAttribute('aria-expanded', 'true');
-  toggleBtn.innerHTML = `<span class="collapse-hint">Recolher</span><span class="toggle-icon"><svg viewBox="0 0 24 24"><polyline points="18 15 12 9 6 15"></polyline></svg></span>`;
+  toggleBtn.setAttribute('aria-expanded', 'false');
+  toggleBtn.innerHTML = `<span class="collapse-hint">Expandir</span><span class="toggle-icon"><svg viewBox="0 0 24 24"><polyline points="18 15 12 9 6 15"></polyline></svg></span>`;
+  toggleBtn.querySelector('.toggle-icon svg').style.transform = 'rotate(180deg)';
   chapterHeader.appendChild(toggleBtn);
 
   toggleBtn.addEventListener('click', () => {
