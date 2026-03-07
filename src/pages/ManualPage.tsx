@@ -68,11 +68,6 @@ const ManualPage = () => {
     <div className="manual-page">
       <div className="progress-bar" style={{ width: `${scrollProgress}%` }} />
 
-      <button className="hamburger-btn" onClick={() => setDrawerOpen(true)} aria-label="Menu">
-        <svg viewBox="0 0 24 24"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
-      </button>
-
-      <MobileDrawer open={drawerOpen} onClose={() => setDrawerOpen(false)} onNavigate={navigate} activeSection="" />
       <SearchOverlay open={searchOpen} onClose={() => setSearchOpen(false)} onNavigate={navigate} />
 
       <main role="main">
