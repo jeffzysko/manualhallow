@@ -1319,14 +1319,20 @@
   display: none !important;
 }
 
-/* Hide non-script content in scripts mode */
-.manual-page.scripts-mode .section-collapsible > *:not(.card-script) {
+/* Hide non-script content in scripts mode — hide everything, then show scripts */
+.manual-page.scripts-mode .section-collapsible > * {
   display: none !important;
 }
-.manual-page.scripts-mode .section-collapsible > .card-script {
+.manual-page.scripts-mode .section-collapsible .card-script {
   display: block !important;
 }
-.manual-page.scripts-mode .chapter-tldr {
+/* Show wrapper divs that contain scripts (like .col-2) */
+.manual-page.scripts-mode .section-collapsible > .col-2:has(.card-script),
+.manual-page.scripts-mode .section-collapsible > div:has(.card-script) {
+  display: block !important;
+}
+/* But hide non-script siblings inside those wrappers */
+.manual-page.scripts-mode .col-2 > *:not(.card-script) {
   display: none !important;
 }
 
