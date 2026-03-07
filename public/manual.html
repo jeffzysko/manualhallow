@@ -5055,6 +5055,72 @@ window.addEventListener('scroll', () => {
   progressBar.style.width = pct + '%';
 });
 
+// ===== CHAPTER PROGRESS TRACKER =====
+// Add progress bars to each chapter header and track reading progress
+const chapterSections = document.querySelectorAll('section[id]:not(#cover):not(#toc):not(#appendix)');
+const chapterProgress = {};
+
+// Load saved progress
+try {
+  const saved = localStorage.getItem('hallow-chapter-progress');
+  if (saved) Object.assign(chapterProgress, JSON.parse(saved));
+} catch(e) {}
+
+// Inject progress bar into each chapter header
+chapterSections.forEach(section => {
+  const header = section.querySelector('.chapter-header');
+  if (!header) return;
+  const id = section.id;
+  const pctSaved = chapterProgress[id] || 0;
+
+  const progressDiv = document.createElement('div');
+  progressDiv.className = 'chapter-progress';
+  progressDiv.setAttribute('role', 'progressbar');
+  progressDiv.setAttribute('aria-label', 'Progresso de leitura do capítulo');
+  progressDiv.setAttribute('aria-valuenow', String(Math.round(pctSaved)));
+  progressDiv.setAttribute('aria-valuemin', '0');
+  progressDiv.setAttribute('aria-valuemax', '100');
+  progressDiv.innerHTML = `
+    <div class="chapter-progress-bar"><div class="chapter-progress-fill" style="width:${pctSaved}%"></div></div>
+    <span class="chapter-progress-label">${Math.round(pctSaved)}%</span>
+  `;
+  header.appendChild(progressDiv);
+});
+
+// Update chapter progress on scroll
+let progressTick = false;
+window.addEventListener('scroll', () => {
+  if (progressTick) return;
+  progressTick = true;
+  requestAnimationFrame(() => {
+    progressTick = false;
+    const vh = window.innerHeight;
+    chapterSections.forEach(section => {
+      const id = section.id;
+      const rect = section.getBoundingClientRect();
+      const sectionH = section.offsetHeight;
+      if (sectionH === 0) return;
+
+      // How much of the section has scrolled past the viewport top
+      const scrolledPast = Math.max(0, -rect.top + vh * 0.3);
+      const pct = Math.min(100, Math.max(chapterProgress[id] || 0, (scrolledPast / sectionH) * 100));
+      chapterProgress[id] = pct;
+
+      const bar = section.querySelector('.chapter-progress-fill');
+      const label = section.querySelector('.chapter-progress-label');
+      if (bar) bar.style.width = pct + '%';
+      if (label) label.textContent = Math.round(pct) + '%';
+
+      const progressDiv = section.querySelector('.chapter-progress');
+      if (progressDiv) progressDiv.setAttribute('aria-valuenow', String(Math.round(pct)));
+    });
+
+    // Save periodically
+    try { localStorage.setItem('hallow-chapter-progress', JSON.stringify(chapterProgress)); } catch(e) {}
+  });
+});
+
+
 // ===== NAV DOTS =====
 function navTo(id) {
   document.querySelector(id).scrollIntoView({ behavior: 'smooth' });
