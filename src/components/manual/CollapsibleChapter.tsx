@@ -16,12 +16,14 @@ interface CollapsibleChapterProps {
   children: ReactNode;
   isRead?: boolean;
   onToggleRead?: () => void;
+  scriptsMode?: boolean;
 }
 
 const CollapsibleChapter = ({
-  id, num, numBg, numColor = "#000", tag, tagColor, title, lead, bgStyle = "var(--bg)", tldr, children, isRead, onToggleRead
+  id, num, numBg, numColor = "#000", tag, tagColor, title, lead, bgStyle = "var(--bg)", tldr, children, isRead, onToggleRead, scriptsMode = false
 }: CollapsibleChapterProps) => {
   const [collapsed, setCollapsed] = useState(true);
+  const isCollapsed = scriptsMode ? false : collapsed;
   const { isFavorite, toggleFavorite, isLoggedIn } = useFavoritesContext();
 
   // Extract plain text from title for favorite label
@@ -63,22 +65,24 @@ const CollapsibleChapter = ({
           )}
         </div>
 
-        <button
-          className="section-toggle"
-          onClick={() => setCollapsed(!collapsed)}
-          aria-expanded={!collapsed}
-        >
-          <span className="collapse-hint">
-            {collapsed ? "Toque para ler" : "Recolher"}
-          </span>
-          <div className="toggle-icon">
-            <svg viewBox="0 0 24 24" style={{ transform: collapsed ? "rotate(0deg)" : "rotate(180deg)" }}>
-              <polyline points="6 9 12 15 18 9" />
-            </svg>
-          </div>
-        </button>
+        {!scriptsMode && (
+          <button
+            className="section-toggle"
+            onClick={() => setCollapsed(!collapsed)}
+            aria-expanded={!isCollapsed}
+          >
+            <span className="collapse-hint">
+              {isCollapsed ? "Toque para ler" : "Recolher"}
+            </span>
+            <div className="toggle-icon">
+              <svg viewBox="0 0 24 24" style={{ transform: isCollapsed ? "rotate(0deg)" : "rotate(180deg)" }}>
+                <polyline points="6 9 12 15 18 9" />
+              </svg>
+            </div>
+          </button>
+        )}
 
-        {collapsed && (
+        {!scriptsMode && isCollapsed && (
           <div className="expand-cta" onClick={() => setCollapsed(false)}>
             <span className="expand-cta-text">Expandir conteúdo completo</span>
             <svg className="expand-cta-icon" viewBox="0 0 24 24">
@@ -87,7 +91,7 @@ const CollapsibleChapter = ({
           </div>
         )}
 
-        <div className={`section-collapsible${collapsed ? " collapsed" : ""}`}>
+        <div className={`section-collapsible${isCollapsed ? " collapsed" : ""}`}>
           {tldr && (
             <div className="chapter-tldr">
               <div className="chapter-tldr-header">

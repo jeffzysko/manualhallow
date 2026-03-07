@@ -1313,32 +1313,60 @@
   max-height: 9999px !important;
   opacity: 1 !important;
   pointer-events: all !important;
+  padding-top: 24px !important;
+  overflow: visible !important;
 }
 .manual-page.scripts-mode .section-toggle,
 .manual-page.scripts-mode .expand-cta {
   display: none !important;
 }
 
-/* Hide non-script content in scripts mode — hide everything, then show scripts */
+/* Hide non-script content in scripts mode — hide everything, then show actionable items */
 .manual-page.scripts-mode .section-collapsible > * {
   display: none !important;
 }
-.manual-page.scripts-mode .section-collapsible .card-script {
+/* Show script cards, objection trees, audio scripts, follow-up sequences, phrases */
+.manual-page.scripts-mode .section-collapsible .card-script,
+.manual-page.scripts-mode .section-collapsible .card-obj,
+.manual-page.scripts-mode .section-collapsible .card-audio,
+.manual-page.scripts-mode .section-collapsible .followup-wrap,
+.manual-page.scripts-mode .section-collapsible .phrases-grid {
   display: block !important;
 }
-/* Show wrapper divs that contain scripts (like .col-2) */
+.manual-page.scripts-mode .section-collapsible .phrases-grid {
+  display: grid !important;
+}
+/* Show wrapper divs that contain actionable items (like .col-2) */
 .manual-page.scripts-mode .section-collapsible > .col-2:has(.card-script),
-.manual-page.scripts-mode .section-collapsible > div:has(.card-script) {
+.manual-page.scripts-mode .section-collapsible > .col-2:has(.card-obj),
+.manual-page.scripts-mode .section-collapsible > div:has(.card-script),
+.manual-page.scripts-mode .section-collapsible > div:has(.card-obj),
+.manual-page.scripts-mode .section-collapsible > div:has(.card-audio) {
   display: block !important;
 }
-/* But hide non-script siblings inside those wrappers */
-.manual-page.scripts-mode .col-2 > *:not(.card-script) {
+/* But hide non-actionable siblings inside wrappers */
+.manual-page.scripts-mode .col-2 > *:not(.card-script):not(.card-obj) {
   display: none !important;
+}
+
+/* Also show actionable items directly inside appendix sections */
+.manual-page.scripts-mode section .page-wrap .card-script,
+.manual-page.scripts-mode section .page-wrap .card-obj,
+.manual-page.scripts-mode section .page-wrap .card-audio,
+.manual-page.scripts-mode section .page-wrap .followup-wrap,
+.manual-page.scripts-mode section .page-wrap .phrases-grid {
+  display: block !important;
+}
+.manual-page.scripts-mode section .page-wrap .phrases-grid {
+  display: grid !important;
+}
+.manual-page.scripts-mode section .page-wrap .col-2:has(.card-obj) {
+  display: grid !important;
 }
 
 /* Banner indicating scripts mode */
 .manual-page.scripts-mode::before {
-  content: '📋 Modo Scripts — mostrando apenas scripts de cada capítulo';
+  content: '📋 Modo Scripts — scripts, objeções, áudios e respostas prontas';
   display: block;
   position: sticky;
   top: 0;
@@ -1360,7 +1388,34 @@
   display: none !important;
 }
 
-/* Hide lead text and ch-num background in scripts mode */
+/* Hide lead text in scripts mode */
 .manual-page.scripts-mode .lead {
+  display: none !important;
+}
+
+/* Show h3 headers that label script/objection sections for context */
+.manual-page.scripts-mode .section-collapsible > h3 {
+  display: none !important;
+}
+/* Show h3 only when followed by actionable content */
+.manual-page.scripts-mode .section-collapsible > h3:has(+ .card-script),
+.manual-page.scripts-mode .section-collapsible > h3:has(+ .col-2),
+.manual-page.scripts-mode .section-collapsible > h3:has(+ .card-obj),
+.manual-page.scripts-mode .section-collapsible > h3:has(+ .card-audio),
+.manual-page.scripts-mode .section-collapsible > h3:has(+ .followup-wrap),
+.manual-page.scripts-mode .section-collapsible > h3:has(+ .phrases-grid) {
+  display: block !important;
+}
+
+/* Appendix sections: hide non-actionable content but keep headers for scripts */
+.manual-page.scripts-mode section[id^="ch"] .page-wrap > *:not(.chapter-header):not(.card-script):not(.card-obj):not(.card-audio):not(.followup-wrap):not(.phrases-grid):not(.col-2):not(h3) {
+  display: none !important;
+}
+.manual-page.scripts-mode #appendix .page-wrap > *:not(.chapter-header):not(.card-script):not(.card-obj):not(.card-audio):not(.followup-wrap):not(.phrases-grid):not(.col-2):not(h3) {
+  display: none !important;
+}
+
+/* Hide appendix sections that have no actionable content */
+.manual-page.scripts-mode #chtp {
   display: none !important;
 }
