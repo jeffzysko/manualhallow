@@ -569,14 +569,43 @@
   background: rgba(201,169,106,0.25);
 }
 
-/* FAVORITE BUTTON */
+/* FAVORITE BUTTON — Chapter level */
 .manual-page .favorite-btn { position: absolute; top: 10px; right: 10px; background: rgba(0,0,0,0.3); border: none; border-radius: 8px; padding: 6px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background 0.2s, transform 0.15s; z-index: 2; }
 .manual-page .favorite-btn:hover { background: rgba(201,169,106,0.15); transform: scale(1.15); }
 .manual-page .favorite-btn.active { background: rgba(201,169,106,0.15); }
 .manual-page .chapter-fav-btn { position: absolute; top: 0; right: 0; }
-.manual-page .element-fav-btn { position: absolute; top: 8px; right: 8px; z-index: 3; background: var(--card2); border: 1px solid var(--border2); border-radius: 50%; padding: 5px; }
-.manual-page .element-fav-btn:hover { background: rgba(201,169,106,0.15); }
+
+/* FAVORITABLE CARD — Footer bar approach */
 .manual-page .favoritable-card { position: relative; }
+.manual-page .fav-footer-bar {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 6px 12px; margin-top: 8px;
+  background: rgba(255,255,255,0.02); border-radius: 0 0 10px 10px;
+  border-top: 1px solid var(--border2);
+}
+.manual-page .fav-footer-label {
+  font-size: 10px; letter-spacing: 1px; text-transform: uppercase;
+  color: var(--gray2); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  max-width: 70%;
+}
+.manual-page .fav-footer-btn {
+  display: flex; align-items: center; gap: 5px;
+  background: none; border: 1px solid var(--border2); border-radius: 6px;
+  padding: 4px 10px; cursor: pointer; font-size: 11px; color: var(--gray2);
+  transition: all 0.2s; flex-shrink: 0;
+}
+.manual-page .fav-footer-btn:hover { border-color: var(--gold); color: var(--gold); background: var(--gold-dim); }
+.manual-page .fav-footer-btn.active { border-color: rgba(201,169,106,0.4); color: var(--gold); background: var(--gold-dim); }
+
+/* Long-press toast */
+.manual-page .fav-longpress-toast {
+  position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+  background: rgba(0,0,0,0.85); color: var(--gold); font-size: 13px; font-weight: 600;
+  padding: 8px 18px; border-radius: 8px; z-index: 10; pointer-events: none;
+  animation: favToastIn 0.2s ease-out, favToastOut 0.4s 0.8s ease-in forwards;
+}
+@keyframes favToastIn { from { opacity: 0; transform: translate(-50%, -50%) scale(0.8); } to { opacity: 1; transform: translate(-50%, -50%) scale(1); } }
+@keyframes favToastOut { from { opacity: 1; } to { opacity: 0; } }
 
 /* UTILITY */
 .manual-page .mt-16 { margin-top: 16px; }
