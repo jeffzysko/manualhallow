@@ -1,3 +1,5 @@
+import FavoritableCard from "../FavoritableCard";
+
 const Chapter4Content = () => (
   <>
     <div className="callout reveal">
@@ -26,37 +28,43 @@ const Chapter4Content = () => (
 
     <h3 className="display mb-24 mt-40" style={{fontSize:28, color:'var(--white)'}}>3 Cenários Prontos com Escada do SIM</h3>
     <div className="col-2 reveal">
-      <div className="card-script">
+      <FavoritableCard id="ch4-script-quente" label="Script: Escada do SIM — Cliente Quente" chapter="Capítulo 04">
+        <div className="card-script">
+          <div className="card-script-header">
+            <div className="card-script-dots"><i></i><i></i><i></i></div>
+            <span style={{color:'var(--green)'}}>🔥 Cliente Quente</span>
+          </div>
+          <div className="card-script-body">
+            <div className="script-line"><span className="script-who">Vendedor</span><div className="script-text">Posso te mostrar 2 modelos que funcionam pro seu espaço? <em>[SIM]</em></div></div>
+            <div className="script-line"><span className="script-who">Vendedor</span><div className="script-text">Perfeito. Quer agendar uma visita rápida pra ver acabamento? <em>[SIM]</em></div></div>
+          </div>
+        </div>
+      </FavoritableCard>
+      <FavoritableCard id="ch4-script-preco" label="Script: Escada do SIM — Comparando Preço" chapter="Capítulo 04">
+        <div className="card-script">
+          <div className="card-script-header">
+            <div className="card-script-dots"><i></i><i></i><i></i></div>
+            <span style={{color:'var(--red)'}}>⚖️ Comparando Preço</span>
+          </div>
+          <div className="card-script-body">
+            <div className="script-line"><span className="script-who">Vendedor</span><div className="script-text">Posso comparar com justiça se você me mandar o print do que está incluso? <em>[SIM]</em></div></div>
+            <div className="script-line"><span className="script-who">Vendedor</span><div className="script-text">Faz sentido comparar por garantia e instalação também? <em>[SIM]</em></div></div>
+          </div>
+        </div>
+      </FavoritableCard>
+    </div>
+    <FavoritableCard id="ch4-script-travado" label="Script: Escada do SIM — Cliente Travado" chapter="Capítulo 04">
+      <div className="card-script reveal">
         <div className="card-script-header">
           <div className="card-script-dots"><i></i><i></i><i></i></div>
-          <span style={{color:'var(--green)'}}>🔥 Cliente Quente</span>
+          <span style={{color:'var(--purple)'}}>🧊 Cliente Travado</span>
         </div>
         <div className="card-script-body">
-          <div className="script-line"><span className="script-who">Vendedor</span><div className="script-text">Posso te mostrar 2 modelos que funcionam pro seu espaço? <em>[SIM]</em></div></div>
-          <div className="script-line"><span className="script-who">Vendedor</span><div className="script-text">Perfeito. Quer agendar uma visita rápida pra ver acabamento? <em>[SIM]</em></div></div>
+          <div className="script-line"><span className="script-who">Vendedor</span><div className="script-text">Posso entender qual é o ponto que te trava pra eu te orientar sem pressão? <em>[SIM]</em></div></div>
+          <div className="script-line"><span className="script-who">Vendedor</span><div className="script-text">Quer fazer só a visita técnica e depois decide? <em>[SIM]</em></div></div>
         </div>
       </div>
-      <div className="card-script">
-        <div className="card-script-header">
-          <div className="card-script-dots"><i></i><i></i><i></i></div>
-          <span style={{color:'var(--red)'}}>⚖️ Comparando Preço</span>
-        </div>
-        <div className="card-script-body">
-          <div className="script-line"><span className="script-who">Vendedor</span><div className="script-text">Posso comparar com justiça se você me mandar o print do que está incluso? <em>[SIM]</em></div></div>
-          <div className="script-line"><span className="script-who">Vendedor</span><div className="script-text">Faz sentido comparar por garantia e instalação também? <em>[SIM]</em></div></div>
-        </div>
-      </div>
-    </div>
-    <div className="card-script reveal">
-      <div className="card-script-header">
-        <div className="card-script-dots"><i></i><i></i><i></i></div>
-        <span style={{color:'var(--purple)'}}>🧊 Cliente Travado</span>
-      </div>
-      <div className="card-script-body">
-        <div className="script-line"><span className="script-who">Vendedor</span><div className="script-text">Posso entender qual é o ponto que te trava pra eu te orientar sem pressão? <em>[SIM]</em></div></div>
-        <div className="script-line"><span className="script-who">Vendedor</span><div className="script-text">Quer fazer só a visita técnica e depois decide? <em>[SIM]</em></div></div>
-      </div>
-    </div>
+    </FavoritableCard>
 
     <h3 className="display mb-24 mt-40" style={{fontSize:28, color:'var(--white)'}}>Técnica das 2–3 Opções</h3>
     <p className="prose reveal">Pressão quebra confiança. Condução premium dá autonomia com direção. Mostre caminhos, nunca imponha.</p>

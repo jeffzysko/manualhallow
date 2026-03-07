@@ -1,3 +1,5 @@
+import FavoritableCard from "../FavoritableCard";
+
 const Chapter2Content = () => (
   <>
     <h3 className="display mb-24" style={{fontSize:28, color:'var(--white)'}}>3 Níveis de Cliente · Abordagem por Perfil</h3>
@@ -33,61 +35,65 @@ const Chapter2Content = () => (
       </div>
     </div>
 
-    <div className="card-audio reveal mt-16">
-      <div className="card-audio-header">
-        <div style={{background:'var(--purple-dim)', color:'var(--purple)', borderRadius:8, width:36, height:36, display:'flex', alignItems:'center', justifyContent:'center', fontSize:18}}>🧊</div>
-        <div>
-          <div style={{fontSize:10, letterSpacing:2, textTransform:'uppercase', color:'var(--purple)', fontWeight:700}}>Nível 3</div>
-          <span style={{fontFamily:'Cormorant Garamond, serif', fontSize:18, color:'var(--white)', fontWeight:600}}>Cliente Travado</span>
+    <FavoritableCard id="ch2-audio-travado" label="Script: Cliente Travado (Nível 3)" chapter="Capítulo 02">
+      <div className="card-audio reveal mt-16">
+        <div className="card-audio-header">
+          <div style={{background:'var(--purple-dim)', color:'var(--purple)', borderRadius:8, width:36, height:36, display:'flex', alignItems:'center', justifyContent:'center', fontSize:18}}>🧊</div>
+          <div>
+            <div style={{fontSize:10, letterSpacing:2, textTransform:'uppercase', color:'var(--purple)', fontWeight:700}}>Nível 3</div>
+            <span style={{fontFamily:'Cormorant Garamond, serif', fontSize:18, color:'var(--white)', fontWeight:600}}>Cliente Travado</span>
+          </div>
+          <div style={{marginLeft:'auto', fontSize:12, color:'var(--gray)'}}>medo/instalação/tempo</div>
         </div>
-        <div style={{marginLeft:'auto', fontSize:12, color:'var(--gray)'}}>medo/instalação/tempo</div>
+        <p className="prose" style={{marginBottom:16}}><strong>Meta:</strong> Destravar o medo escondido. Ferramenta: perguntas de implicação (SPIN) + prova social específica.</p>
+        <div className="card-script-body" style={{padding:0}}>
+          <div className="script-line">
+            <span className="script-who cliente">Cliente</span>
+            <div className="script-text cliente">Vou pensar.</div>
+          </div>
+          <div className="script-line">
+            <span className="script-who">Vendedor</span>
+            <div className="script-text">Claro. Só pra eu entender e te ajudar sem pressão: o que mais te preocupa hoje — instalação/bagunça, prazo, ou garantia pós-instalação?</div>
+          </div>
+          <div className="script-line">
+            <span className="script-who cliente">Cliente</span>
+            <div className="script-text cliente">[responde]</div>
+          </div>
+          <div className="script-line">
+            <span className="script-who">Vendedor</span>
+            <div className="script-text">Perfeito. Então faz sentido a gente fazer o próximo passo mais seguro: uma visita rápida pra mapear o local e te passar o cronograma real. Pode ser [dia] ou [dia]?</div>
+          </div>
+        </div>
       </div>
-      <p className="prose" style={{marginBottom:16}}><strong>Meta:</strong> Destravar o medo escondido. Ferramenta: perguntas de implicação (SPIN) + prova social específica.</p>
-      <div className="card-script-body" style={{padding:0}}>
-        <div className="script-line">
-          <span className="script-who cliente">Cliente</span>
-          <div className="script-text cliente">Vou pensar.</div>
-        </div>
-        <div className="script-line">
-          <span className="script-who">Vendedor</span>
-          <div className="script-text">Claro. Só pra eu entender e te ajudar sem pressão: o que mais te preocupa hoje — instalação/bagunça, prazo, ou garantia pós-instalação?</div>
-        </div>
-        <div className="script-line">
-          <span className="script-who cliente">Cliente</span>
-          <div className="script-text cliente">[responde]</div>
-        </div>
-        <div className="script-line">
-          <span className="script-who">Vendedor</span>
-          <div className="script-text">Perfeito. Então faz sentido a gente fazer o próximo passo mais seguro: uma visita rápida pra mapear o local e te passar o cronograma real. Pode ser [dia] ou [dia]?</div>
-        </div>
-      </div>
-    </div>
+    </FavoritableCard>
 
     <h3 className="display mb-24 mt-40" style={{fontSize:28, color:'var(--white)'}}>Tipos de Perguntas Abertas</h3>
     <p className="prose reveal">Pergunta aberta não é curiosidade — é ferramenta de direção. Ela faz o cliente te contar desejo, medo, critério e trava.</p>
 
-    <div className="mind-grid reveal">
-      <div className="mind-card" style={{"--mind-color":"var(--ch2)"} as React.CSSProperties}>
-        <span className="mind-card-tag" style={{color:'var(--ch2)'}}>Perguntas de História</span>
-        <h4>Conexão + Intenção</h4>
-        <p>"O que te fez pensar em colocar piscina agora?"<br/>"O que você quer que mude na rotina?"</p>
+    <FavoritableCard id="ch2-perguntas" label="Tipos de Perguntas Abertas" chapter="Capítulo 02">
+      <div className="mind-grid reveal">
+        <div className="mind-card" style={{"--mind-color":"var(--ch2)"} as React.CSSProperties}>
+          <span className="mind-card-tag" style={{color:'var(--ch2)'}}>Perguntas de História</span>
+          <h4>Conexão + Intenção</h4>
+          <p>"O que te fez pensar em colocar piscina agora?"<br/>"O que você quer que mude na rotina?"</p>
+        </div>
+        <div className="mind-card" style={{"--mind-color":"var(--blue)"} as React.CSSProperties}>
+          <span className="mind-card-tag" style={{color:'var(--blue)'}}>Perguntas de Futuro</span>
+          <h4>Desejo</h4>
+          <p>"Imagina tudo pronto: como seria um sábado perfeito aí?"<br/>"Qual sensação você quer que esse espaço passe?"</p>
+        </div>
+        <div className="mind-card" style={{"--mind-color":"var(--red)"} as React.CSSProperties}>
+          <span className="mind-card-tag" style={{color:'var(--red)'}}>Perguntas de Risco</span>
+          <h4>Medos</h4>
+          <p>"O que você quer evitar a qualquer custo?"<br/>"Seu medo maior é bagunça, prazo ou custo surpresa?"</p>
+        </div>
+        <div className="mind-card" style={{"--mind-color":"var(--gold)"} as React.CSSProperties}>
+          <span className="mind-card-tag" style={{color:'var(--gold)'}}>Perguntas de Critério</span>
+          <h4>Régua de Decisão</h4>
+          <p>"O que define uma compra inteligente pra você aqui?"<br/>"Se você escolher certo, o que é indispensável?"</p>
+        </div>
       </div>
-      <div className="mind-card" style={{"--mind-color":"var(--blue)"} as React.CSSProperties}>
-        <span className="mind-card-tag" style={{color:'var(--blue)'}}>Perguntas de Futuro</span>
-        <h4>Desejo</h4>
-        <p>"Imagina tudo pronto: como seria um sábado perfeito aí?"<br/>"Qual sensação você quer que esse espaço passe?"</p>
-      </div>
-      <div className="mind-card" style={{"--mind-color":"var(--red)"} as React.CSSProperties}>
-        <span className="mind-card-tag" style={{color:'var(--red)'}}>Perguntas de Risco</span>
-        <h4>Medos</h4>
-        <p>"O que você quer evitar a qualquer custo?"<br/>"Seu medo maior é bagunça, prazo ou custo surpresa?"</p>
-      </div>
-      <div className="mind-card" style={{"--mind-color":"var(--gold)"} as React.CSSProperties}>
-        <span className="mind-card-tag" style={{color:'var(--gold)'}}>Perguntas de Critério</span>
-        <h4>Régua de Decisão</h4>
-        <p>"O que define uma compra inteligente pra você aqui?"<br/>"Se você escolher certo, o que é indispensável?"</p>
-      </div>
-    </div>
+    </FavoritableCard>
 
     <h3 className="display mb-24 mt-40" style={{fontSize:28, color:'var(--white)'}}>SPIN Selling Aplicado</h3>
     <div className="steps reveal">
@@ -111,12 +117,14 @@ const Chapter2Content = () => (
 
     <h3 className="display mb-24 mt-40" style={{fontSize:28, color:'var(--white)'}}>Cadência de Follow-up D+1 → D+14</h3>
     <p className="prose reveal" style={{marginBottom:20}}>Regra de ouro: follow-up sempre com <strong>avanço de valor</strong>, nunca com "e aí?".</p>
-    <div className="followup-wrap reveal">
-      <div className="followup-row"><div className="fu-day">D+1</div><div className="fu-msg"><span className="fu-tag">confirmação</span>"Conseguiu ver as 2 opções? Quer que eu feche a melhor pro seu espaço?"</div></div>
-      <div className="followup-row"><div className="fu-day">D+3</div><div className="fu-msg"><span className="fu-tag">prova social</span>"Achei um vídeo de uma instalação parecida com a sua. Quer que eu te envie?"</div></div>
-      <div className="followup-row"><div className="fu-day">D+7</div><div className="fu-msg"><span className="fu-tag">comparação</span>"Se você estiver comparando, me manda o print do que está incluso. Eu te ajudo sem pegadinha."</div></div>
-      <div className="followup-row"><div className="fu-day">D+14</div><div className="fu-msg"><span className="fu-tag">agenda</span>"Estou fechando a agenda de instalação do mês. Quer garantir um encaixe ou prefere a próxima janela?"</div></div>
-    </div>
+    <FavoritableCard id="ch2-followup" label="Follow-up: Cadência D+1 a D+14" chapter="Capítulo 02">
+      <div className="followup-wrap reveal">
+        <div className="followup-row"><div className="fu-day">D+1</div><div className="fu-msg"><span className="fu-tag">confirmação</span>"Conseguiu ver as 2 opções? Quer que eu feche a melhor pro seu espaço?"</div></div>
+        <div className="followup-row"><div className="fu-day">D+3</div><div className="fu-msg"><span className="fu-tag">prova social</span>"Achei um vídeo de uma instalação parecida com a sua. Quer que eu te envie?"</div></div>
+        <div className="followup-row"><div className="fu-day">D+7</div><div className="fu-msg"><span className="fu-tag">comparação</span>"Se você estiver comparando, me manda o print do que está incluso. Eu te ajudo sem pegadinha."</div></div>
+        <div className="followup-row"><div className="fu-day">D+14</div><div className="fu-msg"><span className="fu-tag">agenda</span>"Estou fechando a agenda de instalação do mês. Quer garantir um encaixe ou prefere a próxima janela?"</div></div>
+      </div>
+    </FavoritableCard>
 
     <h3 className="display mb-24 mt-40" style={{fontSize:28, color:'var(--white)'}}>Os 7 Mecanismos Mentais do Cliente Premium</h3>
     <p className="prose reveal">O cliente A/B+ toma decisão com emoção e justifica com razão. Ele quer sentir segurança sem ser pressionado.</p>
