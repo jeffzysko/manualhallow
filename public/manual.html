@@ -1076,6 +1076,13 @@ body { padding-bottom: 72px; }
   background: currentColor; opacity: 0.5; flex-shrink: 0;
 }
 
+/* Hide Sumário tab on desktop — only visible on mobile */
+.tab-sumario-mobile { display: none; }
+@media (max-width: 640px) {
+  .tab-sumario-mobile { display: flex; }
+}
+}
+
 /* PDF modal overlay */
 .pdf-modal {
   position: fixed; inset: 0; z-index: 500;
