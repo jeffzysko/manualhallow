@@ -1474,6 +1474,11 @@ body.scripts-mode .scripts-banner { display: block; }
   padding: 0; color: inherit; font-family: inherit;
   text-align: left;
 }
+.collapse-hint {
+  font-size: 13px; font-weight: 600; letter-spacing: 1px;
+  text-transform: uppercase; color: var(--gold);
+  transition: color .2s;
+}
 .toggle-icon {
   width: 36px; height: 36px; border-radius: 50%;
   background: var(--card2); border: 1px solid var(--border2);
@@ -1483,6 +1488,41 @@ body.scripts-mode .scripts-banner { display: block; }
 }
 .toggle-icon svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 2; transition: transform .3s ease; }
 .section-toggle:hover .toggle-icon { background: var(--card); border-color: var(--border); color: var(--gold); }
+
+/* Expand CTA bar — visible when collapsed */
+.expand-cta {
+  display: flex; align-items: center; justify-content: center; gap: 10px;
+  background: linear-gradient(135deg, rgba(201,169,106,0.08), rgba(201,169,106,0.03));
+  border: 1px dashed rgba(201,169,106,0.3);
+  border-radius: 12px; padding: 14px 24px; margin-top: 12px;
+  cursor: pointer; transition: all .25s ease;
+  animation: subtlePulse 2.5s ease-in-out infinite;
+}
+.expand-cta:hover {
+  background: rgba(201,169,106,0.12); border-style: solid;
+  border-color: var(--gold); transform: translateY(-1px);
+}
+.expand-cta-text {
+  font-size: 13px; font-weight: 600; color: var(--gold-light);
+  letter-spacing: 0.5px;
+}
+.expand-cta-icon {
+  width: 20px; height: 20px; fill: none; stroke: var(--gold); stroke-width: 2;
+  stroke-linecap: round; stroke-linejoin: round;
+  animation: bounceDown 1.5s ease-in-out infinite;
+}
+.section-collapsible:not(.collapsed) + .expand-cta,
+.expand-cta.hidden { display: none; }
+
+@keyframes subtlePulse {
+  0%, 100% { opacity: 0.85; }
+  50% { opacity: 1; }
+}
+@keyframes bounceDown {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(4px); }
+}
+
 .section-collapsible {
   overflow: hidden;
   transition: max-height .4s cubic-bezier(0.4,0,0.2,1), opacity .3s ease;
