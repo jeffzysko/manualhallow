@@ -5681,14 +5681,19 @@ searchInput.addEventListener('input', () => {
       const idx = parseInt(el.dataset.idx);
       const target = searchIndex[idx].element;
       closeSearch();
+      // Reveal lazy chapter if needed
+      const section = target.closest('section[id]');
+      if (section && typeof revealChapter === 'function') revealChapter(section);
       const coll = target.closest('.section-collapsible');
       if (coll && coll.classList.contains('collapsed')) {
         coll.classList.remove('collapsed');
         const btn = coll.closest('.page-wrap')?.querySelector('.section-toggle');
         if (btn) {
           btn.setAttribute('aria-expanded', 'true');
-          btn.querySelector('.collapse-hint').textContent = 'Recolher';
-          btn.querySelector('.toggle-icon svg').style.transform = '';
+          const hint = btn.querySelector('.collapse-hint');
+          if (hint) hint.textContent = 'Recolher';
+          const icon = btn.querySelector('.toggle-icon svg');
+          if (icon) icon.style.transform = '';
         }
       }
       setTimeout(() => {
