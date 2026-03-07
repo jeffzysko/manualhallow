@@ -4,7 +4,7 @@ import ManualCover from "@/components/manual/ManualCover";
 import ManualTOC from "@/components/manual/ManualTOC";
 import CollapsibleChapter from "@/components/manual/CollapsibleChapter";
 import BottomTabBar from "@/components/manual/BottomTabBar";
-import MobileDrawer from "@/components/manual/MobileDrawer";
+
 import SearchOverlay from "@/components/manual/SearchOverlay";
 import Chapter1Content from "@/components/manual/chapters/Chapter1Content";
 import Chapter2Content from "@/components/manual/chapters/Chapter2Content";
