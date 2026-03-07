@@ -26,7 +26,6 @@ const CollapsibleChapter = ({
   const isCollapsed = scriptsMode ? false : collapsed;
   const { isFavorite, toggleFavorite, isLoggedIn } = useFavoritesContext();
 
-  // Extract plain text from title for favorite label
   const chapterLabel = `Cap. ${num.replace(/^0/, "")} — ${tag}`;
 
   return (
@@ -40,8 +39,7 @@ const CollapsibleChapter = ({
             </div>
             <span className="ch-label-tag" style={{ color: tagColor }}>{tag}</span>
           </div>
-          <h2 dangerouslySetInnerHTML={{ __html: typeof title === "string" ? title : "" }} />
-          {typeof title !== "string" && title}
+          {title}
           <p className="lead">{lead}</p>
 
           {isLoggedIn && (
