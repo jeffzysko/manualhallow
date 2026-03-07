@@ -436,7 +436,7 @@
 /* RESPONSIVE — MOBILE */
 @media (max-width: 640px) {
   .manual-page { font-size: 15px; padding-bottom: 80px; }
-  .manual-page .page-wrap { padding: 0 24px; }
+  .manual-page .page-wrap { padding: 0 clamp(24px, 6vw, 48px); }
   .manual-page .section-gap { padding: 48px 0; }
 
   /* Cover */
