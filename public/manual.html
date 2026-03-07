@@ -48,7 +48,7 @@ body {
   color: var(--white);
   font-family: 'Plus Jakarta Sans', sans-serif;
   font-size: 15px;
-  line-height: 1.75;
+  line-height: 1.5;
   -webkit-font-smoothing: antialiased;
   overflow-x: hidden;
 }
@@ -62,6 +62,7 @@ body {
 .mono  { font-family: 'JetBrains Mono', monospace; }
 
 h1,h2,h3,h4 { font-family: 'Cormorant Garamond', serif; line-height: 1.2; }
+p, li, td, dd, blockquote, .prose, .callout, .card-script-body, .note-box, .pdf-option-desc { line-height: 1.5; }
 
 /* ===== ORNAMENTAL DIVIDER ===== */
 .ornament {
@@ -81,38 +82,12 @@ h1,h2,h3,h4 { font-family: 'Cormorant Garamond', serif; line-height: 1.2; }
 .section-gap { padding: 100px 0; }
 .section-gap-sm { padding: 60px 0; }
 
-/* ===== NAV ===== */
-.sidenav {
-  position: fixed; left: 0; top: 0; height: 100vh;
-  width: 64px; background: var(--bg2);
-  border-right: 1px solid var(--border2);
-  display: flex; flex-direction: column;
-  align-items: center; padding: 32px 0;
-  z-index: 100; gap: 8px;
-}
-.sidenav-logo {
-  font-family: 'Cormorant Garamond', serif;
-  color: var(--gold); font-size: 22px; font-weight: 700;
-  writing-mode: vertical-rl; text-orientation: mixed;
-  letter-spacing: 6px; margin-bottom: 24px;
-  text-transform: uppercase;
-}
-.nav-dot {
-  width: 8px; height: 8px; border-radius: 50%;
-  background: var(--border); cursor: pointer;
-  transition: all .3s ease; border: none;
-}
-.nav-dot:hover, .nav-dot.active { background: var(--gold); transform: scale(1.4); }
-.nav-dot-label {
-  position: absolute; left: 72px;
-  background: var(--card2); color: var(--white);
-  font-size: 11px; padding: 4px 10px; border-radius: 4px;
-  white-space: nowrap; opacity: 0; pointer-events: none;
-  transition: opacity .2s; border: 1px solid var(--border);
-}
-.nav-dot:hover .nav-dot-label { opacity: 1; }
+/* ===== LAYOUT ===== */
+.page-wrap { max-width: 1100px; margin: 0 auto; padding: 0 72px; }
+.section-gap { padding: 100px 0; }
+.section-gap-sm { padding: 60px 0; }
 
-.main-content { margin-left: 64px; }
+.main-content { margin-left: 0; }
 
 /* ===== COVER PAGE ===== */
 #cover {
@@ -868,10 +843,9 @@ h1,h2,h3,h4 { font-family: 'Cormorant Garamond', serif; line-height: 1.2; }
    ============================================= */
 @media (max-width: 640px) {
 
-  /* LAYOUT — hide sidenav, full width */
-  .sidenav { display: none; }
+  /* LAYOUT */
   .main-content { margin-left: 0; }
-  .page-wrap { padding: 0 16px; }
+  .page-wrap { padding: 0 20px; }
 
   /* HAMBURGER BUTTON */
   .hamburger-btn { display: flex !important; }
@@ -987,7 +961,7 @@ h1,h2,h3,h4 { font-family: 'Cormorant Garamond', serif; line-height: 1.2; }
 
 /* Add bottom padding to body so content isn't hidden behind tab bar */
 body { padding-bottom: 72px; }
-.bottom-tab-bar { padding-left: 64px; }
+.bottom-tab-bar { padding-left: 0; }
 
 /* Legacy fab classes hidden */
 .fab-pdf, .fab-search, .fab-scripts { display: none !important; }
@@ -1449,29 +1423,6 @@ body.scripts-mode .scripts-banner { display: block; }
     </div>
   </div>
 </div>
-
-<!-- ===== SIDEBAR NAV ===== -->
-<nav class="sidenav" id="sidenav">
-  <div class="sidenav-logo">H</div>
-  <button class="nav-dot active" onclick="navTo('#cover')" title="Capa"></button>
-  <button class="nav-dot" onclick="navTo('#toc')" title="Sumário"></button>
-  <button class="nav-dot" onclick="navTo('#ch1')" title="Premium"></button>
-  <button class="nav-dot" onclick="navTo('#ch2')" title="Diagnóstico"></button>
-  <button class="nav-dot" onclick="navTo('#ch3')" title="Espelhamento"></button>
-  <button class="nav-dot" onclick="navTo('#ch4')" title="Escada do SIM"></button>
-  <button class="nav-dot" onclick="navTo('#ch5')" title="Valor"></button>
-  <button class="nav-dot" onclick="navTo('#ch6')" title="Persuasão"></button>
-  <button class="nav-dot" onclick="navTo('#ch7')" title="Fechamento"></button>
-  <button class="nav-dot" onclick="navTo('#ch8')" title="Fidelização"></button>
-  <button class="nav-dot" onclick="navTo('#chacc')" title="Acessórios"></button>
-  <button class="nav-dot" onclick="navTo('#ch9')" title="Metas 2026"></button>
-  <button class="nav-dot" onclick="navTo('#appendix')" title="Apêndices"></button>
-  <button class="nav-dot" onclick="navTo('#chps')" title="Provas Sociais"></button>
-  <button class="nav-dot" onclick="navTo('#choa')" title="Objeções Acessórios"></button>
-  <button class="nav-dot" onclick="navTo('#chlf')" title="Lead Frio"></button>
-  <button class="nav-dot" onclick="navTo('#chgf')" title="Guia de Fotos"></button>
-  <button class="nav-dot" onclick="navTo('#chtp')" title="Template Proposta"></button>
-</nav>
 
 <div class="main-content">
 
