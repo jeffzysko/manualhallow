@@ -1017,8 +1017,9 @@ body { padding-bottom: 72px; }
 
 /* FAB responsive handled in main media queries above */
 @media print {
-  #progress-bar, .fab-search, .fab-scripts, .fab-pdf, .search-overlay, .scripts-banner, .pdf-modal { display: none !important; }
+  #progress-bar, .bottom-tab-bar, .search-overlay, .scripts-banner, .pdf-modal { display: none !important; }
   .section-collapsible.collapsed { max-height: 9999px !important; opacity: 1 !important; }
+  body { padding-bottom: 0; }
 }
 
 /* ===== UTILITY ===== */
