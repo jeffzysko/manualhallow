@@ -1487,8 +1487,10 @@ body.scripts-mode .scripts-banner { display: block; }
   overflow: hidden;
   transition: max-height .4s cubic-bezier(0.4,0,0.2,1), opacity .3s ease;
   max-height: 9999px; opacity: 1;
+  display: flex; flex-direction: column; gap: 40px;
+  padding-top: 24px;
 }
-.section-collapsible.collapsed { max-height: 0; opacity: 0; }
+.section-collapsible.collapsed { max-height: 0; opacity: 0; padding-top: 0; }
 .chapter-header-wrap { padding: 60px 0 0; }
 
 /* ===== CHAPTER TL;DR CARD ===== */
