@@ -120,7 +120,7 @@ const ManualPage = () => {
 
       <BottomTabBar
         onScrollTop={scrollToTop}
-        onOpenDrawer={() => {}}
+        onOpenDrawer={() => navigate("toc")}
         onOpenSearch={() => setSearchOpen(true)}
         onOpenFavorites={() => {}}
         onToggleScripts={() => setScriptsMode(!scriptsMode)}
