@@ -2,7 +2,8 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+<meta name="theme-color" content="#09090F">
 <title>Manual de Atendimento e Vendas — Padrão Hallow</title>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,600&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
@@ -35,7 +36,7 @@
   --ch7: #E0B55B; --ch8: #C95B8A;
 }
 
-html { scroll-behavior: smooth; }
+html { scroll-behavior: smooth; overflow-x: hidden; }
 
 body {
   background: var(--bg);
@@ -44,6 +45,7 @@ body {
   font-size: 15px;
   line-height: 1.75;
   -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
 }
 
 /* ===== TYPOGRAPHY ===== */
@@ -842,23 +844,97 @@ h1,h2,h3,h4 { font-family: 'Cormorant Garamond', serif; line-height: 1.2; }
 .reveal.visible { opacity: 1; transform: translateY(0); }
 
 /* ===== RESPONSIVE ===== */
+/* =============================================
+   RESPONSIVE — TABLET (max 900px)
+   ============================================= */
 @media (max-width: 900px) {
   .cover-inner { grid-template-columns: 1fr; padding: 80px 32px 100px 96px; }
   .cover-right { display: none; }
   .toc-grid { grid-template-columns: 1fr 1fr; }
-  .kpi-grid, .cert-grid { grid-template-columns: 1fr; }
+  .col-2 { grid-template-columns: 1fr; }
+  .compare-head { grid-template-columns: 1fr 1fr 1fr; }
+  .compare-row { grid-template-columns: 1fr 1fr 1fr; }
 }
+
+/* =============================================
+   RESPONSIVE — MOBILE (max 640px)
+   Only fixing true overflow / breakage.
+   Preserving every visual detail that looked great.
+   ============================================= */
 @media (max-width: 640px) {
-  .sidenav { width: 48px; }
-  .main-content { margin-left: 48px; }
-  .page-wrap { padding: 0 24px; }
-  .cover-inner { padding: 60px 24px 80px 72px; }
-  .toc-grid { grid-template-columns: 1fr; }
-  .phrases-grid { grid-template-columns: 1fr; }
-  .season-grid { grid-template-columns: 1fr; }
-  .compare-head, .compare-row { grid-template-columns: 1fr; }
-  .script-line { grid-template-columns: 1fr; }
-  .script-who { text-align: left; }
+
+  /* LAYOUT */
+  .sidenav { width: 44px; }
+  .sidenav-logo { font-size: 14px; }
+  .main-content { margin-left: 44px; }
+  .page-wrap { padding: 0 18px; }
+
+  /* FABs — stacked vertically, no overlap */
+  .fab-pdf   { bottom: 16px; right: 16px; padding: 11px 16px; font-size: 11px; }
+  .fab-search{ bottom: 72px; right: 16px; padding: 11px 16px; font-size: 11px; }
+  .fab-scripts { bottom: 128px; right: 16px; padding: 10px 14px; font-size: 11px; }
+
+  /* PDF MODAL — bottom sheet feel */
+  .pdf-modal { align-items: flex-end; }
+  .pdf-modal-box {
+    border-radius: 24px 24px 0 0; width: 100%; max-width: 100%;
+    padding: 28px 20px 36px; max-height: 88vh; overflow-y: auto;
+  }
+  .pdf-modal-title { font-size: 22px; }
+  .pdf-modal-sub   { font-size: 12px; margin-bottom: 16px; }
+
+  /* SEARCH */
+  .search-overlay { padding-top: 20px; }
+  .search-box { padding: 0 12px; }
+  #search-input { font-size: 16px; } /* prevents iOS auto-zoom */
+
+  /* COVER */
+  .cover-inner { padding: 52px 16px 64px 60px; gap: 24px; }
+  .cover-title { font-size: clamp(32px, 9vw, 52px); }
+
+  /* TOC */
+  .toc-grid { grid-template-columns: 1fr; gap: 8px; }
+  .toc-item { padding: 16px; }
+  .toc-arrow { display: none; }
+
+  /* SCRIPTS — the min-width on script-who causes overflow, fix only that */
+  .script-who { min-width: 52px !important; font-size: 9px; }
+  .card-script-body { padding: 18px; }
+  .card-script-header { padding: 12px 16px; font-size: 11px; }
+
+  /* COMPARE TABLE — 3 col is too tight, go 1 col with label prefix */
+  .compare-head { display: none; }
+  .compare-row {
+    display: flex; flex-direction: column;
+    border: 1px solid var(--border2); border-radius: 12px;
+    margin-bottom: 10px; overflow: hidden;
+  }
+  .compare-cell { border-right: none !important; border-bottom: 1px solid var(--border2); }
+  .compare-cell:last-child { border-bottom: none; }
+
+  /* RUBRIC TABLE — 4 col impossible on mobile */
+  .rubric-head { display: none; }
+  .rubric-row {
+    display: flex; flex-direction: column;
+    border: 1px solid var(--border2); border-radius: 12px;
+    margin-bottom: 10px; overflow: hidden;
+  }
+  .rubric-cell { border-right: none !important; border-bottom: 1px solid var(--border2); font-size: 12px; }
+  .rubric-cell:last-child { border-bottom: none; }
+  .rubric-cell.criterion { background: var(--card2); font-size: 13px; font-weight: 700; }
+  .rubric-cell.c0::before { content: "0 — "; color: var(--red); font-weight: 700; }
+  .rubric-cell.c1::before { content: "1 — "; color: var(--gold); font-weight: 700; }
+  .rubric-cell.c2::before { content: "2 — "; color: var(--green); font-weight: 700; }
+  .rubric-score-legend { flex-direction: column; gap: 8px; }
+
+  /* GRIDS that are genuinely too wide at 3+ col */
+  .season-grid  { grid-template-columns: 1fr; }
+  .phrases-grid { grid-template-columns: 1fr; gap: 12px; }
+  .acc-grid     { grid-template-columns: 1fr 1fr; gap: 10px; }
+  .col-2        { grid-template-columns: 1fr; }
+
+  /* FOOTER */
+  footer .page-wrap { padding: 40px 18px; }
 }
 
 /* ===== PDF EXPORT BUTTON ===== */
@@ -917,11 +993,7 @@ h1,h2,h3,h4 { font-family: 'Cormorant Garamond', serif; line-height: 1.2; }
 }
 .pdf-modal-cancel:hover { color: var(--white); }
 
-@media (max-width: 640px) {
-  .fab-search { right: 140px; }
-  .fab-scripts { bottom: 84px; right: 20px; padding: 10px 16px; font-size: 11px; }
-  .fab-pdf { padding: 12px 18px; font-size: 12px; }
-}
+/* FAB responsive handled in main media queries above */
 @media print {
   #progress-bar, .fab-search, .fab-scripts, .fab-pdf, .search-overlay, .scripts-banner, .pdf-modal { display: none !important; }
   .section-collapsible.collapsed { max-height: 9999px !important; opacity: 1 !important; }
@@ -1005,10 +1077,7 @@ h1,h2,h3,h4 { font-family: 'Cormorant Garamond', serif; line-height: 1.2; }
 .rubric-score-item p { font-size: 13px; color: var(--gray); }
 .rubric-score-item p strong { color: var(--white); }
 
-@media (max-width: 700px) {
-  .rubric-head, .rubric-row { grid-template-columns: 1fr; }
-  .rubric-head-cell, .rubric-cell { border-right: none; border-bottom: 1px solid var(--border2); }
-}
+/* rubric responsive handled above */
 
 .mt-16 { margin-top: 16px; }
 .mt-24 { margin-top: 24px; }
@@ -1026,9 +1095,7 @@ h1,h2,h3,h4 { font-family: 'Cormorant Garamond', serif; line-height: 1.2; }
 .col-2 {
   display: grid; grid-template-columns: 1fr 1fr; gap: 32px;
 }
-@media (max-width: 700px) {
-  .col-2 { grid-template-columns: 1fr; }
-}
+/* col-2 responsive handled in main media queries above */
 
 .tag {
   display: inline-flex; align-items: center; gap: 6px;
@@ -1229,14 +1296,7 @@ body.scripts-mode .scripts-banner { display: block; }
   margin-left: 12px; font-weight: 400; text-transform: uppercase;
 }
 
-@media (max-width: 640px) {
-  .fab-search { right: 140px; }
-  .fab-scripts { bottom: 84px; right: 20px; padding: 10px 16px; font-size: 11px; }
-}
-@media print {
-  #progress-bar, .fab-search, .fab-scripts, .search-overlay, .scripts-banner { display: none !important; }
-  .section-collapsible.collapsed { max-height: 9999px !important; opacity: 1 !important; }
-}
+/* print + responsive handled above */
 </style>
 </head>
 <body>
