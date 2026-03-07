@@ -52,6 +52,7 @@ const TopHeader = () => {
         {user ? (
           <div className="top-header__user">
             <button
+              ref={avatarRef}
               className="top-header__avatar"
               onClick={() => setMenuOpen(!menuOpen)}
               aria-label="Menu do usuário"
@@ -60,9 +61,7 @@ const TopHeader = () => {
             </button>
 
             {menuOpen && (
-              <>
-                <div className="top-header__overlay" onClick={() => setMenuOpen(false)} />
-                <div className="top-header__dropdown">
+              <div ref={dropdownRef} className="top-header__dropdown">
                   <div className="top-header__dropdown-header">
                     <div className="top-header__dropdown-avatar">{initials}</div>
                     <div>
