@@ -5718,17 +5718,17 @@ const chapterTLDR = {
   ]
 };
 
-// Inject TL;DR cards after each chapter header
+// Inject TL;DR cards as first child of each collapsible section
 document.querySelectorAll('section[id]:not(#cover):not(#toc):not(#appendix):not(#footer)').forEach(section => {
   const id = section.id;
   const points = chapterTLDR[id];
   if (!points) return;
   
-  const header = section.querySelector('.chapter-header');
-  if (!header) return;
+  const collapsible = section.querySelector('.section-collapsible');
+  if (!collapsible) return;
   
   const tldr = document.createElement('div');
-  tldr.className = 'chapter-tldr reveal';
+  tldr.className = 'chapter-tldr';
   tldr.innerHTML = `
     <div class="chapter-tldr-header">
       <span class="chapter-tldr-badge">TL;DR</span>
@@ -5739,8 +5739,8 @@ document.querySelectorAll('section[id]:not(#cover):not(#toc):not(#appendix):not(
     </ul>
   `;
   
-  // Insert after the chapter header
-  header.insertAdjacentElement('afterend', tldr);
+  // Insert as first child of collapsible content
+  collapsible.insertBefore(tldr, collapsible.firstChild);
 });
 
 // ===== FAVORITES SYSTEM =====
