@@ -915,5 +915,111 @@
   border-radius: 6px;
 }
 @media (max-width: 640px) {
+  .admin-stats-grid { grid-template-columns: 1fr 1fr; }
+}
+@media (max-width: 400px) {
   .admin-stats-grid { grid-template-columns: 1fr; }
+}
+
+/* ADMIN TABS */
+.admin-tabs {
+  display: flex;
+  gap: 0;
+  margin-bottom: 28px;
+  border-radius: 10px;
+  overflow: hidden;
+  border: 1px solid var(--border);
+}
+.admin-tab {
+  flex: 1;
+  padding: 12px 0;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 1px;
+  background: transparent;
+  color: var(--gray);
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.admin-tab--active {
+  background: var(--gold-dim);
+  color: var(--gold);
+}
+
+/* SECTION NOTES */
+.section-note {
+  margin-top: 24px;
+  padding-top: 20px;
+  border-top: 1px solid var(--border2);
+}
+.section-note__toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--gray);
+  background: var(--card);
+  border: 1px solid var(--border2);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.section-note__toggle:hover {
+  border-color: var(--border);
+  color: var(--white);
+}
+.section-note__toggle--active {
+  background: var(--gold-dim);
+  border-color: var(--border);
+  color: var(--gold);
+}
+.section-note__editor {
+  margin-top: 12px;
+  animation: dropdownFadeIn 0.15s ease-out;
+}
+.section-note__textarea {
+  width: 100%;
+  min-height: 80px;
+  padding: 14px 16px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  color: var(--white);
+  font-size: 13px;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  line-height: 1.6;
+  resize: vertical;
+  outline: none;
+  transition: border-color 0.2s;
+}
+.section-note__textarea:focus {
+  border-color: var(--gold);
+}
+.section-note__textarea::placeholder {
+  color: var(--gray2);
+}
+.section-note__footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 8px;
+}
+.section-note__status {
+  font-size: 11px;
+  color: var(--gray);
+}
+.section-note__clear {
+  background: none;
+  border: none;
+  color: var(--red);
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+  opacity: 0.8;
+}
+.section-note__clear:hover {
+  opacity: 1;
 }
