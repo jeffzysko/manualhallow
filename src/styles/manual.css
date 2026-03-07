@@ -647,30 +647,50 @@
 
 /* RESPONSIVE — MOBILE */
 @media (max-width: 640px) {
-  .manual-page { font-size: 15px; padding-bottom: 80px; }
-  .manual-page .page-wrap { padding-left: 28px !important; padding-right: 28px !important; }
-  .manual-page .section-gap { padding: 48px 0; }
+  .manual-page { font-size: 15px; padding-bottom: 80px; padding-top: 56px; }
+  .manual-page .page-wrap { padding-left: 16px !important; padding-right: 16px !important; }
+  .manual-page .section-gap { padding: 40px 0; }
+  .manual-page .section-gap-sm { padding: 28px 0; }
+
+  /* Top header */
+  .top-header { height: 56px; }
+  .top-header__logo-text { font-size: 17px; letter-spacing: 3px; }
+  .top-header__avatar { width: 32px; height: 32px; font-size: 12px; border-radius: 8px; }
+  .top-header__dropdown { min-width: 220px; right: -8px; }
+  .top-header__dropdown-header { padding: 12px; gap: 10px; }
+  .top-header__dropdown-avatar { width: 34px; height: 34px; font-size: 12px; }
+  .top-header__dropdown-name { font-size: 13px; }
+  .top-header__dropdown-email { font-size: 11px; }
+  .top-header__dropdown-btn { padding: 12px 14px; font-size: 13px; }
+  .top-header__login-btn { padding: 6px 14px; font-size: 11px; }
 
   /* Cover */
-  .manual-page .cover-inner { padding: 48px 28px 40px; gap: 24px; min-height: auto; }
-  .manual-page .cover-title { font-size: clamp(32px, 9vw, 48px); }
-  .manual-page .cover-subtitle { font-size: 11px; letter-spacing: 2px; margin-bottom: 24px; }
-  .manual-page .cover-desc { font-size: 14px; margin-bottom: 32px; }
+  .manual-page #cover { min-height: auto; }
+  .manual-page .cover-inner { padding: 40px 16px 32px; gap: 20px; min-height: auto; }
+  .manual-page .cover-title { font-size: clamp(30px, 9vw, 44px); }
+  .manual-page .cover-subtitle { font-size: 10px; letter-spacing: 2px; margin-bottom: 20px; }
+  .manual-page .cover-desc { font-size: 13px; margin-bottom: 24px; line-height: 1.7; }
   .manual-page .cover-stats { grid-template-columns: repeat(3, 1fr); }
-  .manual-page .cover-stat { padding: 16px 10px; }
-  .manual-page .cover-stat-num { font-size: 24px; }
+  .manual-page .cover-stat { padding: 14px 8px; }
+  .manual-page .cover-stat-num { font-size: 22px; }
   .manual-page .cover-stat-label { font-size: 8px; letter-spacing: 1px; }
-  .manual-page .cover-footer { position: relative; bottom: auto; left: auto; right: auto; padding: 24px 16px 0; flex-direction: column; align-items: center; gap: 8px; text-align: center; }
-  .manual-page .cover-badge { padding: 6px 14px; margin-bottom: 20px; }
-  .manual-page .cover-badge span { font-size: 9px; letter-spacing: 2px; }
+  .manual-page .cover-footer { position: relative; bottom: auto; left: auto; right: auto; padding: 20px 16px 0; flex-direction: column; align-items: center; gap: 8px; text-align: center; }
+  .manual-page .cover-badge { padding: 5px 12px; margin-bottom: 16px; }
+  .manual-page .cover-badge span { font-size: 8px; letter-spacing: 1.5px; }
+  .manual-page .cover-brand-name { font-size: 15px; letter-spacing: 3px; }
+  .manual-page .cover-brand-sep { height: 24px; }
+  .manual-page .cover-brand-sub { font-size: 9px; }
+  .manual-page .cover-edition { font-size: 9px; }
 
   /* Tab bar */
   .manual-page .bottom-tab-bar { bottom: 8px; min-width: 0; width: calc(100% - 16px); max-width: 100%; border-radius: 16px; padding-bottom: env(safe-area-inset-bottom, 0px); }
-  .manual-page .tab-item { font-size: 9px; padding: 10px 4px 8px; gap: 2px; }
+  .manual-page .tab-item { font-size: 9px; padding: 10px 2px 8px; gap: 2px; min-width: 0; }
   .manual-page .tab-item svg { width: 18px; height: 18px; }
+  .manual-page .tab-item span { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 48px; }
 
   /* TOC */
-  .manual-page .toc-header h2 { font-size: 36px; }
+  .manual-page .toc-header { padding: 40px 0 32px; }
+  .manual-page .toc-header h2 { font-size: 32px; }
   .manual-page .toc-grid { grid-template-columns: 1fr; gap: 4px; border-radius: 14px; }
   .manual-page .toc-item { padding: 14px 16px; gap: 12px; }
   .manual-page .toc-arrow { display: none; }
@@ -678,131 +698,192 @@
   .manual-page .toc-content p { font-size: 11px; }
 
   /* Chapter headers */
-  .manual-page .chapter-header { padding: 40px 0 16px; }
-  .manual-page .chapter-header h2 { font-size: clamp(26px, 7vw, 38px) !important; }
-  .manual-page .chapter-header .lead { font-size: 14px; }
-  .manual-page .ch-num { font-size: clamp(48px, 14vw, 72px) !important; }
+  .manual-page .chapter-header { padding: 32px 0 12px; }
+  .manual-page .chapter-header h2 { font-size: clamp(24px, 7vw, 36px) !important; }
+  .manual-page .chapter-header .lead { font-size: 13px; line-height: 1.7; }
+  .manual-page .ch-num { font-size: clamp(44px, 14vw, 68px) !important; }
+  .manual-page .ch-label-num { width: 28px; height: 28px; font-size: 12px; }
+  .manual-page .ch-label-tag { font-size: 10px; letter-spacing: 2px; }
 
   /* Cards */
-  .manual-page .card { padding: 20px; margin-bottom: 16px; border-radius: 14px; }
-  .manual-page .card-check { padding: 20px; }
-  .manual-page .card-obj { padding: 20px; }
-  .manual-page .card-audio { padding: 20px; }
-  .manual-page .callout { padding: 16px 20px; margin: 20px 0; }
-  .manual-page .callout p { font-size: 17px; }
+  .manual-page .card { padding: 18px; margin-bottom: 14px; border-radius: 12px; }
+  .manual-page .card-check { padding: 18px; margin-bottom: 14px; }
+  .manual-page .card-obj { padding: 18px; }
+  .manual-page .card-audio { padding: 18px; margin-bottom: 14px; }
+  .manual-page .callout { padding: 14px 18px; margin: 16px 0; }
+  .manual-page .callout p { font-size: 16px; }
 
   /* Scripts */
-  .manual-page .script-line { grid-template-columns: 56px 1fr; gap: 8px; margin-bottom: 12px; }
+  .manual-page .script-line { grid-template-columns: 50px 1fr; gap: 6px; margin-bottom: 10px; }
   .manual-page .script-who { min-width: 0 !important; font-size: 9px !important; letter-spacing: 0.5px; text-align: left; padding-top: 4px; }
-  .manual-page .script-text { font-size: 13px; padding: 8px 12px; line-height: 1.6; }
-  .manual-page .card-script-header { padding: 10px 16px; }
-  .manual-page .card-script-header span { font-size: 10px; letter-spacing: 1px; }
-  .manual-page .card-script-body { padding: 14px; }
+  .manual-page .script-text { font-size: 13px; padding: 8px 10px; line-height: 1.6; }
+  .manual-page .card-script-header { padding: 8px 14px; }
+  .manual-page .card-script-header span { font-size: 9px; letter-spacing: 1px; }
+  .manual-page .card-script-body { padding: 12px; }
 
   /* Compare tables */
   .manual-page .compare-head { display: none; }
   .manual-page .compare-table { border: none; }
   .manual-page .compare-row { display: flex; flex-direction: column; border: 1px solid var(--border2); border-radius: 12px; margin-bottom: 8px; overflow: hidden; }
-  .manual-page .compare-cell { border-right: none !important; border-bottom: 1px solid var(--border2); padding: 12px 16px; font-size: 13px; }
+  .manual-page .compare-cell { border-right: none !important; border-bottom: 1px solid var(--border2); padding: 10px 14px; font-size: 12px; }
   .manual-page .compare-cell:last-child { border-bottom: none; }
-  .manual-page .compare-cell.label { font-size: 11px; }
+  .manual-page .compare-cell.label { font-size: 10px; }
 
   /* Stats */
-  .manual-page .stats-row { grid-template-columns: 1fr; gap: 10px; }
-  .manual-page .stat-box { padding: 18px; }
-  .manual-page .stat-num { font-size: 32px; }
+  .manual-page .stats-row { grid-template-columns: 1fr; gap: 8px; }
+  .manual-page .stat-box { padding: 16px; }
+  .manual-page .stat-num { font-size: 28px; }
 
   /* Grids */
   .manual-page .col-2 { grid-template-columns: 1fr; gap: 12px; }
-  .manual-page .cert-grid { grid-template-columns: 1fr; gap: 12px; }
-  .manual-page .cert-card { padding: 20px; }
-  .manual-page .cert-num { font-size: 48px; }
-  .manual-page .kpi-grid { grid-template-columns: 1fr 1fr; gap: 10px; }
-  .manual-page .kpi-card { padding: 16px; }
-  .manual-page .kpi-card h4 { font-size: 14px; }
-  .manual-page .kpi-card p { font-size: 11px; }
-  .manual-page .season-grid { grid-template-columns: 1fr; gap: 12px; }
-  .manual-page .season-card { padding: 20px; }
-  .manual-page .season-card h4 { font-size: 18px; }
-  .manual-page .mind-grid { grid-template-columns: 1fr; gap: 12px; }
-  .manual-page .mind-card { padding: 20px; }
-  .manual-page .profiles-grid { grid-template-columns: 1fr; gap: 12px; }
-  .manual-page .profile-card { padding: 20px; }
-  .manual-page .acc-grid { grid-template-columns: 1fr 1fr; gap: 10px; }
-  .manual-page .acc-card { padding: 16px; }
-  .manual-page .acc-card h4 { font-size: 15px; }
-  .manual-page .phrases-grid { grid-template-columns: 1fr; gap: 8px; }
-  .manual-page .phrase-item { padding: 10px 16px; font-size: 13px; }
+  .manual-page .cert-grid { grid-template-columns: 1fr; gap: 10px; }
+  .manual-page .cert-card { padding: 18px; }
+  .manual-page .cert-num { font-size: 44px; }
+  .manual-page .kpi-grid { grid-template-columns: 1fr 1fr; gap: 8px; }
+  .manual-page .kpi-card { padding: 14px; }
+  .manual-page .kpi-card h4 { font-size: 13px; }
+  .manual-page .kpi-card p { font-size: 10px; }
+  .manual-page .season-grid { grid-template-columns: 1fr; gap: 10px; }
+  .manual-page .season-card { padding: 18px; }
+  .manual-page .season-card h4 { font-size: 17px; }
+  .manual-page .mind-grid { grid-template-columns: 1fr; gap: 10px; }
+  .manual-page .mind-card { padding: 18px; }
+  .manual-page .profiles-grid { grid-template-columns: 1fr; gap: 10px; }
+  .manual-page .profile-card { padding: 18px; }
+  .manual-page .acc-grid { grid-template-columns: 1fr 1fr; gap: 8px; }
+  .manual-page .acc-card { padding: 14px; }
+  .manual-page .acc-card h4 { font-size: 14px; }
+  .manual-page .phrases-grid { grid-template-columns: 1fr; gap: 6px; }
+  .manual-page .phrase-item { padding: 10px 14px; font-size: 13px; }
 
   /* Follow-up */
   .manual-page .followup-row { grid-template-columns: 1fr; }
-  .manual-page .fu-day { border-right: none; border-bottom: 1px solid var(--border2); padding: 10px 16px; justify-content: flex-start; font-size: 11px; }
-  .manual-page .fu-msg { padding: 12px 16px; font-size: 13px; flex-wrap: wrap; gap: 8px; }
+  .manual-page .fu-day { border-right: none; border-bottom: 1px solid var(--border2); padding: 8px 14px; justify-content: flex-start; font-size: 11px; }
+  .manual-page .fu-msg { padding: 10px 14px; font-size: 13px; flex-wrap: wrap; gap: 6px; }
   .manual-page .fu-tag { margin-right: 0; }
 
   /* Steps */
-  .manual-page .step { padding: 16px; gap: 12px; }
-  .manual-page .step-num { width: 30px; height: 30px; font-size: 12px; }
-  .manual-page .step-body h4 { font-size: 15px; }
+  .manual-page .step { padding: 14px; gap: 10px; }
+  .manual-page .step-num { width: 28px; height: 28px; font-size: 11px; }
+  .manual-page .step-body h4 { font-size: 14px; }
   .manual-page .step-body p { font-size: 12px; }
 
   /* Funnel */
-  .manual-page .funnel-bar { padding: 12px 14px; gap: 10px; flex-wrap: wrap; }
-  .manual-page .funnel-step-name { font-size: 13px; }
-  .manual-page .funnel-step-desc { font-size: 11px; flex-basis: 100%; padding-left: 38px; }
+  .manual-page .funnel-bar { padding: 10px 12px; gap: 8px; flex-wrap: wrap; }
+  .manual-page .funnel-step-name { font-size: 12px; }
+  .manual-page .funnel-step-desc { font-size: 10px; flex-basis: 100%; padding-left: 36px; }
 
   /* Pontos */
-  .manual-page .ponto-item { padding: 14px 16px; gap: 14px; }
-  .manual-page .ponto-num { font-size: 24px; min-width: 30px; }
-  .manual-page .ponto-content h4 { font-size: 14px; }
-  .manual-page .ponto-content p { font-size: 12px; }
+  .manual-page .ponto-item { padding: 12px 14px; gap: 12px; }
+  .manual-page .ponto-num { font-size: 22px; min-width: 28px; }
+  .manual-page .ponto-content h4 { font-size: 13px; }
+  .manual-page .ponto-content p { font-size: 11px; }
 
   /* Key phrase */
-  .manual-page .key-phrase { font-size: clamp(22px, 5vw, 32px); padding: 24px 0; margin: 24px 0; }
+  .manual-page .key-phrase { font-size: clamp(20px, 5vw, 28px); padding: 20px 0; margin: 20px 0; }
 
   /* Obj branches */
-  .manual-page .obj-branch { flex-direction: column; gap: 4px; padding: 10px 14px; }
+  .manual-page .obj-branch { flex-direction: column; gap: 4px; padding: 8px 12px; }
   .manual-page .obj-branch-if { min-width: 0; }
-  .manual-page .obj-branch-text { font-size: 13px; }
-  .manual-page .obj-q { font-size: 14px; padding-left: 12px; }
+  .manual-page .obj-branch-text { font-size: 12px; }
+  .manual-page .obj-q { font-size: 13px; padding-left: 10px; }
+  .manual-page .card-obj h4 { font-size: 17px; }
 
   /* Audio */
-  .manual-page .card-audio-header { flex-wrap: wrap; gap: 8px; }
+  .manual-page .card-audio-header { flex-wrap: wrap; gap: 6px; }
   .manual-page .audio-timer { margin-left: 0; }
   .manual-page .audio-text { font-size: 13px; line-height: 1.6; }
+  .manual-page .audio-icon { width: 34px; height: 34px; font-size: 16px; }
 
   /* Note box */
-  .manual-page .note-box { flex-direction: column; gap: 8px; padding: 16px; }
+  .manual-page .note-box { flex-direction: column; gap: 8px; padding: 14px; }
+  .manual-page .note-box p { font-size: 12px; }
 
   /* Rubric */
   .manual-page .rubric-head { display: none; }
   .manual-page .rubric-table { border: none; }
   .manual-page .rubric-row { display: flex; flex-direction: column; border: 1px solid var(--border2); border-radius: 12px; margin-bottom: 8px; overflow: hidden; }
-  .manual-page .rubric-cell { border-right: none !important; border-bottom: 1px solid var(--border2); font-size: 12px; }
+  .manual-page .rubric-cell { border-right: none !important; border-bottom: 1px solid var(--border2); font-size: 12px; padding: 10px 14px; }
   .manual-page .rubric-cell:last-child { border-bottom: none; }
-  .manual-page .rubric-score-legend { gap: 10px; }
-  .manual-page .rubric-score-item { padding: 8px 12px; }
+  .manual-page .rubric-score-legend { gap: 8px; }
+  .manual-page .rubric-score-item { padding: 6px 10px; }
 
   /* TL;DR */
-  .manual-page .chapter-tldr { padding: 20px; margin: -12px 0 32px; }
-  .manual-page .chapter-tldr-list li { font-size: 13px; }
+  .manual-page .chapter-tldr { padding: 16px 18px; margin: -8px 0 24px; }
+  .manual-page .chapter-tldr-list li { font-size: 12px; gap: 8px; }
+  .manual-page .chapter-tldr-title { font-size: 16px; }
 
   /* Search */
-  .manual-page .search-overlay { padding-top: 16px; }
-  .manual-page .search-box { padding: 0 12px; }
-  .manual-page .search-input-wrap { padding: 14px 16px; border-radius: 14px; }
+  .manual-page .search-overlay { padding-top: 12px; }
+  .manual-page .search-box { padding: 0 8px; }
+  .manual-page .search-input-wrap { padding: 12px 14px; border-radius: 12px; gap: 10px; }
   .manual-page .search-input { font-size: 16px; }
-  .manual-page .search-result-item { padding: 12px 16px; }
+  .manual-page .search-result-item { padding: 10px 14px; }
+  .manual-page .search-result-text { font-size: 13px; }
 
   /* Display headings inside content */
-  .manual-page .display { font-size: 22px !important; }
+  .manual-page .display { font-size: 20px !important; }
 
   /* Footer */
-  .manual-page #footer { padding: 40px 0; }
-  .manual-page .footer-logo { font-size: 24px; letter-spacing: 4px; }
+  .manual-page #footer { padding: 32px 0; }
+  .manual-page .footer-logo { font-size: 22px; letter-spacing: 4px; }
+  .manual-page .footer-tagline { font-size: 11px; }
+
+  /* Favoritable card footer */
+  .manual-page .fav-footer-bar { padding: 5px 10px; margin-top: 6px; }
+  .manual-page .fav-footer-label { font-size: 9px; max-width: 65%; }
+  .manual-page .fav-footer-btn { padding: 3px 8px; font-size: 10px; }
+
+  /* Chapter read check */
+  .manual-page .chapter-read-check { font-size: 11px; padding: 5px 12px; }
+
+  /* Chapter fav button */
+  .manual-page .chapter-fav-btn { top: -4px; }
+
+  /* Expand CTA */
+  .manual-page .expand-cta { padding: 12px 18px; font-size: 12px; }
+
+  /* Ornament */
+  .manual-page .ornament::before, .manual-page .ornament::after { width: 40px; }
+  .manual-page .ornament span { font-size: 12px; letter-spacing: 2px; }
+
+  /* Reading progress */
+  .reading-progress { padding: 16px 16px 0; }
+  .reading-progress__chip { padding: 4px 10px; font-size: 10px; }
+
+  /* Notes drawer */
+  .nd-panel { width: min(360px, 95vw); }
+  .nd-header { padding: 16px 16px 14px; }
+  .nd-header__title { font-size: 18px; }
+  .nd-tabs { padding: 10px 16px; }
+  .nd-chapters { padding: 12px 16px; gap: 5px; }
+  .nd-chip { padding: 4px 10px; font-size: 10px; }
+  .nd-editor { padding: 16px; }
+  .nd-all { padding: 16px; }
 
   /* Appendix chapter headers */
-  .manual-page section > .page-wrap > .chapter-header .ch-num { font-size: clamp(40px, 12vw, 60px) !important; }
+  .manual-page section > .page-wrap > .chapter-header .ch-num { font-size: clamp(36px, 12vw, 56px) !important; }
+
+  /* Scripts mode banner */
+  .manual-page.scripts-mode::before { font-size: 10px; padding: 8px 12px; }
+}
+
+/* Extra small screens */
+@media (max-width: 380px) {
+  .manual-page .page-wrap { padding-left: 12px !important; padding-right: 12px !important; }
+  .manual-page .cover-inner { padding: 32px 12px 28px; }
+  .manual-page .cover-title { font-size: 28px; }
+  .manual-page .cover-stat-num { font-size: 20px; }
+  .manual-page .chapter-header h2 { font-size: 22px !important; }
+  .manual-page .tab-item span { font-size: 8px; max-width: 40px; }
+  .manual-page .kpi-grid { grid-template-columns: 1fr; }
+  .manual-page .acc-grid { grid-template-columns: 1fr; }
+  .manual-page .bottom-tab-bar { width: calc(100% - 8px); border-radius: 14px; }
+  .manual-page .card { padding: 14px; }
+  .manual-page .card-check { padding: 14px; }
+  .manual-page .card-obj { padding: 14px; }
+  .manual-page .card-audio { padding: 14px; }
+  .nd-panel { width: 100vw; }
 }
 
 @media print {
