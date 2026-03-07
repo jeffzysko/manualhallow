@@ -1016,15 +1016,15 @@ body { padding-bottom: 72px; }
 
 /* ===== MOBILE DRAWER ===== */
 .mobile-drawer-overlay {
-  display: none;
   position: fixed; inset: 0; z-index: 250;
   background: rgba(0,0,0,0.6);
   backdrop-filter: blur(4px);
   -webkit-backdrop-filter: blur(4px);
   opacity: 0; pointer-events: none;
   transition: opacity .3s;
+  visibility: hidden;
 }
-.mobile-drawer-overlay.open { opacity: 1; pointer-events: auto; }
+.mobile-drawer-overlay.open { opacity: 1; pointer-events: auto; visibility: visible; }
 
 .mobile-drawer {
   position: fixed; left: 0; top: 0; bottom: 0; z-index: 260;
@@ -1086,16 +1086,15 @@ body { padding-bottom: 72px; }
 @media (max-width: 640px) {
   .tab-sumario-mobile { display: flex; }
 }
-}
 
 /* PDF modal overlay */
 .pdf-modal {
   position: fixed; inset: 0; z-index: 500;
   background: rgba(0,0,0,0.8); backdrop-filter: blur(10px);
-  display: flex; align-items: center; justify-content: center;
-  opacity: 0; pointer-events: none; transition: opacity .25s;
+  display: none; align-items: center; justify-content: center;
+  transition: opacity .25s;
 }
-.pdf-modal.open { opacity: 1; pointer-events: all; }
+.pdf-modal.open { display: flex; opacity: 1; }
 .pdf-modal-box {
   background: var(--card); border: 1px solid var(--border);
   border-radius: 24px; padding: 48px; max-width: 560px; width: 90%;
