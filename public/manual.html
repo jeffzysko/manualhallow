@@ -5079,9 +5079,110 @@ document.addEventListener('keydown', e => {
   if (e.key === 'Escape') closeSearch();
 });
 
-function highlight(text, query) {
-  const safe = query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-  return text.replace(new RegExp(`(${safe})`, 'gi'), '<mark>$1</mark>');
+function highlight(text, terms) {
+  let result = text;
+  terms.forEach(t => {
+    if (t.length < 2) return;
+    const safe = t.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    result = result.replace(new RegExp(`(${safe})`, 'gi'), '<mark>$1</mark>');
+  });
+  return result;
+}
+
+// Synonym / related terms map for intelligent search
+const synonymMap = {
+  'preço': ['valor', 'custo', 'investimento', 'orçamento', 'desconto', 'pagamento', 'parcela', 'barato', 'caro'],
+  'valor': ['preço', 'custo', 'investimento', 'orçamento'],
+  'desconto': ['preço', 'valor', 'promoção', 'condição especial', 'negociação'],
+  'objeção': ['objeções', 'resistência', 'dúvida', 'contorno', 'rebater', 'resposta'],
+  'objeções': ['objeção', 'resistência', 'dúvida', 'contorno', 'rebater'],
+  'script': ['scripts', 'roteiro', 'fala', 'diálogo', 'abordagem', 'texto'],
+  'scripts': ['script', 'roteiro', 'fala', 'diálogo', 'abordagem'],
+  'fechamento': ['fechar', 'venda', 'conversão', 'assinatura', 'contrato', 'proposta'],
+  'fechar': ['fechamento', 'venda', 'conversão'],
+  'abertura': ['abrir', 'início', 'primeiro contato', 'rapport', 'saudação'],
+  'follow': ['followup', 'follow-up', 'acompanhamento', 'retorno', 'recontato'],
+  'followup': ['follow-up', 'follow up', 'acompanhamento', 'retorno'],
+  'acompanhamento': ['follow-up', 'followup', 'retorno', 'recontato'],
+  'cliente': ['lead', 'prospect', 'comprador', 'consumidor', 'pessoa'],
+  'lead': ['cliente', 'prospect', 'contato', 'oportunidade'],
+  'concorrente': ['concorrência', 'competidor', 'marca', 'comparação', 'rival'],
+  'concorrência': ['concorrente', 'competidor', 'comparação'],
+  'produto': ['película', 'filme', 'item', 'solução', 'serviço'],
+  'película': ['produto', 'filme', 'ppf', 'proteção', 'blindagem'],
+  'ppf': ['película', 'paint protection film', 'proteção', 'filme'],
+  'instalação': ['instalar', 'aplicação', 'aplicar', 'colocação', 'serviço'],
+  'garantia': ['garantias', 'segurança', 'proteção', 'cobertura', 'durabilidade'],
+  'qualidade': ['premium', 'excelência', 'padrão', 'superior', 'diferencial'],
+  'treinamento': ['treino', 'capacitação', 'roleplay', 'prática', 'avaliação', 'rubrica'],
+  'roleplay': ['treinamento', 'simulação', 'prática', 'encenação'],
+  'whatsapp': ['mensagem', 'chat', 'conversa', 'texto', 'contato'],
+  'telefone': ['ligação', 'chamada', 'ligar', 'contato'],
+  'proposta': ['orçamento', 'cotação', 'oferta', 'apresentação'],
+  'diagnóstico': ['avaliação', 'inspeção', 'análise', 'vistoria', 'foto'],
+  'foto': ['fotos', 'imagem', 'diagnóstico', 'registro', 'visual'],
+  'agendamento': ['agendar', 'agenda', 'marcar', 'horário', 'visita'],
+  'rapport': ['conexão', 'empatia', 'relacionamento', 'abertura', 'confiança'],
+  'urgência': ['urgente', 'escassez', 'prazo', 'tempo limitado', 'oportunidade'],
+  'checklist': ['lista', 'verificação', 'conferência', 'formulário'],
+};
+
+// Fuzzy match: allows 1 typo for words >= 4 chars
+function fuzzyMatch(text, query) {
+  if (query.length < 4) return text.includes(query);
+  if (text.includes(query)) return true;
+  // Simple Levenshtein-based word check
+  const words = text.split(/\s+/);
+  for (const word of words) {
+    if (word.length < 3) continue;
+    if (levenshtein(word.substring(0, query.length + 1).toLowerCase(), query) <= 1) return true;
+  }
+  return false;
+}
+
+function levenshtein(a, b) {
+  const m = a.length, n = b.length;
+  if (Math.abs(m - n) > 2) return 3; // early exit
+  const dp = Array.from({length: m + 1}, (_, i) => i);
+  for (let j = 1; j <= n; j++) {
+    let prev = dp[0]; dp[0] = j;
+    for (let i = 1; i <= m; i++) {
+      const tmp = dp[i];
+      dp[i] = a[i-1] === b[j-1] ? prev : 1 + Math.min(prev, dp[i], dp[i-1]);
+      prev = tmp;
+    }
+  }
+  return dp[m];
+}
+
+function getExpandedTerms(query) {
+  const lower = query.toLowerCase();
+  const words = lower.split(/\s+/).filter(w => w.length >= 2);
+  const allTerms = new Set(words);
+  allTerms.add(lower);
+  words.forEach(w => {
+    const syns = synonymMap[w];
+    if (syns) syns.forEach(s => allTerms.add(s));
+  });
+  return Array.from(allTerms);
+}
+
+function scoreHit(item, queryLower, expandedTerms) {
+  const textLower = item.text.toLowerCase();
+  // Exact match gets highest score
+  if (textLower.includes(queryLower)) return 100;
+  // Individual word matches
+  const queryWords = queryLower.split(/\s+/).filter(w => w.length >= 2);
+  let wordScore = 0;
+  queryWords.forEach(w => { if (textLower.includes(w)) wordScore += 30; });
+  if (wordScore > 0) return wordScore;
+  // Synonym matches
+  let synScore = 0;
+  expandedTerms.forEach(t => { if (textLower.includes(t)) synScore += 15; });
+  if (synScore > 0) return synScore;
+  // Fuzzy match
+  if (fuzzyMatch(textLower, queryLower)) return 5;
+  return 0;
 }
 
 searchInput.addEventListener('input', () => {
@@ -5091,25 +5192,53 @@ searchInput.addEventListener('input', () => {
     return;
   }
   const lower = q.toLowerCase();
-  const hits = searchIndex.filter(item => item.text.toLowerCase().includes(lower)).slice(0, 18);
+  const expandedTerms = getExpandedTerms(q);
+  const highlightTerms = [q, ...expandedTerms.filter(t => t !== lower)];
+
+  // Score and sort
+  const scored = [];
+  searchIndex.forEach((item, idx) => {
+    const score = scoreHit(item, lower, expandedTerms);
+    if (score > 0) scored.push({ ...item, score, idx });
+  });
+  scored.sort((a, b) => b.score - a.score);
+  const hits = scored.slice(0, 20);
 
   if (hits.length === 0) {
     resultsContainer.innerHTML = `<div class="search-empty">Nenhum resultado para "<strong>${q}</strong>"</div>`;
     return;
   }
 
-  resultsContainer.innerHTML = hits.map((hit, i) =>
-    `<div class="search-result-item" data-idx="${i}">
-      <div class="search-result-chapter">${hit.chapter}</div>
-      <div class="search-result-text">${highlight(hit.text.substring(0, 200), q)}</div>
-    </div>`
-  ).join('');
+  // Separate exact vs related
+  const exact = hits.filter(h => h.score >= 30);
+  const related = hits.filter(h => h.score < 30);
 
-  resultsContainer.querySelectorAll('.search-result-item').forEach((el, i) => {
+  let html = '';
+  if (exact.length > 0) {
+    html += exact.map(hit =>
+      `<div class="search-result-item" data-idx="${hit.idx}">
+        <div class="search-result-chapter">${hit.chapter}</div>
+        <div class="search-result-text">${highlight(hit.text.substring(0, 200), highlightTerms)}</div>
+      </div>`
+    ).join('');
+  }
+  if (related.length > 0) {
+    html += `<div class="search-related-label">Assuntos relacionados</div>`;
+    html += related.map(hit =>
+      `<div class="search-result-item search-result-related" data-idx="${hit.idx}">
+        <div class="search-result-chapter">${hit.chapter}</div>
+        <div class="search-result-text">${highlight(hit.text.substring(0, 200), highlightTerms)}</div>
+      </div>`
+    ).join('');
+  }
+
+  resultsContainer.innerHTML = html;
+
+  resultsContainer.querySelectorAll('.search-result-item').forEach(el => {
     el.addEventListener('click', () => {
+      const idx = parseInt(el.dataset.idx);
+      const target = searchIndex[idx].element;
       closeSearch();
-      const target = hits[i].element;
-      // Expand section if collapsed
       const coll = target.closest('.section-collapsible');
       if (coll && coll.classList.contains('collapsed')) {
         coll.classList.remove('collapsed');
