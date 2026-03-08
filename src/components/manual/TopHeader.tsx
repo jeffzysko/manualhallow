@@ -1,9 +1,14 @@
 import { useAuth } from "@/contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
-import { useState, useEffect, useRef, useCallback } from "react";
+import { useState, useEffect, useRef } from "react";
 import { supabase } from "@/integrations/supabase/client";
 
-const TopHeader = () => {
+interface TopHeaderProps {
+  onOpenSearch?: () => void;
+  onOpenFavorites?: () => void;
+}
+
+const TopHeader = ({ onOpenSearch, onOpenFavorites }: TopHeaderProps) => {
   const { user, signOut } = useAuth();
   const navigate = useNavigate();
   const [scrolled, setScrolled] = useState(false);
@@ -57,57 +62,76 @@ const TopHeader = () => {
           <span className="top-header__logo-sub">Manual de Vendas</span>
         </div>
 
-        {/* User Area */}
-        {user ? (
-          <div className="top-header__user">
-            <button
-              ref={avatarRef}
-              className="top-header__avatar"
-              onClick={() => setMenuOpen(!menuOpen)}
-              aria-label="Menu do usuário"
-            >
-              {initials}
+        {/* Actions */}
+        <div className="top-header__actions">
+          {onOpenSearch && (
+            <button className="top-header__icon-btn" onClick={onOpenSearch} aria-label="Buscar" title="Buscar (⌘K)">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <circle cx="11" cy="11" r="8" />
+                <path d="m21 21-4.35-4.35" />
+              </svg>
             </button>
+          )}
+          {onOpenFavorites && (
+            <button className="top-header__icon-btn" onClick={onOpenFavorites} aria-label="Favoritos" title="Favoritos">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+              </svg>
+            </button>
+          )}
 
-            {menuOpen && (
-              <div ref={dropdownRef} className="top-header__dropdown">
-                <div className="top-header__dropdown-header">
-                  <div className="top-header__dropdown-avatar">{initials}</div>
-                  <div>
-                    {user.user_metadata?.full_name && (
-                      <p className="top-header__dropdown-name">{user.user_metadata.full_name}</p>
-                    )}
-                    <p className="top-header__dropdown-email">{user.email}</p>
+          {/* User Area */}
+          {user ? (
+            <div className="top-header__user">
+              <button
+                ref={avatarRef}
+                className="top-header__avatar"
+                onClick={() => setMenuOpen(!menuOpen)}
+                aria-label="Menu do usuário"
+              >
+                {initials}
+              </button>
+
+              {menuOpen && (
+                <div ref={dropdownRef} className="top-header__dropdown">
+                  <div className="top-header__dropdown-header">
+                    <div className="top-header__dropdown-avatar">{initials}</div>
+                    <div>
+                      {user.user_metadata?.full_name && (
+                        <p className="top-header__dropdown-name">{user.user_metadata.full_name}</p>
+                      )}
+                      <p className="top-header__dropdown-email">{user.email}</p>
+                    </div>
                   </div>
-                </div>
-                <div className="top-header__dropdown-divider" />
-                {isAdmin && (
-                  <button className="top-header__dropdown-btn" onClick={() => { setMenuOpen(false); navigate("/admin"); }}>
+                  <div className="top-header__dropdown-divider" />
+                  {isAdmin && (
+                    <button className="top-header__dropdown-btn" onClick={() => { setMenuOpen(false); navigate("/admin"); }}>
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <rect x="3" y="3" width="7" height="7" />
+                        <rect x="14" y="3" width="7" height="7" />
+                        <rect x="3" y="14" width="7" height="7" />
+                        <rect x="14" y="14" width="7" height="7" />
+                      </svg>
+                      Painel Admin
+                    </button>
+                  )}
+                  <button className="top-header__dropdown-btn" onClick={handleSignOut}>
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                      <rect x="3" y="3" width="7" height="7" />
-                      <rect x="14" y="3" width="7" height="7" />
-                      <rect x="3" y="14" width="7" height="7" />
-                      <rect x="14" y="14" width="7" height="7" />
+                      <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+                      <polyline points="16 17 21 12 16 7" />
+                      <line x1="21" y1="12" x2="9" y2="12" />
                     </svg>
-                    Painel Admin
+                    Sair da conta
                   </button>
-                )}
-                <button className="top-header__dropdown-btn" onClick={handleSignOut}>
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
-                    <polyline points="16 17 21 12 16 7" />
-                    <line x1="21" y1="12" x2="9" y2="12" />
-                  </svg>
-                  Sair da conta
-                </button>
-              </div>
-            )}
-          </div>
-        ) : (
-          <button className="top-header__login-btn" onClick={() => navigate("/auth")}>
-            Entrar
-          </button>
-        )}
+                </div>
+              )}
+            </div>
+          ) : (
+            <button className="top-header__login-btn" onClick={() => navigate("/auth")}>
+              Entrar
+            </button>
+          )}
+        </div>
       </div>
     </header>
   );
