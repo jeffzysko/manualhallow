@@ -1995,7 +1995,15 @@ body { overflow-x: hidden; }
 .ai-chat-clear:hover { color: var(--red); background: var(--red-dim); }
 
 @media (max-width: 480px) {
-  .ai-chat-drawer { height: 85vh; max-height: none; border-radius: 16px 16px 0 0; }
+  .ai-chat-overlay { align-items: stretch; }
+  .ai-chat-drawer {
+    height: 100vh;
+    height: 100dvh;
+    max-height: none;
+    max-width: none;
+    border-radius: 0;
+    padding-top: env(safe-area-inset-top, 0px);
+  }
   .ai-chat-msg { max-width: 92%; }
   .ai-chat-suggestion { font-size: 12px; padding: 6px 12px; }
 }

@@ -1,4 +1,4 @@
-import { useState, ReactNode } from "react";
+import { useState, useRef, useCallback, ReactNode } from "react";
 import FavoriteButton from "./FavoriteButton";
 import { useFavoritesContext } from "@/contexts/FavoritesContext";
 import { useInView } from "@/hooks/useInView";
