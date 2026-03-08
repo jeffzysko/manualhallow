@@ -254,7 +254,7 @@ html { scroll-behavior: smooth; -webkit-overflow-scrolling: touch; }
 .manual-page .cert-card p { font-size: 13px; color: var(--gray); line-height: 1.6; }
 
 /* PONTOS LIST */
-.manual-page .pontos-list { display: flex; flex-direction: column; gap: 2px; border: 1px solid var(--border2); border-radius: 16px; overflow: hidden; }
+.manual-page .pontos-list { display: flex; flex-direction: column; gap: 2px; border: 1px solid var(--border2); border-radius: 16px; overflow: hidden; margin-bottom: 28px; }
 .manual-page .ponto-item { background: var(--card); padding: 20px 28px; display: flex; align-items: center; gap: 20px; border-bottom: 1px solid var(--border2); transition: background .2s; }
 .manual-page .ponto-item:last-child { border-bottom: none; }
 .manual-page .ponto-item:hover { background: var(--card2); }
