@@ -822,7 +822,7 @@ html { scroll-behavior: smooth; -webkit-overflow-scrolling: touch; }
   .manual-page .section-gap-sm { padding: 36px 0; }
 
   /* ── Top header ── */
-  .top-header { height: 56px; }
+  .top-header { height: calc(56px + env(safe-area-inset-top, 0px)); }
   .top-header__inner { padding: 0 12px; }
   .top-header__logo-text { font-size: 17px; letter-spacing: 3px; }
   .top-header__logo-sub { font-size: 9px; }
