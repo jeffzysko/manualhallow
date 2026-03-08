@@ -1,6 +1,9 @@
 /* ===== MANUAL HALLOW — DESIGN SYSTEM ===== */
 /* All styles scoped to .manual-page to avoid Tailwind conflicts */
 
+/* GPU-accelerated smooth scrolling */
+html { scroll-behavior: smooth; -webkit-overflow-scrolling: touch; }
+
 .manual-page {
   --bg:          #09090F;
   --bg2:         #0F1018;
@@ -33,10 +36,14 @@
   font-size: 16px;
   line-height: 1.65;
   -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
   overflow-x: hidden;
   min-height: 100vh;
   padding-top: 64px;
   padding-bottom: 96px;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
 }
 
 .manual-page *, .manual-page *::before, .manual-page *::after { box-sizing: border-box; }
@@ -334,7 +341,7 @@
 .manual-page .fade-in { animation: manual-fadeIn 1s ease both; }
 
 /* BOTTOM TAB BAR */
-.manual-page .bottom-tab-bar { position: fixed; bottom: 16px; left: 50%; transform: translateX(-50%); z-index: 200; display: flex; justify-content: center; align-items: stretch; width: auto; max-width: 520px; min-width: 320px; background: rgba(15,16,24,0.72); backdrop-filter: saturate(200%) blur(24px); -webkit-backdrop-filter: saturate(200%) blur(24px); border: 1px solid rgba(201,169,106,0.15); border-radius: 20px; box-shadow: 0 8px 32px rgba(0,0,0,0.5), 0 2px 8px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.06); overflow: hidden; animation: manual-tab-entrance 0.6s cubic-bezier(0.16, 1, 0.3, 1) both; }
+.manual-page .bottom-tab-bar { position: fixed; bottom: 16px; left: 50%; transform: translateX(-50%); z-index: 200; display: flex; justify-content: center; align-items: stretch; width: auto; max-width: 520px; min-width: 320px; background: rgba(15,16,24,0.72); backdrop-filter: saturate(200%) blur(24px); -webkit-backdrop-filter: saturate(200%) blur(24px); border: 1px solid rgba(201,169,106,0.15); border-radius: 20px; box-shadow: 0 8px 32px rgba(0,0,0,0.5), 0 2px 8px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.06); overflow: hidden; animation: manual-tab-entrance 0.6s cubic-bezier(0.16, 1, 0.3, 1) both; contain: layout style; will-change: transform; }
 @keyframes manual-tab-entrance { 0% { opacity: 0; transform: translateX(-50%) translateY(40px) scale(0.9); } 100% { opacity: 1; transform: translateX(-50%) translateY(0) scale(1); } }
 .manual-page .bottom-tab-bar::before { content: ''; position: absolute; bottom: -8px; left: 20%; right: 20%; height: 24px; background: radial-gradient(ellipse, rgba(201,169,106,0.15) 0%, transparent 70%); filter: blur(12px); pointer-events: none; z-index: -1; }
 .manual-page .tab-item { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; padding: 12px 12px 10px; cursor: pointer; background: none; border: none; color: var(--gray); font-family: 'Plus Jakarta Sans', sans-serif; font-size: 10px; font-weight: 600; letter-spacing: 0.5px; transition: color .2s, transform .2s, background .2s; -webkit-tap-highlight-color: transparent; position: relative; border-radius: 16px; }
@@ -419,10 +426,10 @@
 .manual-page .chapter-tldr-list li { display: flex; align-items: flex-start; gap: 12px; font-size: 14px; color: var(--gray); line-height: 1.6; }
 .manual-page .chapter-tldr-list li::before { content: '→'; color: var(--gold); font-weight: 700; flex-shrink: 0; margin-top: 1px; }
 
-/* PROGRESS BAR */
-.manual-page .progress-bar { position: fixed; top: 0; left: 0; width: 100%; height: 3px; background: linear-gradient(90deg, var(--gold), var(--gold-light)); z-index: 9999; transform-origin: left; will-change: transform; box-shadow: 0 0 12px rgba(201,169,106,0.6); }
+/* PROGRESS BAR — GPU accelerated */
+.manual-page .progress-bar { position: fixed; top: 0; left: 0; width: 100%; height: 3px; background: linear-gradient(90deg, var(--gold), var(--gold-light)); z-index: 9999; transform-origin: left; will-change: transform; box-shadow: 0 0 12px rgba(201,169,106,0.6); contain: strict; }
 
-/* TOP HEADER */
+/* TOP HEADER — GPU composited */
 .top-header {
   position: fixed;
   top: 0;
@@ -437,6 +444,8 @@
   -webkit-backdrop-filter: blur(20px);
   border-bottom: 1px solid transparent;
   transition: background 0.3s, border-color 0.3s, box-shadow 0.3s;
+  will-change: background, border-color;
+  contain: layout style;
 }
 .top-header--scrolled {
   background: rgba(9,9,15,0.92);
