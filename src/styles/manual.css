@@ -182,7 +182,7 @@ html { scroll-behavior: smooth; -webkit-overflow-scrolling: touch; }
 .manual-page .audio-text { font-size: 15px; color: var(--white); line-height: 1.7; font-style: italic; }
 
 /* CALLOUT */
-.manual-page .callout { border-left: 3px solid var(--gold); padding: 24px 28px; margin: 28px 0; background: var(--gold-dim); border-radius: 0 12px 12px 0; }
+.manual-page .callout { border-left: 3px solid var(--gold); padding: 24px 28px; margin: 36px 0; background: var(--gold-dim); border-radius: 0 12px 12px 0; }
 .manual-page .callout p { font-family: 'Cormorant Garamond', serif; font-size: 20px; color: var(--white); line-height: 1.6; font-style: italic; font-weight: 400; }
 
 /* KEY PHRASE */
