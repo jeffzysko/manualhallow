@@ -1573,3 +1573,34 @@
 .auth-footer { text-align: center; margin-top: 20px; }
 .auth-link { background: none; border: none; color: var(--gold); font-size: 13px; cursor: pointer; text-decoration: underline; opacity: 0.8; }
 .auth-link:hover { opacity: 1; }
+
+/* ADMIN PAGE CLASSES */
+.admin-center { min-height: 100vh; display: flex; align-items: center; justify-content: center; }
+.admin-error-page { flex-direction: column; gap: 16px; padding-top: 0; }
+.admin-loading-text { color: var(--gray); }
+.admin-error-text { color: var(--red); font-size: 15px; }
+.admin-back-btn { background: var(--gold-dim); color: var(--gold); border: 1px solid var(--border); border-radius: 10px; padding: 10px 24px; font-size: 13px; font-weight: 600; cursor: pointer; letter-spacing: 1px; transition: background 0.15s; }
+.admin-back-btn:hover { background: rgba(201,169,106,0.2); }
+.admin-content { padding-top: 40px; padding-bottom: 80px; }
+.admin-page-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 32px; flex-wrap: wrap; gap: 12px; }
+.admin-title { font-size: 32px; color: var(--gold); margin-bottom: 4px; }
+.admin-desc { color: var(--gray); font-size: 13px; }
+.admin-section-title { color: var(--white); font-size: 18px; margin-bottom: 16px; }
+.admin-empty { color: var(--gray); font-size: 13px; }
+.admin-table-name { color: var(--white); font-size: 14px; }
+.admin-user-name { color: var(--white); font-size: 14px; display: block; }
+.admin-user-name--bold { font-weight: 600; }
+.admin-user-email { color: var(--gray); font-size: 12px; }
+.admin-user-meta { display: flex; align-items: center; gap: 10px; }
+.admin-user-info { flex: 1; min-width: 200px; }
+.admin-user-badges { display: flex; align-items: center; gap: 8px; }
+.admin-user-actions { display: flex; align-items: center; gap: 8px; }
+.admin-status--active { color: var(--green); font-size: 11px; font-weight: 600; }
+.admin-status--inactive { color: var(--red); font-size: 11px; font-weight: 600; }
+.admin-date { color: var(--gray); font-size: 11px; }
+.admin-badge--blue { background: var(--blue-dim); color: var(--blue); }
+.admin-table-row--wrap { flex-wrap: wrap; gap: 8px; }
+.admin-toggle-btn { padding: 5px 14px; font-size: 11px; font-weight: 600; border-radius: 8px; border: 1px solid; cursor: pointer; transition: opacity 0.15s; }
+.admin-toggle-btn:disabled { opacity: 0.5; cursor: wait; }
+.admin-toggle-btn--danger { background: var(--red-dim); color: var(--red); border-color: rgba(224,92,92,0.3); }
+.admin-toggle-btn--success { background: var(--green-dim); color: var(--green); border-color: rgba(92,184,138,0.3); }
