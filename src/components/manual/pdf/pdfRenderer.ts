@@ -26,6 +26,12 @@ interface PDFCtx {
   pageH: number;
 }
 
+function safeY(ctx: PDFCtx) {
+  if (isNaN(ctx.y) || ctx.y === undefined || ctx.y === null) {
+    ctx.y = ctx.margin;
+  }
+}
+
 function paintBg(ctx: PDFCtx) {
   ctx.doc.setFillColor(...C.bg);
   ctx.doc.rect(0, 0, ctx.pageW, ctx.pageH, "F");
@@ -38,6 +44,8 @@ function addPage(ctx: PDFCtx) {
 }
 
 function checkSpace(ctx: PDFCtx, needed: number) {
+  safeY(ctx);
+  if (isNaN(needed)) needed = 20;
   if (ctx.y + needed > ctx.pageH - ctx.margin - 10) addPage(ctx);
 }
 
@@ -713,56 +721,68 @@ export function renderBlocksToPDF(
   blocks: ContentBlock[],
 ) {
   for (const block of blocks) {
-    switch (block.type) {
-      case "h3":
-        renderH3(ctx, block.text!);
-        break;
-      case "h4":
-        renderH4(ctx, block.text!);
-        break;
-      case "p":
-        renderP(ctx, block.text!);
-        break;
-      case "callout":
-        renderCallout(ctx, block.text!);
-        break;
-      case "step":
-        renderSteps(ctx, block.items!);
-        break;
-      case "script-dialog":
-        renderScriptDialog(ctx, block.text!, block.items!);
-        break;
-      case "card-grid":
-      case "cert-grid":
-        renderCardGrid(ctx, block.items!);
-        break;
-      case "compare-table":
-        if (block.items?.[0]) renderCompareTable(ctx, block.items[0].heads, block.items[0].rows);
-        break;
-      case "followup":
-        renderFollowup(ctx, block.items!);
-        break;
-      case "numbered-point":
-        renderNumberedPoints(ctx, block.items!);
-        break;
-      case "phrase-columns":
-        renderPhraseColumns(ctx, block.items!);
-        break;
-      case "mind-grid":
-        renderMindGrid(ctx, block.items!);
-        break;
-      case "check-card":
-        renderCheckCard(ctx, block.text!, block.items!);
-        break;
-      case "list-item":
-        checkSpace(ctx, 8);
-        ctx.doc.setTextColor(...C.white);
-        ctx.doc.setFontSize(9);
-        ctx.doc.setFont("helvetica", "normal");
-        const liLines = ctx.doc.splitTextToSize(`  •  ${block.text}`, ctx.contentW - 6);
-        ctx.doc.text(liLines, ctx.margin + 3, ctx.y);
-        ctx.y += liLines.length * 4.5 + 2;
-        break;
+    try {
+      safeY(ctx);
+      switch (block.type) {
+        case "h3":
+          if (block.text) renderH3(ctx, block.text);
+          break;
+        case "h4":
+          if (block.text) renderH4(ctx, block.text);
+          break;
+        case "p":
+          if (block.text) renderP(ctx, block.text);
+          break;
+        case "callout":
+          if (block.text) renderCallout(ctx, block.text);
+          break;
+        case "step":
+          if (block.items?.length) renderSteps(ctx, block.items);
+          break;
+        case "script-dialog":
+          if (block.text && block.items?.length) renderScriptDialog(ctx, block.text, block.items);
+          break;
+        case "card-grid":
+        case "cert-grid":
+          if (block.items?.length) renderCardGrid(ctx, block.items);
+          break;
+        case "compare-table":
+          if (block.items?.[0]?.heads && block.items[0].rows) {
+            renderCompareTable(ctx, block.items[0].heads, block.items[0].rows);
+          }
+          break;
+        case "followup":
+          if (block.items?.length) renderFollowup(ctx, block.items);
+          break;
+        case "numbered-point":
+          if (block.items?.length) renderNumberedPoints(ctx, block.items);
+          break;
+        case "phrase-columns":
+          if (block.items?.length) renderPhraseColumns(ctx, block.items);
+          break;
+        case "mind-grid":
+          if (block.items?.length) renderMindGrid(ctx, block.items);
+          break;
+        case "check-card":
+          if (block.text && block.items?.length) renderCheckCard(ctx, block.text, block.items);
+          break;
+        case "list-item":
+          if (block.text) {
+            checkSpace(ctx, 8);
+            ctx.doc.setTextColor(...C.white);
+            ctx.doc.setFontSize(9);
+            ctx.doc.setFont("helvetica", "normal");
+            const liLines = ctx.doc.splitTextToSize(`  •  ${block.text}`, ctx.contentW - 6);
+            ctx.doc.text(liLines, ctx.margin + 3, ctx.y);
+            ctx.y += liLines.length * 4.5 + 2;
+          }
+          break;
+      }
+    } catch (err) {
+      console.warn("[PDF] Skipping block due to error:", block.type, err);
+      // Reset y to safe value and continue
+      safeY(ctx);
+      ctx.y += 4;
     }
   }
 }
