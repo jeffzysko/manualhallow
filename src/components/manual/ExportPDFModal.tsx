@@ -1,4 +1,4 @@
-import { useState, useCallback, useRef, useEffect } from "react";
+import { useState, useCallback, useRef } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { TOC_ITEMS } from "@/data/chapters";
@@ -24,19 +24,6 @@ const ExportPDFModal = ({ open, onClose }: ExportPDFModalProps) => {
   const [generating, setGenerating] = useState(false);
   const [renderForPDF, setRenderForPDF] = useState(false);
   const hiddenRef = useRef<HTMLDivElement>(null);
-  const pendingGenerateRef = useRef(false);
-
-  // When renderForPDF becomes true and DOM is ready, proceed with generation
-  useEffect(() => {
-    if (!renderForPDF || !pendingGenerateRef.current) return;
-    // Wait for lazy components to load
-    const timer = setTimeout(() => {
-      pendingGenerateRef.current = false;
-      actuallyGeneratePDF();
-    }, 2000);
-    return () => clearTimeout(timer);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [renderForPDF]);
 
   const toggleChapter = useCallback((id: string) => {
     setSelected(prev => {
@@ -55,16 +42,37 @@ const ExportPDFModal = ({ open, onClose }: ExportPDFModalProps) => {
     }
   }, [selected.size]);
 
-  const generatePDF = useCallback(() => {
-    if (selected.size === 0 || !user) return;
-    setGenerating(true);
-    pendingGenerateRef.current = true;
-    setRenderForPDF(true);
-  }, [selected, user]);
+  const waitForHiddenContent = (): Promise<void> => {
+    return new Promise((resolve) => {
+      let attempts = 0;
+      const check = () => {
+        attempts++;
+        const el = hiddenRef.current;
+        console.log(`[PDF] Polling attempt ${attempts}, ref exists: ${!!el}, children: ${el?.children?.length ?? 0}`);
+        if (el && el.children.length > 0) {
+          // Give lazy components extra time to render
+          setTimeout(resolve, 1500);
+        } else if (attempts >= 20) {
+          console.warn("[PDF] Gave up waiting for hidden content");
+          resolve();
+        } else {
+          setTimeout(check, 300);
+        }
+      };
+      setTimeout(check, 300);
+    });
+  };
 
-  const actuallyGeneratePDF = useCallback(async () => {
-    if (!user) return;
-    console.log("[PDF] Starting generation...");
+  const generatePDF = async () => {
+    if (selected.size === 0 || !user) return;
+    console.log("[PDF] Button clicked, starting...");
+    setGenerating(true);
+    setRenderForPDF(true);
+
+    // Wait a tick for React to render HiddenChapterRenderer
+    await new Promise(r => setTimeout(r, 100));
+    await waitForHiddenContent();
+    console.log("[PDF] Hidden content ready, building PDF...");
 
     try {
 
