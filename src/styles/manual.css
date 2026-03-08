@@ -1148,6 +1148,21 @@ body { overflow-x: hidden; }
   .admin-stat-num { font-size: 26px; }
 }
 
+/* PWA standalone mode — extra safe-area handling */
+@media all and (display-mode: standalone) {
+  .manual-page {
+    padding-top: calc(72px + env(safe-area-inset-top, 0px));
+  }
+  .top-header {
+    height: calc(72px + env(safe-area-inset-top, 0px));
+  }
+}
+
+/* Sections scroll-margin for fixed header clearance */
+.manual-page section[id] {
+  scroll-margin-top: calc(72px + env(safe-area-inset-top, 0px));
+}
+
 @media print {
   .manual-page .progress-bar, .manual-page .bottom-tab-bar, .manual-page .search-overlay { display: none !important; }
   .manual-page .section-collapsible.collapsed { max-height: 9999px !important; opacity: 1 !important; }
