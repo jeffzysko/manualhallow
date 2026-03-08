@@ -43,7 +43,7 @@ const CollapsibleChapter = ({
   const chapterLabel = `Cap. ${num.replace(/^0/, "")} — ${tag}`;
 
   return (
-    <section id={id} style={{ background: bgStyle, position: "relative" }}>
+    <section id={id} ref={sectionRef} style={{ background: bgStyle, position: "relative" }}>
       <div
         ref={animRef}
         className={`page-wrap section-gap chapter-animate${isVisible ? " chapter-visible" : ""}`}
