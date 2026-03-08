@@ -202,6 +202,7 @@ const AdminPage = () => {
             </div>
           </div>
         )}
+        {tab === "analytics" && <AnalyticsDashboard />}
       </div>
     </div>
   );
