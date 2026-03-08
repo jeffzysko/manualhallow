@@ -1644,7 +1644,7 @@
 .auth-recovery-title { color: var(--white); font-size: 16px; font-weight: 600; margin-bottom: 8px; }
 .auth-recovery-desc { color: var(--gray); font-size: 13px; }
 .auth-form { display: flex; flex-direction: column; gap: 14px; }
-.auth-input { background: var(--bg); border: 1px solid var(--border); border-radius: 10px; padding: 14px 16px; color: var(--white); font-size: 14px; outline: none; transition: border-color 0.15s; }
+.auth-input { background: var(--bg); border: 1px solid var(--border); border-radius: 10px; padding: 14px 16px; color: var(--white); font-size: 16px; outline: none; transition: border-color 0.15s; width: 100%; box-sizing: border-box; -webkit-appearance: none; }
 .auth-input:focus { border-color: var(--gold); }
 .auth-error { color: var(--red); font-size: 13px; }
 .auth-success { color: var(--green); font-size: 13px; }
