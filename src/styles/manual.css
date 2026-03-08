@@ -212,7 +212,7 @@ html { scroll-behavior: smooth; -webkit-overflow-scrolling: touch; }
 .manual-page .step-body p { font-size: 13px; color: var(--gray); line-height: 1.6; }
 
 /* FOLLOW-UP */
-.manual-page .followup-wrap { border: 1px solid var(--border2); border-radius: 16px; overflow: hidden; margin-bottom: 24px; }
+.manual-page .followup-wrap { border: 1px solid var(--border2); border-radius: 16px; overflow: hidden; margin-bottom: 28px; }
 .manual-page .followup-row { display: grid; grid-template-columns: 80px 1fr; gap: 0; margin-bottom: 2px; }
 .manual-page .followup-row:last-child { margin-bottom: 0; }
 .manual-page .fu-day { background: var(--card2); padding: 18px 16px; font-family: 'JetBrains Mono', monospace; font-size: 13px; color: var(--gold); font-weight: 600; text-align: center; display: flex; align-items: center; justify-content: center; border-right: 1px solid var(--border2); }
