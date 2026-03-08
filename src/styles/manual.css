@@ -190,7 +190,7 @@ html { scroll-behavior: smooth; -webkit-overflow-scrolling: touch; }
 .manual-page .key-phrase em { color: var(--gold); font-style: italic; }
 
 /* COMPARE TABLE */
-.manual-page .compare-table { border-radius: 16px; overflow: hidden; border: 1px solid var(--border2); margin-bottom: 32px; }
+.manual-page .compare-table { border-radius: 16px; overflow: hidden; border: 1px solid var(--border2); margin-bottom: 28px; }
 .manual-page .compare-head { display: grid; grid-template-columns: 1fr 1fr 1fr; background: var(--card2); }
 .manual-page .compare-head-cell { padding: 16px 20px; font-size: 12px; letter-spacing: 2px; text-transform: uppercase; font-weight: 700; border-right: 1px solid var(--border2); }
 .manual-page .compare-head-cell:last-child { border-right: none; }
