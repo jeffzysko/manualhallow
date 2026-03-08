@@ -1,4 +1,6 @@
-const ManualCover = () => (
+import { memo } from "react";
+
+const ManualCover = memo(() => (
   <section id="cover">
     <div className="cover-bg" />
     <div className="cover-grid" />
