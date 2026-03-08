@@ -485,6 +485,32 @@ html { scroll-behavior: smooth; -webkit-overflow-scrolling: touch; }
 @media (min-width: 480px) {
   .top-header__logo-sub { display: inline; }
 }
+.top-header__actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.top-header__icon-btn {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  border: 1px solid var(--border2);
+  background: transparent;
+  color: var(--gray);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: color 0.2s, background 0.2s, border-color 0.2s;
+}
+.top-header__icon-btn:hover {
+  color: var(--gold);
+  background: var(--gold-dim);
+  border-color: var(--border);
+}
+.top-header__icon-btn svg {
+  flex-shrink: 0;
+}
 .top-header__user {
   position: relative;
 }
