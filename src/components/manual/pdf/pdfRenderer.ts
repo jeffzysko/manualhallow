@@ -26,6 +26,12 @@ interface PDFCtx {
   pageH: number;
 }
 
+function safeY(ctx: PDFCtx) {
+  if (isNaN(ctx.y) || ctx.y === undefined || ctx.y === null) {
+    ctx.y = ctx.margin;
+  }
+}
+
 function paintBg(ctx: PDFCtx) {
   ctx.doc.setFillColor(...C.bg);
   ctx.doc.rect(0, 0, ctx.pageW, ctx.pageH, "F");
@@ -38,6 +44,8 @@ function addPage(ctx: PDFCtx) {
 }
 
 function checkSpace(ctx: PDFCtx, needed: number) {
+  safeY(ctx);
+  if (isNaN(needed)) needed = 20;
   if (ctx.y + needed > ctx.pageH - ctx.margin - 10) addPage(ctx);
 }
 
