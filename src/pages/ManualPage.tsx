@@ -172,8 +172,6 @@ const ManualPage = () => {
         <BottomTabBar
           onScrollTop={scrollToTop}
           onOpenDrawer={() => navigate("toc")}
-          onOpenSearch={() => setSearchOpen(true)}
-          onOpenFavorites={handleOpenFavorites}
           onOpenNotes={() => {
             if (!user) { routerNavigate("/auth"); return; }
             setNotesOpen(true);
