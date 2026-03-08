@@ -1,6 +1,9 @@
 /* ===== MANUAL HALLOW — DESIGN SYSTEM ===== */
 /* All styles scoped to .manual-page to avoid Tailwind conflicts */
 
+/* GPU-accelerated smooth scrolling */
+html { scroll-behavior: smooth; -webkit-overflow-scrolling: touch; }
+
 .manual-page {
   --bg:          #09090F;
   --bg2:         #0F1018;
