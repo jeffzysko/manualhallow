@@ -186,7 +186,7 @@ html { scroll-behavior: smooth; -webkit-overflow-scrolling: touch; }
 .manual-page .callout p { font-family: 'Cormorant Garamond', serif; font-size: 20px; color: var(--white); line-height: 1.6; font-style: italic; font-weight: 400; }
 
 /* KEY PHRASE */
-.manual-page .key-phrase { font-family: 'Cormorant Garamond', serif; font-size: clamp(28px, 3.5vw, 44px); font-weight: 600; color: var(--white); line-height: 1.2; padding: 40px 0; border-top: 1px solid var(--border2); border-bottom: 1px solid var(--border2); margin: 36px 0; }
+.manual-page .key-phrase { font-family: 'Cormorant Garamond', serif; font-size: clamp(28px, 3.5vw, 44px); font-weight: 600; color: var(--white); line-height: 1.2; padding: 48px 0; border-top: 1px solid var(--border2); border-bottom: 1px solid var(--border2); margin: 48px 0; }
 .manual-page .key-phrase em { color: var(--gold); font-style: italic; }
 
 /* COMPARE TABLE */
