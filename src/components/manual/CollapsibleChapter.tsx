@@ -1,4 +1,4 @@
-import { useState, useRef, useCallback, ReactNode } from "react";
+import { useState, useRef, useCallback, useEffect, ReactNode } from "react";
 import FavoriteButton from "./FavoriteButton";
 import { useFavoritesContext } from "@/contexts/FavoritesContext";
 import { useInView } from "@/hooks/useInView";
@@ -28,28 +28,54 @@ const CollapsibleChapter = ({
   const { isFavorite, toggleFavorite, isLoggedIn } = useFavoritesContext();
   const { ref: animRef, isVisible } = useInView();
   const sectionRef = useRef<HTMLElement>(null);
+  const expandInfoRef = useRef<{ viewportTop: number } | null>(null);
+
+  // ResizeObserver: when section resizes after expand, correct scroll drift
+  useEffect(() => {
+    const section = sectionRef.current;
+    if (!section || isCollapsed) return;
+    if (!expandInfoRef.current) return;
+
+    const savedTop = expandInfoRef.current.viewportTop;
+    let corrected = false;
+
+    const observer = new ResizeObserver(() => {
+      if (corrected) return;
+      const currentTop = section.getBoundingClientRect().top;
+      const drift = currentTop - savedTop;
+      if (Math.abs(drift) > 2) {
+        window.scrollBy({ top: drift, behavior: "instant" as ScrollBehavior });
+      }
+      // Keep observing for a bit (lazy content may load in stages)
+    });
+
+    observer.observe(section);
+
+    // Clean up after 3s — lazy content should be loaded by then
+    const cleanup = setTimeout(() => {
+      observer.disconnect();
+      expandInfoRef.current = null;
+      corrected = true;
+    }, 3000);
+
+    return () => {
+      observer.disconnect();
+      clearTimeout(cleanup);
+    };
+  }, [isCollapsed]);
 
   const handleExpand = useCallback(() => {
     const wasCollapsed = collapsed;
     
-    // Save the section's position relative to viewport BEFORE state change
-    const rect = sectionRef.current?.getBoundingClientRect();
-    const offsetFromViewport = rect?.top ?? 0;
+    // Save section's viewport position BEFORE state change
+    if (wasCollapsed && sectionRef.current) {
+      const rect = sectionRef.current.getBoundingClientRect();
+      expandInfoRef.current = { viewportTop: rect.top };
+    } else {
+      expandInfoRef.current = null;
+    }
     
     setCollapsed(prev => !prev);
-    
-    // After render, restore the section to the same viewport position
-    if (wasCollapsed && sectionRef.current) {
-      // Use setTimeout to wait for React render + Suspense resolve
-      setTimeout(() => {
-        if (!sectionRef.current) return;
-        const newRect = sectionRef.current.getBoundingClientRect();
-        const drift = newRect.top - offsetFromViewport;
-        if (Math.abs(drift) > 5) {
-          window.scrollBy({ top: drift, behavior: "instant" as ScrollBehavior });
-        }
-      }, 50);
-    }
   }, [collapsed]);
 
   const chapterLabel = `Cap. ${num.replace(/^0/, "")} — ${tag}`;
