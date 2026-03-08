@@ -385,6 +385,14 @@
 .manual-page .fav-overlay-item-chapter { color: var(--gray2); font-size: 11px; margin-top: 2px; }
 .manual-page .fav-overlay-item-remove { background: none; border: none; color: var(--red); font-size: 12px; cursor: pointer; padding: 4px 8px; flex-shrink: 0; opacity: 0.7; transition: opacity 0.15s; }
 .manual-page .fav-overlay-item-remove:hover { opacity: 1; }
+.manual-page .fav-confirm-group { display: flex; gap: 6px; flex-shrink: 0; }
+.manual-page .fav-confirm-yes { background: var(--red-dim); color: var(--red); border: 1px solid rgba(224,92,92,0.3); border-radius: 6px; padding: 3px 12px; font-size: 11px; font-weight: 600; cursor: pointer; }
+.manual-page .fav-confirm-no { background: var(--card2); color: var(--gray); border: 1px solid var(--border2); border-radius: 6px; padding: 3px 12px; font-size: 11px; font-weight: 600; cursor: pointer; }
+
+/* Skeleton */
+.manual-page .chapter-skeleton { padding: 40px 0; display: flex; flex-direction: column; gap: 14px; }
+.manual-page .chapter-skeleton-bar { background: var(--card2); border-radius: 6px; animation: skeleton-pulse 1.2s ease-in-out infinite; }
+@keyframes skeleton-pulse { 0%,100% { opacity: 0.4; } 50% { opacity: 0.8; } }
 
 /* COLLAPSIBLE */
 .manual-page .section-toggle { width: 100%; background: none; border: none; cursor: pointer; display: flex; align-items: center; justify-content: space-between; padding: 12px 0 0; color: inherit; font-family: inherit; text-align: left; }
