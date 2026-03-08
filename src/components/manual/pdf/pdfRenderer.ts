@@ -431,7 +431,8 @@ function renderScriptDialog(ctx: PDFCtx, title: string, lines: { who: string; te
     ctx.doc.setFont("helvetica", "bold");
     ctx.doc.text(line.who.toUpperCase(), ctx.margin + 4, ctx.y + 3);
     // Text
-    ctx.doc.setTextColor(line.isClient ? C.gray : C.white);
+    const textColor = line.isClient ? C.gray : C.white;
+    ctx.doc.setTextColor(...textColor);
     ctx.doc.setFontSize(9);
     ctx.doc.setFont("helvetica", "normal");
     const textLines = ctx.doc.splitTextToSize(line.text, ctx.contentW - 30);
