@@ -126,7 +126,7 @@ const ManualPage = () => {
           )}
           {notesOpen && <NotesDrawer open={notesOpen} onClose={() => setNotesOpen(false)} />}
           {aiChatOpen && <AIChatDrawer open={aiChatOpen} onClose={() => setAiChatOpen(false)} />}
-          {pdfExportOpen && <ExportPDFModal open={pdfExportOpen} onClose={() => setPdfExportOpen(false)} />}
+          
         </Suspense>
 
         <main role="main" id="main-content">
