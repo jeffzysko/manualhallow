@@ -1,11 +1,10 @@
-import { memo } from "react";
 import { TOC_ITEMS } from "@/data/chapters";
 
 interface ManualTOCProps {
   onNavigate: (target: string) => void;
 }
 
-const ManualTOC = memo(({ onNavigate }: ManualTOCProps) => (
+const ManualTOC = ({ onNavigate }: ManualTOCProps) => (
   <section id="toc">
     <div className="page-wrap">
       <div className="toc-header">
@@ -34,8 +33,6 @@ const ManualTOC = memo(({ onNavigate }: ManualTOCProps) => (
 
     </div>
   </section>
-));
-
-ManualTOC.displayName = "ManualTOC";
+);
 
 export default ManualTOC;

@@ -1,6 +1,4 @@
-import { memo } from "react";
-
-const ManualCover = memo(() => (
+const ManualCover = () => (
   <section id="cover">
     <div className="cover-bg" />
     <div className="cover-grid" />
@@ -68,8 +66,6 @@ const ManualCover = memo(() => (
       <span className="cover-edition">Guia Interno · Confidencial · 2026</span>
     </div>
   </section>
-));
-
-ManualCover.displayName = "ManualCover";
+);
 
 export default ManualCover;
