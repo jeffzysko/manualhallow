@@ -3,6 +3,9 @@
 
 /* GPU-accelerated smooth scrolling */
 html { scroll-behavior: smooth; -webkit-overflow-scrolling: touch; }
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+}
 
 .manual-page {
   --bg:          #09090F;
