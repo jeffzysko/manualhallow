@@ -2,6 +2,7 @@ import { useState, useRef, useCallback, useEffect, ReactNode } from "react";
 import FavoriteButton from "./FavoriteButton";
 import { useFavoritesContext } from "@/contexts/FavoritesContext";
 import { useInView } from "@/hooks/useInView";
+import { useAnalytics } from "@/hooks/useAnalytics";
 
 interface CollapsibleChapterProps {
   id: string;
