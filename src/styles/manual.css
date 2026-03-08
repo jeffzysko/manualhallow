@@ -2,7 +2,8 @@
 /* All styles scoped to .manual-page to avoid Tailwind conflicts */
 
 /* GPU-accelerated smooth scrolling */
-html { scroll-behavior: smooth; -webkit-overflow-scrolling: touch; }
+html { scroll-behavior: smooth; -webkit-overflow-scrolling: touch; overflow-x: hidden; }
+body { overflow-x: hidden; }
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
 }
@@ -1042,8 +1043,18 @@ html { scroll-behavior: smooth; -webkit-overflow-scrolling: touch; }
   .reading-progress { padding: 16px 16px 0; }
   .reading-progress__chip { padding: 4px 10px; font-size: 10px; min-height: 32px; }
 
-  /* ── Notes drawer ── */
-  .nd-panel { width: min(360px, 95vw); }
+  /* ── Notes drawer → fullscreen on mobile ── */
+  .nd-overlay { background: rgba(0,0,0,0.85); }
+  .nd-panel {
+    width: 100vw;
+    height: 100vh;
+    height: 100dvh;
+    top: 0; right: 0; bottom: 0; left: 0;
+    border-left: none;
+    border-radius: 0;
+    animation: fadeIn 0.25s ease-out;
+    padding-top: env(safe-area-inset-top, 0px);
+  }
   .nd-header { padding: 16px 16px 14px; }
   .nd-header__title { font-size: 18px; }
   .nd-tabs { padding: 10px 16px; }
@@ -1053,7 +1064,7 @@ html { scroll-behavior: smooth; -webkit-overflow-scrolling: touch; }
   .nd-editor { padding: 16px; }
   .nd-textarea { font-size: 16px; min-height: 200px; }
   .nd-all { padding: 16px; }
-  .nd-close { width: 36px; height: 36px; }
+  .nd-close { width: 40px; height: 40px; }
 
   /* ── Auth pages ── */
   .auth-wrapper { padding: 16px; }
@@ -1122,7 +1133,7 @@ html { scroll-behavior: smooth; -webkit-overflow-scrolling: touch; }
   .manual-page .card-check { padding: 14px; }
   .manual-page .card-obj { padding: 14px; }
   .manual-page .card-audio { padding: 14px; }
-  .nd-panel { width: 100vw; }
+  .nd-panel { width: 100vw; height: 100vh; height: 100dvh; }
 
   /* Auth extra small */
   .auth-card { padding: 24px 16px; border-radius: 14px; }
@@ -1542,6 +1553,7 @@ html { scroll-behavior: smooth; -webkit-overflow-scrolling: touch; }
   justify-content: space-between;
   margin-top: 12px;
   padding-top: 12px;
+  padding-bottom: env(safe-area-inset-bottom, 0px);
   border-top: 1px solid var(--border2);
 }
 .nd-editor__status {
