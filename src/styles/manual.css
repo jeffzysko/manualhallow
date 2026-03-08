@@ -913,7 +913,7 @@ html { scroll-behavior: smooth; -webkit-overflow-scrolling: touch; }
   .manual-page .display { font-size: 20px !important; }
 
   /* ── Footer ── */
-  .manual-page #footer { padding: 32px 0 calc(80px + env(safe-area-inset-bottom, 0px)); }
+  .manual-page #footer { padding: 48px 0 calc(80px + env(safe-area-inset-bottom, 0px)); }
   .manual-page .footer-logo { font-size: 22px; letter-spacing: 4px; }
   .manual-page .footer-tagline { font-size: 11px; }
 
