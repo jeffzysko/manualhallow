@@ -104,6 +104,7 @@ const AdminPage = () => {
         <div className="admin-tabs">
           <button className={`admin-tab${tab === "overview" ? " admin-tab--active" : ""}`} onClick={() => setTab("overview")}>Visão Geral</button>
           <button className={`admin-tab${tab === "users" ? " admin-tab--active" : ""}`} onClick={() => setTab("users")}>Usuários ({users.length})</button>
+          <button className={`admin-tab${tab === "analytics" ? " admin-tab--active" : ""}`} onClick={() => setTab("analytics")}>Analytics</button>
         </div>
 
         {tab === "overview" && (
