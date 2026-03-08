@@ -10,7 +10,7 @@ interface TopHeaderProps {
   scriptsMode?: boolean;
 }
 
-const TopHeader = ({ onOpenSearch, onOpenFavorites, onToggleScripts, onExportPDF, scriptsMode }: TopHeaderProps) => {
+const TopHeader = ({ onOpenSearch, onOpenFavorites, onToggleScripts, scriptsMode }: TopHeaderProps) => {
   const { user, signOut } = useAuth();
   const navigate = useNavigate();
   const [scrolled, setScrolled] = useState(false);
