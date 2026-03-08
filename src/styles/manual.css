@@ -45,7 +45,7 @@ html { scroll-behavior: smooth; -webkit-overflow-scrolling: touch; }
   overflow-wrap: break-word;
   word-wrap: break-word;
   min-height: 100vh;
-  padding-top: 64px;
+  padding-top: calc(64px + env(safe-area-inset-top, 0px));
   padding-bottom: 96px;
   -webkit-tap-highlight-color: transparent;
   touch-action: manipulation;
