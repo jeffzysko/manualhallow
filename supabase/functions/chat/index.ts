@@ -73,6 +73,51 @@ Seu papel é ajudar vendedores a aplicar as técnicas do manual com precisão. R
 - RITUAL DIÁRIO 30-45min: Varredura funil, 5 follow-ups com valor, 1 convite visita, 1 prova social, Atualizar CRM
 - 4 REGRAS: 5 Minutos (resposta rápida), Próxima Ação (toda conversa termina com data/hora), Print (se diz "mais barato", peça print), Pacote (preço sempre contextualizado)
 
+## ACESSÓRIOS & UPSELL
+- CASCATA: "Cria massagem natural na cervical" (relaxar) / "Item que mais valoriza o visual" (estética). Instalar depois = obra extra 40-60% mais cara
+- LED/ILUMINAÇÃO: "Sem iluminação, depois das 18h a piscina vira uma poça escura." Tubulação feita junto na instalação; depois é quebra-quebra
+- AQUECIMENTO: "Sem aquecimento = 4 meses de uso/ano. Com = 12 meses." Instalar depois custa 40% mais por obra extra
+- CLORADOR: Automatiza tratamento, reduz custo com produtos químicos a longo prazo
+- BORDA/ACABAMENTO: Valoriza esteticamente e aumenta segurança
+- Objeção universal "Vou colocar depois": "Em média 40-60% mais caro por obra extra. A maioria prefere já deixar a infraestrutura pronta."
+- Técnica: sempre pergunte antes de recomendar. Ex: "Você pretende usar só no verão ou o ano todo?" / "Vai usar à noite também?"
+
+## EXTRA 1 — BANCO DE PROVAS SOCIAIS
+- 3 perfis de depoimento: Roberto (pesquisou 4 empresas, entendeu valor do pacote completo), Carla (transparência + prazo cumprido, indicou 3 vizinhos), André (convenceu esposa pela comparação lado a lado)
+- Dados: 97% satisfação pós-instalação, 85% indicam para amigos, 4.9★ no Google
+- Quando usar: no follow-up D+3, na proposta, quando cliente diz "preciso pensar" ou "preciso falar com cônjuge"
+- Template universal: "[Nome do cliente], [cidade]. Situação: [contexto]. Resultado: [transformação]. Frase-chave: [citação direta]."
+
+## EXTRA 2 — OBJEÇÕES DE ACESSÓRIOS (DETALHADO)
+- Aquecimento: "Você pretende usar só no verão ou o ano todo?" → Ano todo: "Sem aquecimento = 4 meses" / Só verão: "Instalar depois custa 40% mais"
+- Iluminação: "Vai usar só de dia?" → À noite tb: "Poça escura" / Só de dia: "Tubulação é feita junto, depois é quebra-quebra"
+- Cascata: "O que mais te atrai: relaxar, exercitar ou visual?" → Relaxar: "Massagem natural" / Visual: "Item que mais valoriza"
+- "Vou colocar depois": "Sabe quanto custa instalar separado?" → Não sabe: "40-60% mais caro" / Sabe: "A maioria prefere já deixar pronta"
+
+## EXTRA 3 — REATIVAÇÃO DE LEAD FRIO
+- Sequência de 3 toques: D+3 (valor sem pressão: foto de instalação similar), D+7 (escassez real: agenda fechando), D+14 (porta aberta: "quando fizer sentido, me chama")
+- Script D+3: "Lembrei de você porque fizemos uma instalação essa semana num espaço parecido. Posso te mandar as fotos?"
+- Script D+7: "Nossa agenda de instalação pra [MÊS] está quase fechada. Se ainda tiver interesse, consigo reservar uma vaga."
+- Script D+14: "Sei que o timing pode não ser agora e tá tudo bem. Quando fizer sentido, é só me chamar."
+- Regra: "Lead frio não é lead morto. É lead que ainda não encontrou o motivo certo para agir."
+
+## EXTRA 4 — GUIA DE FOTOS PARA DIAGNÓSTICO
+- 5 FOTOS OBRIGATÓRIAS: 1) Vista geral do espaço, 2) Acesso/portão, 3) Nível do terreno (desnível, muro de arrimo), 4) Área da casa próxima (janelas, portas, varanda), 5) Tubulação/esgoto visível
+- Script para pedir: "Pra eu montar uma proposta certinha e sem surpresa, me manda 3 fotos: uma do espaço todo, uma do acesso (portão/passagem) e uma mostrando se o terreno é plano ou tem desnível."
+- Sinais de alerta nas fotos: desnível acentuado, acesso estreito, tubulação no caminho, solo rochoso
+
+## EXTRA 5 — TEMPLATE DE PROPOSTA PADRÃO
+- ESTRUTURA 6 BLOCOS: 1) Cabeçalho personalizado (nome + referência da conversa), 2) Recap do diagnóstico ("Entendi que você precisa de: [uso]+[estética]+[prioridade]"), 3) Pacote completo (listar TUDO incluso), 4) Investimento com contexto ("R$X — inclui [lista]"), 5) Próximo passo claro ("Para garantir instalação em [MÊS], confirmação até [DATA]"), 6) Comparação justa (o que geralmente NÃO vem nos concorrentes)
+- Regra: "Uma proposta bem feita não precisa de desconto. Ela faz o cliente sentir que está comprando segurança."
+
+## APÊNDICES — SCRIPTS & KIT DE EXECUÇÃO
+- 3 SCRIPTS DE ABERTURA: V1 "casa ou sítio/chácara?", V2 "já tem tamanho em mente?", V3 "o que te fez pensar em piscina agora?"
+- CENÁRIO CASA: Família+estética+instalação tranquila. Fluxo: tipo→uso→estilo→medo→foto→proposta
+- CENÁRIO COMPARAÇÃO: Concorrente mais barato. Pedir print + foto + comparar item a item
+- CHECKLIST PRÉ-PROPOSTA (10 itens): casa/sítio confirmado, perfil de uso, estética, acesso, prioridade, medos mapeados, critério de decisão, timing, referência de comparação, decisor identificado
+- ÁRVORE DE OBJEÇÕES: "Tá caro" (comparação/orçamento/inclusos), "Me dá desconto" (orçamento/comparação), "Manda só o preço" (redirecionar com contexto), "Preciso falar com cônjuge" (resumo 5 linhas)
+- FUNIL SPLASH: Lead → Diagnóstico → Enquadramento Premium → Proposta → Objeções → Fechamento → Pós-venda
+
 === FIM DO CONTEÚDO ===
 
 INSTRUÇÕES:
