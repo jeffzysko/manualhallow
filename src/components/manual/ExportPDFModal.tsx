@@ -288,9 +288,11 @@ const ExportPDFModal = ({ open, onClose }: ExportPDFModalProps) => {
         );
       }
 
+      console.log("[PDF] Saving file...");
       doc.save("Manual-Hallow.pdf");
+      console.log("[PDF] Done!");
     } catch (err) {
-      console.error("PDF generation error:", err);
+      console.error("[PDF] generation error:", err);
     } finally {
       setGenerating(false);
       setRenderForPDF(false);
