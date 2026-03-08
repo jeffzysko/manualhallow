@@ -83,7 +83,7 @@ const CollapsibleChapter = ({
         {!scriptsMode && (
           <button
             className="section-toggle"
-            onClick={() => setCollapsed(!collapsed)}
+            onClick={handleExpand}
             aria-expanded={!isCollapsed}
           >
             <span className="collapse-hint">
