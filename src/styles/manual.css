@@ -149,7 +149,7 @@ html { scroll-behavior: smooth; -webkit-overflow-scrolling: touch; }
 .manual-page .check-text { font-size: 15px; color: var(--white); line-height: 1.65; }
 
 /* OBJEÇÃO */
-.manual-page .card-obj { background: var(--card); border: 1px solid rgba(224,92,92,0.25); border-radius: 16px; padding: 32px; position: relative; overflow: hidden; }
+.manual-page .card-obj { background: var(--card); border: 1px solid rgba(224,92,92,0.25); border-radius: 16px; padding: 32px; margin-bottom: 28px; position: relative; overflow: hidden; }
 .manual-page .card-obj::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 3px; background: var(--red); }
 .manual-page .card-obj-header { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; }
 .manual-page .card-obj-tag { background: var(--red-dim); color: var(--red); font-size: 10px; letter-spacing: 2px; text-transform: uppercase; font-weight: 700; padding: 4px 12px; border-radius: 100px; }
