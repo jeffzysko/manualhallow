@@ -776,7 +776,7 @@ html { scroll-behavior: smooth; -webkit-overflow-scrolling: touch; }
   .manual-page .tab-item span { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 52px; }
 
   /* ── TOC ── */
-  .manual-page .toc-header { padding: 40px 0 32px; }
+  .manual-page .toc-header { padding: 48px 0 36px; }
   .manual-page .toc-header h2 { font-size: 32px; }
   .manual-page .toc-grid { grid-template-columns: 1fr; gap: 4px; border-radius: 14px; }
   .manual-page .toc-item { padding: 16px; gap: 12px; min-height: 56px; }
