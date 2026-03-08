@@ -203,7 +203,7 @@ html { scroll-behavior: smooth; -webkit-overflow-scrolling: touch; }
 .manual-page .compare-cell.good { color: var(--green); }
 
 /* STEPS */
-.manual-page .steps { display: flex; flex-direction: column; gap: 0; border: 1px solid var(--border2); border-radius: 16px; overflow: hidden; }
+.manual-page .steps { display: flex; flex-direction: column; gap: 0; border: 1px solid var(--border2); border-radius: 16px; overflow: hidden; margin-bottom: 28px; }
 .manual-page .step { display: flex; gap: 20px; padding: 24px 28px; border-bottom: 1px solid var(--border2); align-items: flex-start; background: var(--card); transition: background .2s; }
 .manual-page .step:last-child { border-bottom: none; }
 .manual-page .step:hover { background: var(--card2); }
