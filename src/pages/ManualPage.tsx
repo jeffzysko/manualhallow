@@ -120,7 +120,7 @@ const ManualPage = () => {
           <ManualCover />
           <ManualTOC onNavigate={navigate} />
 
-          <Suspense fallback={null}>
+          <Suspense fallback={<ChapterSkeleton />}>
             <CollapsibleChapter id="ch1" num="01" numBg="var(--ch1)" tag="Estratégia" tagColor="var(--ch1)" title={<h2>O Jogo do<br/><em style={{color:"var(--ch1)"}}>Premium</em></h2>} lead="Como vender 2× mais caro sem entrar na guerra de preço. O cliente não compra piscina — compra risco evitado, previsibilidade e transformação." tldr={tldr.ch1} isRead={progress.ch1} onToggleRead={() => toggleChapter("ch1")} scriptsMode={scriptsMode}>
               <Chapter1Content />
             </CollapsibleChapter>

@@ -1,3 +1,4 @@
+import { useState } from "react";
 import type { FavoriteItem } from "@/hooks/useFavorites";
 
 interface FavoritesOverlayProps {
@@ -9,12 +10,24 @@ interface FavoritesOverlayProps {
 }
 
 const FavoritesOverlay = ({ open, onClose, favorites, onNavigate, onRemove }: FavoritesOverlayProps) => {
+  const [confirmId, setConfirmId] = useState<string | null>(null);
+
+  const handleRemove = (itemId: string) => {
+    onRemove(itemId);
+    setConfirmId(null);
+  };
+
+  const handleClose = () => {
+    setConfirmId(null);
+    onClose();
+  };
+
   return (
-    <div className={`search-overlay${open ? " open" : ""}`} onClick={onClose}>
+    <div className={`search-overlay${open ? " open" : ""}`} onClick={handleClose}>
       <div className="search-box fav-overlay-box" onClick={e => e.stopPropagation()}>
         <div className="fav-overlay-header">
           <h3 className="display fav-overlay-title">★ Favoritos</h3>
-          <button className="fav-overlay-close" onClick={onClose} aria-label="Fechar">✕</button>
+          <button className="fav-overlay-close" onClick={handleClose} aria-label="Fechar">✕</button>
         </div>
 
         <div className="fav-overlay-list">
@@ -25,21 +38,38 @@ const FavoritesOverlay = ({ open, onClose, favorites, onNavigate, onRemove }: Fa
             </div>
           ) : (
             favorites.map(fav => (
-              <div
-                key={fav.id}
-                className="fav-overlay-item"
-                onClick={() => { onNavigate(fav.item_id); onClose(); }}
-              >
-                <div className="fav-overlay-item-info">
+              <div key={fav.id} className="fav-overlay-item">
+                <div
+                  className="fav-overlay-item-info"
+                  onClick={() => { onNavigate(fav.item_id); handleClose(); }}
+                >
                   <div className="fav-overlay-item-title">{fav.item_title}</div>
                   <div className="fav-overlay-item-chapter">{fav.item_chapter}</div>
                 </div>
-                <button
-                  className="fav-overlay-item-remove"
-                  onClick={e => { e.stopPropagation(); onRemove(fav.item_id); }}
-                >
-                  Remover
-                </button>
+
+                {confirmId === fav.item_id ? (
+                  <div className="fav-confirm-group">
+                    <button
+                      className="fav-confirm-yes"
+                      onClick={e => { e.stopPropagation(); handleRemove(fav.item_id); }}
+                    >
+                      Sim
+                    </button>
+                    <button
+                      className="fav-confirm-no"
+                      onClick={e => { e.stopPropagation(); setConfirmId(null); }}
+                    >
+                      Não
+                    </button>
+                  </div>
+                ) : (
+                  <button
+                    className="fav-overlay-item-remove"
+                    onClick={e => { e.stopPropagation(); setConfirmId(fav.item_id); }}
+                  >
+                    Remover
+                  </button>
+                )}
               </div>
             ))
           )}
