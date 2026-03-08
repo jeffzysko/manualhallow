@@ -31,10 +31,6 @@ const ManualTOC = ({ onNavigate }: ManualTOCProps) => (
         ))}
       </div>
 
-      <div className="note-box">
-        <div className="note-icon">⚠️</div>
-        <p><strong>Escopo da Splash:</strong> A Splash vende e realiza a instalação da piscina. Itens fora do escopo — paisagismo, revestimentos, decks, iluminação, mobiliário — são responsabilidade do cliente. Etapas de obra civil (contrapiso, preparação do terreno, elétrica/hidráulica externa) também ficam por conta do cliente; <strong>nós orientamos o necessário para a instalação ocorrer com segurança.</strong></p>
-      </div>
     </div>
   </section>
 );
