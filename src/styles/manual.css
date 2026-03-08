@@ -50,11 +50,11 @@ html { scroll-behavior: smooth; -webkit-overflow-scrolling: touch; }
 .manual-page .display { font-family: 'Cormorant Garamond', serif; font-weight: 600; }
 .manual-page h1,.manual-page h2,.manual-page h3,.manual-page h4 { font-family: 'Cormorant Garamond', serif; line-height: 1.2; margin: 0; }
 .manual-page p { margin: 0; }
-.manual-page .section-collapsible > h3 { margin-top: 32px; margin-bottom: 8px; }
-.manual-page .section-collapsible > h4 { margin-top: 20px; margin-bottom: 6px; }
+.manual-page .section-collapsible > h3 { margin-top: 48px; margin-bottom: 16px; }
+.manual-page .section-collapsible > h4 { margin-top: 28px; margin-bottom: 8px; }
 .manual-page .card h4, .manual-page .step h4, .manual-page .card-obj h4, .manual-page .card-check h4, .manual-page .card-audio h4 { margin-top: 0; margin-bottom: 6px; }
-.manual-page .prose { margin-bottom: 12px; }
-.manual-page .lead { margin-bottom: 12px; }
+.manual-page .prose { margin-bottom: 16px; }
+.manual-page .lead { margin-bottom: 16px; }
 .manual-page .ornament { display: flex; align-items: center; gap: 16px; margin: 0 auto; width: fit-content; }
 .manual-page .ornament::before, .manual-page .ornament::after { content: ''; display: block; width: 60px; height: 1px; background: linear-gradient(90deg, transparent, var(--gold)); }
 .manual-page .ornament::after { background: linear-gradient(90deg, var(--gold), transparent); }
