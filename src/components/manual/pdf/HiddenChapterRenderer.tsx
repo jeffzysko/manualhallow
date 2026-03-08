@@ -26,7 +26,7 @@ const CHAPTER_COMPONENTS: Record<string, React.LazyExoticComponent<React.Compone
 // Stub context so FavoritableCard doesn't crash
 const stubFavContext = {
   isFavorite: () => false,
-  toggleFavorite: () => {},
+  toggleFavorite: (_id: string, _title: string, _chapter: string) => {},
   isLoggedIn: false,
 };
 
