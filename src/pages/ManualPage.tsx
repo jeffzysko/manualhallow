@@ -6,16 +6,18 @@ import ManualTOC from "@/components/manual/ManualTOC";
 import CollapsibleChapter from "@/components/manual/CollapsibleChapter";
 import BottomTabBar from "@/components/manual/BottomTabBar";
 import TopHeader from "@/components/manual/TopHeader";
-import SearchOverlay from "@/components/manual/SearchOverlay";
-import FavoritesOverlay from "@/components/manual/FavoritesOverlay";
-import NotesDrawer from "@/components/manual/NotesDrawer";
-import AIChatDrawer from "@/components/manual/AIChatDrawer";
 import { useAuth } from "@/contexts/AuthContext";
 import { useFavorites } from "@/hooks/useFavorites";
 import { useReadingProgress } from "@/hooks/useReadingProgress";
 import { FavoritesContext } from "@/contexts/FavoritesContext";
 
 import ChapterSkeleton from "@/components/manual/ChapterSkeleton";
+
+// Lazy-load overlays & drawers (heavy deps like react-markdown)
+const SearchOverlay = lazy(() => import("@/components/manual/SearchOverlay"));
+const FavoritesOverlay = lazy(() => import("@/components/manual/FavoritesOverlay"));
+const NotesDrawer = lazy(() => import("@/components/manual/NotesDrawer"));
+const AIChatDrawer = lazy(() => import("@/components/manual/AIChatDrawer"));
 
 const Chapter1Content = lazy(() => import("@/components/manual/chapters/Chapter1Content"));
 const Chapter2Content = lazy(() => import("@/components/manual/chapters/Chapter2Content"));
@@ -109,16 +111,20 @@ const ManualPage = () => {
 
         <TopHeader onOpenSearch={() => setSearchOpen(true)} onOpenFavorites={handleOpenFavorites} onToggleScripts={() => setScriptsMode(!scriptsMode)} scriptsMode={scriptsMode} />
 
-        <SearchOverlay open={searchOpen} onClose={() => setSearchOpen(false)} onNavigate={navigate} />
-        <FavoritesOverlay
-          open={favoritesOpen}
-          onClose={() => setFavoritesOpen(false)}
-          favorites={favorites}
-          onNavigate={navigate}
-          onRemove={handleRemoveFavorite}
-        />
-        <NotesDrawer open={notesOpen} onClose={() => setNotesOpen(false)} />
-        <AIChatDrawer open={aiChatOpen} onClose={() => setAiChatOpen(false)} />
+        <Suspense fallback={null}>
+          {searchOpen && <SearchOverlay open={searchOpen} onClose={() => setSearchOpen(false)} onNavigate={navigate} />}
+          {favoritesOpen && (
+            <FavoritesOverlay
+              open={favoritesOpen}
+              onClose={() => setFavoritesOpen(false)}
+              favorites={favorites}
+              onNavigate={navigate}
+              onRemove={handleRemoveFavorite}
+            />
+          )}
+          {notesOpen && <NotesDrawer open={notesOpen} onClose={() => setNotesOpen(false)} />}
+          {aiChatOpen && <AIChatDrawer open={aiChatOpen} onClose={() => setAiChatOpen(false)} />}
+        </Suspense>
 
         <main role="main" id="main-content">
           <ManualCover />
