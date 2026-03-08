@@ -57,9 +57,10 @@ const AIChatDrawer = ({ open, onClose }: { open: boolean; onClose: () => void })
   }, [user]);
 
   const sendMessage = useCallback(async (text: string) => {
-    if (!text.trim() || isLoading) return;
+    const sanitized = clampText(text, 2000);
+    if (!sanitized || isLoading) return;
 
-    const userMsg: Msg = { role: "user", content: text.trim() };
+    const userMsg: Msg = { role: "user", content: sanitized };
     setInput("");
     setMessages(prev => [...prev, userMsg]);
     setIsLoading(true);
