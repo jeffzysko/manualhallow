@@ -60,8 +60,8 @@ html { scroll-behavior: smooth; -webkit-overflow-scrolling: touch; }
 .manual-page .ornament::after { background: linear-gradient(90deg, var(--gold), transparent); }
 .manual-page .ornament span { color: var(--gold); font-size: 14px; letter-spacing: 3px; }
 .manual-page .page-wrap { max-width: 960px; margin: 0 auto; padding-left: clamp(28px, 8vw, 120px) !important; padding-right: clamp(28px, 8vw, 120px) !important; }
-.manual-page .section-gap { padding: 80px 0; }
-.manual-page .section-gap-sm { padding: 48px 0; }
+.manual-page .section-gap { padding: 96px 0; }
+.manual-page .section-gap-sm { padding: 56px 0; }
 
 /* COVER */
 .manual-page #cover { min-height: 100vh; position: relative; overflow: hidden; display: flex; flex-direction: column; justify-content: center; background: #06070D; }
