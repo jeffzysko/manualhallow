@@ -71,12 +71,11 @@ const NotesDrawer = ({ open, onClose }: NotesDrawerProps) => {
     setSaving(false);
   }, [user, activeChapter, draft, fetchNotes]);
 
-  // Auto-save with proper deps
+  // Auto-save
   useEffect(() => {
     if (!open || !user) return;
     const existing = notes.find(n => n.section_id === activeChapter);
     if (draft === (existing?.content || "")) return;
-
     const timer = setTimeout(() => { saveNote(); }, 1500);
     return () => clearTimeout(timer);
   }, [draft, open, user, activeChapter, notes, saveNote]);
@@ -88,31 +87,30 @@ const NotesDrawer = ({ open, onClose }: NotesDrawerProps) => {
   if (!open) return null;
 
   return (
-    <>
-      <div className="nd-overlay" onClick={onClose} />
-      <div className="nd-panel">
+    <div className="ai-chat-overlay" onClick={onClose}>
+      <div className="ai-chat-drawer nd-drawer" onClick={e => e.stopPropagation()}>
         {/* Header */}
-        <div className="nd-header">
-          <div className="nd-header__left">
-            <div className="nd-header__icon">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M12 20h9" />
-                <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z" />
-              </svg>
-            </div>
-            <div>
-              <h3 className="nd-header__title">Anotações</h3>
-              <p className="nd-header__subtitle">{totalNotes} nota{totalNotes !== 1 ? "s" : ""} salva{totalNotes !== 1 ? "s" : ""}</p>
-            </div>
-          </div>
-          <button className="nd-close" onClick={onClose} aria-label="Fechar">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" />
+        <div className="ai-chat-header">
+          <div className="ai-chat-header-left">
+            <svg className="ai-chat-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M12 20h9" />
+              <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z" />
             </svg>
-          </button>
+            <span className="ai-chat-title">Anotações</span>
+            <span style={{ fontSize: 11, color: "var(--gray)", marginLeft: 4 }}>
+              {totalNotes} nota{totalNotes !== 1 ? "s" : ""}
+            </span>
+          </div>
+          <div className="ai-chat-header-right">
+            <button className="ai-chat-close" onClick={onClose} aria-label="Fechar">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" />
+              </svg>
+            </button>
+          </div>
         </div>
 
-        {/* View Toggle */}
+        {/* Tabs */}
         <div className="nd-tabs">
           <button className={`nd-tab${view === "edit" ? " nd-tab--active" : ""}`} onClick={() => setView("edit")}>
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -130,8 +128,8 @@ const NotesDrawer = ({ open, onClose }: NotesDrawerProps) => {
         </div>
 
         {view === "edit" ? (
-          <>
-            {/* Chapter Selector */}
+          <div style={{ flex: 1, display: "flex", flexDirection: "column", overflow: "hidden" }}>
+            {/* Chapter chips */}
             <div className="nd-chapters">
               {CHAPTERS.map(ch => (
                 <button
@@ -181,7 +179,7 @@ const NotesDrawer = ({ open, onClose }: NotesDrawerProps) => {
                 )}
               </div>
             </div>
-          </>
+          </div>
         ) : (
           <div className="nd-all">
             {totalNotes === 0 ? (
@@ -220,7 +218,7 @@ const NotesDrawer = ({ open, onClose }: NotesDrawerProps) => {
           </div>
         )}
       </div>
-    </>
+    </div>
   );
 };
 
