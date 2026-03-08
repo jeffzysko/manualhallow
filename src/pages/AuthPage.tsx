@@ -39,7 +39,7 @@ const AuthPage = () => {
           emailRedirectTo: window.location.origin,
         },
       });
-      if (error) setError(error.message);
+      if (error) setError(translateAuthError(error.message));
       else setMessage("Verifique seu e-mail para confirmar o cadastro.");
     } else if (mode === "recovery") {
       const { error } = await supabase.auth.resetPasswordForEmail(email, {
