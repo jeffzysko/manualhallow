@@ -3,6 +3,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
 import TopHeader from "@/components/manual/TopHeader";
+import { CHAPTER_NAMES } from "@/data/chapters";
 import "@/styles/manual.css";
 
 interface AdminStats {
@@ -25,8 +26,6 @@ interface UserRow {
   chapters_read: number;
 }
 
-import { CHAPTER_NAMES } from "@/data/chapters";
-
 const AdminPage = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
@@ -35,6 +34,7 @@ const AdminPage = () => {
   const [tab, setTab] = useState<"overview" | "users">("overview");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [togglingId, setTogglingId] = useState<string | null>(null);
 
   useEffect(() => {
     if (!user) { navigate("/auth"); return; }
@@ -59,24 +59,26 @@ const AdminPage = () => {
   };
 
   const toggleUserActive = async (targetId: string, active: boolean) => {
+    setTogglingId(targetId);
     await supabase.rpc("admin_toggle_user", { target_user_id: targetId, active });
     setUsers(prev => prev.map(u => u.id === targetId ? { ...u, is_active: active } : u));
+    setTogglingId(null);
   };
 
   if (loading) {
     return (
-      <div className="manual-page" style={{ minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center" }}>
-        <p style={{ color: "var(--gray)" }}>Carregando...</p>
+      <div className="manual-page admin-center">
+        <p className="admin-loading-text">Carregando...</p>
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="manual-page" style={{ minHeight: "100vh", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 16, paddingTop: 0 }}>
+      <div className="manual-page admin-center admin-error-page">
         <TopHeader />
-        <p style={{ color: "var(--red)", fontSize: 15 }}>{error}</p>
-        <button onClick={() => navigate("/")} style={{ background: "var(--gold-dim)", color: "var(--gold)", border: "1px solid var(--border)", borderRadius: 10, padding: "10px 24px", fontSize: 13, fontWeight: 600, cursor: "pointer" }}>
+        <p className="admin-error-text">{error}</p>
+        <button className="admin-back-btn" onClick={() => navigate("/")}>
           Voltar ao Manual
         </button>
       </div>
@@ -86,13 +88,13 @@ const AdminPage = () => {
   return (
     <div className="manual-page">
       <TopHeader />
-      <div className="page-wrap" style={{ paddingTop: 40, paddingBottom: 80 }}>
-        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 32, flexWrap: "wrap", gap: 12 }}>
+      <div className="page-wrap admin-content">
+        <div className="admin-page-header">
           <div>
-            <h1 className="display" style={{ fontSize: 32, color: "var(--gold)", marginBottom: 4 }}>Painel Admin</h1>
-            <p style={{ color: "var(--gray)", fontSize: 13 }}>Gestão do Manual de Vendas Hallow</p>
+            <h1 className="display admin-title">Painel Admin</h1>
+            <p className="admin-desc">Gestão do Manual de Vendas Hallow</p>
           </div>
-          <button onClick={() => navigate("/")} style={{ background: "var(--gold-dim)", color: "var(--gold)", border: "1px solid var(--border)", borderRadius: 10, padding: "10px 20px", fontSize: 12, fontWeight: 600, cursor: "pointer", letterSpacing: 1 }}>
+          <button className="admin-back-btn" onClick={() => navigate("/")}>
             ← Manual
           </button>
         </div>
@@ -105,7 +107,6 @@ const AdminPage = () => {
 
         {tab === "overview" && (
           <>
-            {/* Stats Cards */}
             <div className="admin-stats-grid">
               <div className="admin-stat-card">
                 <span className="admin-stat-num">{stats?.total_users || 0}</span>
@@ -129,47 +130,43 @@ const AdminPage = () => {
               </div>
             </div>
 
-            {/* Popular Chapters */}
             <div className="admin-section">
-              <h3 style={{ color: "var(--white)", fontSize: 18, marginBottom: 16 }}>Capítulos mais favoritados</h3>
+              <h3 className="admin-section-title">Capítulos mais favoritados</h3>
               {stats?.popular_chapters && stats.popular_chapters.length > 0 ? (
                 <div className="admin-table">
                   {stats.popular_chapters.map((ch, i) => (
                     <div key={i} className="admin-table-row">
-                      <span style={{ color: "var(--white)", fontSize: 14 }}>{CHAPTER_NAMES[ch.chapter] || ch.chapter}</span>
+                      <span className="admin-table-name">{CHAPTER_NAMES[ch.chapter] || ch.chapter}</span>
                       <span className="admin-badge">{ch.total} favoritos</span>
                     </div>
                   ))}
                 </div>
               ) : (
-                <p style={{ color: "var(--gray)", fontSize: 13 }}>Nenhum dado disponível ainda.</p>
+                <p className="admin-empty">Nenhum dado disponível ainda.</p>
               )}
             </div>
 
-            {/* Recent Users */}
             <div className="admin-section">
-              <h3 style={{ color: "var(--white)", fontSize: 18, marginBottom: 16 }}>Últimos cadastros</h3>
+              <h3 className="admin-section-title">Últimos cadastros</h3>
               {stats?.recent_users && stats.recent_users.length > 0 ? (
                 <div className="admin-table">
                   {stats.recent_users.map((u) => (
                     <div key={u.id} className="admin-table-row">
                       <div>
-                        <span style={{ color: "var(--white)", fontSize: 14, display: "block" }}>{u.full_name || "Sem nome"}</span>
-                        <span style={{ color: "var(--gray)", fontSize: 11 }}>{u.email}</span>
+                        <span className="admin-user-name">{u.full_name || "Sem nome"}</span>
+                        <span className="admin-user-email">{u.email}</span>
                       </div>
-                      <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-                        <span style={{ color: u.is_active ? "var(--green)" : "var(--red)", fontSize: 11, fontWeight: 600 }}>
+                      <div className="admin-user-meta">
+                        <span className={u.is_active ? "admin-status--active" : "admin-status--inactive"}>
                           {u.is_active ? "Ativo" : "Inativo"}
                         </span>
-                        <span style={{ color: "var(--gray)", fontSize: 12 }}>
-                          {new Date(u.created_at).toLocaleDateString("pt-BR")}
-                        </span>
+                        <span className="admin-date">{new Date(u.created_at).toLocaleDateString("pt-BR")}</span>
                       </div>
                     </div>
                   ))}
                 </div>
               ) : (
-                <p style={{ color: "var(--gray)", fontSize: 13 }}>Nenhum usuário cadastrado.</p>
+                <p className="admin-empty">Nenhum usuário cadastrado.</p>
               )}
             </div>
           </>
@@ -179,32 +176,23 @@ const AdminPage = () => {
           <div className="admin-section">
             <div className="admin-table">
               {users.map((u) => (
-                <div key={u.id} className="admin-table-row" style={{ flexWrap: "wrap", gap: 8 }}>
-                  <div style={{ flex: 1, minWidth: 200 }}>
-                    <span style={{ color: "var(--white)", fontSize: 14, display: "block", fontWeight: 600 }}>{u.full_name || "Sem nome"}</span>
-                    <span style={{ color: "var(--gray)", fontSize: 12 }}>{u.email}</span>
+                <div key={u.id} className="admin-table-row admin-table-row--wrap">
+                  <div className="admin-user-info">
+                    <span className="admin-user-name admin-user-name--bold">{u.full_name || "Sem nome"}</span>
+                    <span className="admin-user-email">{u.email}</span>
                   </div>
-                  <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                    <span className="admin-badge" style={{ background: "var(--blue-dim)", color: "var(--blue)" }}>{u.chapters_read} cap.</span>
+                  <div className="admin-user-badges">
+                    <span className="admin-badge admin-badge--blue">{u.chapters_read} cap.</span>
                     <span className="admin-badge">{u.total_favorites} fav.</span>
                   </div>
-                  <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                    <span style={{ color: "var(--gray)", fontSize: 11 }}>{new Date(u.created_at).toLocaleDateString("pt-BR")}</span>
+                  <div className="admin-user-actions">
+                    <span className="admin-date">{new Date(u.created_at).toLocaleDateString("pt-BR")}</span>
                     <button
+                      className={`admin-toggle-btn ${u.is_active ? "admin-toggle-btn--danger" : "admin-toggle-btn--success"}`}
                       onClick={() => toggleUserActive(u.id, !u.is_active)}
-                      style={{
-                        padding: "5px 14px",
-                        fontSize: 11,
-                        fontWeight: 600,
-                        borderRadius: 8,
-                        border: "1px solid",
-                        cursor: "pointer",
-                        background: u.is_active ? "var(--red-dim)" : "var(--green-dim)",
-                        color: u.is_active ? "var(--red)" : "var(--green)",
-                        borderColor: u.is_active ? "rgba(224,92,92,0.3)" : "rgba(92,184,138,0.3)",
-                      }}
+                      disabled={togglingId === u.id}
                     >
-                      {u.is_active ? "Desativar" : "Ativar"}
+                      {togglingId === u.id ? "…" : u.is_active ? "Desativar" : "Ativar"}
                     </button>
                   </div>
                 </div>
