@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import CHAPTERS from "@/data/chapters";
+import { clampText } from "@/lib/sanitize";
 
 interface Note {
   id: string;
@@ -57,13 +58,14 @@ const NotesDrawer = ({ open, onClose }: NotesDrawerProps) => {
       setNotes(prev => prev.filter(n => n.section_id !== activeChapter));
     } else {
       const chapterInfo = CHAPTERS.find(c => c.id === activeChapter);
+      const sanitizedContent = clampText(draft, 5000);
       await supabase
         .from("user_notes")
         .upsert({
           user_id: user.id,
           section_id: activeChapter,
           chapter_id: chapterInfo?.label || activeChapter,
-          content: draft,
+          content: sanitizedContent,
           updated_at: new Date().toISOString(),
         }, { onConflict: "user_id,section_id" });
       await fetchNotes();

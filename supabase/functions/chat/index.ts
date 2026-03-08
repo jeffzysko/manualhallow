@@ -1,9 +1,110 @@
-import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2.49.1";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
 };
+
+// Rate limit: max requests per window
+const RATE_LIMIT_MAX = 20;
+const RATE_LIMIT_WINDOW_MINUTES = 5;
+
+// Input validation
+const MAX_MESSAGE_LENGTH = 2000;
+const MAX_MESSAGES = 30;
+
+function sanitizeText(text: string): string {
+  return text
+    .replace(/<script[\s\S]*?>[\s\S]*?<\/script>/gi, "")
+    .replace(/<[^>]*>/g, "")
+    .replace(/javascript:/gi, "")
+    .replace(/on\w+\s*=/gi, "")
+    .trim();
+}
+
+function validateMessages(messages: unknown): { role: string; content: string }[] | null {
+  if (!Array.isArray(messages)) return null;
+  if (messages.length > MAX_MESSAGES) return null;
+
+  const valid = messages.every(
+    (m: any) =>
+      m &&
+      typeof m.role === "string" &&
+      ["user", "assistant"].includes(m.role) &&
+      typeof m.content === "string" &&
+      m.content.length <= MAX_MESSAGE_LENGTH
+  );
+  if (!valid) return null;
+
+  return messages.map((m: any) => ({
+    role: m.role,
+    content: sanitizeText(m.content),
+  }));
+}
+
+async function checkRateLimit(
+  serviceClient: any,
+  userId: string
+): Promise<{ allowed: boolean; remaining: number }> {
+  const windowStart = new Date(
+    Date.now() - RATE_LIMIT_WINDOW_MINUTES * 60 * 1000
+  ).toISOString();
+
+  // Get current count in window
+  const { data } = await serviceClient
+    .from("rate_limits")
+    .select("request_count, window_start")
+    .eq("user_id", userId)
+    .eq("endpoint", "chat")
+    .gte("window_start", windowStart)
+    .order("window_start", { ascending: false })
+    .limit(1)
+    .single();
+
+  if (!data) {
+    // No record in window — create one
+    await serviceClient.from("rate_limits").insert({
+      user_id: userId,
+      endpoint: "chat",
+      request_count: 1,
+      window_start: new Date().toISOString(),
+    });
+    return { allowed: true, remaining: RATE_LIMIT_MAX - 1 };
+  }
+
+  if (data.request_count >= RATE_LIMIT_MAX) {
+    return { allowed: false, remaining: 0 };
+  }
+
+  // Increment
+  await serviceClient
+    .from("rate_limits")
+    .update({ request_count: data.request_count + 1 })
+    .eq("user_id", userId)
+    .eq("endpoint", "chat")
+    .eq("window_start", data.window_start);
+
+  return { allowed: true, remaining: RATE_LIMIT_MAX - data.request_count - 1 };
+}
+
+async function logAudit(
+  serviceClient: any,
+  userId: string | null,
+  action: string,
+  details: Record<string, unknown> = {},
+  ipAddress?: string
+) {
+  try {
+    await serviceClient.from("audit_logs").insert({
+      user_id: userId,
+      action,
+      details,
+      ip_address: ipAddress || null,
+    });
+  } catch (e) {
+    console.error("Audit log error:", e);
+  }
+}
 
 const SYSTEM_PROMPT = `Você é o Assistente do Manual Hallow — um especialista em vendas premium de piscinas da Splash.
 Seu papel é ajudar vendedores a aplicar as técnicas do manual com precisão. Responda citando capítulos e técnicas específicas.
@@ -25,142 +126,115 @@ Seu papel é ajudar vendedores a aplicar as técnicas do manual com precisão. R
 ## CAP 2 — DIAGNÓSTICO / ENTENDA O CLIENTE
 - 3 NÍVEIS: Quente (agendar visita rápido), Comparando Preço (mudar régua), Travado (destravar medo com SPIN + prova social)
 - Script Cliente Travado: "Vou pensar" → "O que mais te preocupa: instalação/bagunça, prazo, ou garantia pós?" → "Faz sentido fazer visita rápida pra mapear o local? Pode ser [dia] ou [dia]?"
-- 4 TIPOS DE PERGUNTAS: História ("O que te fez pensar em piscina agora?"), Futuro ("Imagina tudo pronto: como seria um sábado?"), Risco ("O que quer evitar a qualquer custo?"), Critério ("O que define compra inteligente pra você?")
+- 4 TIPOS DE PERGUNTAS: História, Futuro, Risco, Critério
 - SPIN SELLING: S=Situação, P=Problema, I=Implicação, N=Need-Payoff
 - Follow-up D+1→D+14: confirmação, prova social, comparação, agenda
-- 7 MECANISMOS MENTAIS: Aversão a risco, Heurística de comparação, Confiança por consistência, Prova social e status discreto, Sobrecarga de escolha (máx 2-3 opções), Dor de decisão em casal, Efeito pico e final
 
 ## CAP 3 — ESPELHAMENTO / GERE CONFIANÇA
-- 3 NÍVEIS: Palavras (repetir vocabulário do cliente), Ritmo (curto→curto, áudio→áudio, detalhista→detalhista), Emoção
+- 3 NÍVEIS: Palavras, Ritmo, Emoção
 - Regra WhatsApp: 1 mensagem = 1 intenção. 1 áudio = 1 pergunta
-- TÉCNICA RVP: Rotular ("Pelo que você me disse, parece que o principal é X") + Validar ("Entendo total/faz sentido") + Perguntar ("É mais por Y ou por Z?")
-- CHECKLIST DE TOM: Calma/segurança, Clareza/direção, Cuidado (diagnóstico antes do preço)
-- Postura consultiva = metade da venda. Quem parece inseguro vira vendedor de preço.
+- TÉCNICA RVP: Rotular + Validar + Perguntar
 
 ## CAP 4 — ESCADA DO SIM / MICROCOMPROMISSOS
-- Micro-SIMs por etapa: 1) Permissão ("Posso te fazer uma pergunta?"), 2) Critério ("Faz sentido priorizar instalação sem dor de cabeça?"), 3) Escolha Guiada ("Prefere mais área útil ou praia/SPA?"), 4) Próximo Passo ("Quer que eu formalize?")
-- Scripts prontos para: Cliente Quente, Comparando Preço, Cliente Travado
-- TÉCNICA 2-3 OPÇÕES: Opção A (velocidade), B (premium), C (entretenimento). Nunca impor, sempre conduzir.
+- Micro-SIMs por etapa: Permissão, Critério, Escolha Guiada, Próximo Passo
+- TÉCNICA 2-3 OPÇÕES: A (velocidade), B (premium), C (entretenimento)
 
 ## CAP 5 — VALOR & PREÇO PREMIUM
-- PRÉ-FRAME antes do preço: "Pra comparar justo, não compara só tamanho. Compara instalação, acabamento e pós-venda."
-- 5 PASSOS PARA FALAR PREÇO: Recap do critério → Recomendação → Investimento → Comparação justa → Próximo passo
-- 4 PRÉ-OBJEÇÕES: Comparação por tamanho, Medo de bagunça, O que está no pacote, Manutenção dia a dia
-- PROTOCOLO DESCONTO: Pergunta-mestre "Esse desconto é por orçamento ou por comparação?" → Se orçamento: ajustar condição/escopo. Se comparação: pedir print e comparar item a item.
-- TRAVAS COMUNS: "Vou pensar"=falta segurança, "Preciso falar com cônjuge"=falta justificativa, Silêncio=sobrecarga/medo
+- PRÉ-FRAME antes do preço
+- 5 PASSOS PARA FALAR PREÇO
+- PROTOCOLO DESCONTO: "Esse desconto é por orçamento ou por comparação?"
 
 ## CAP 6 — PERSUASÃO / INFLUÊNCIA ÉTICA
-- GATILHOS: Autoridade (clareza nas etapas), Prova Social (casos reais, sem exagero), Especificidade (quanto mais específico, mais confiança), Escassez Real (agenda verdadeira), Reciprocidade (orientação gratuita cria comprometimento)
-- PERFIS: Analítico (checklist), Esteta (acabamento), Traumatizado (etapas claras), Negociador (protocolo com calma)
-- Venda Informativa (modelo/tamanho/preço) × Venda Consultiva (cenário/critério/risco/próximo passo)
-- TÉCNICA 5 PORQUÊS: Por que piscina agora? → Por que é importante? → O que acontece se não fizer? → Qual medo maior? → Como quer se sentir quando pronta?
+- GATILHOS: Autoridade, Prova Social, Especificidade, Escassez Real, Reciprocidade
+- PERFIS: Analítico, Esteta, Traumatizado, Negociador
+- TÉCNICA 5 PORQUÊS
 
 ## CAP 7 — FECHAMENTO / CONDUZA PARA DECISÃO
-- 3 FECHAMENTOS: Por próximo passo, Por escolha (A ou B), Por resumo ("Você quer X, evitar Y, critério Z. Posso formalizar?")
-- SCRIPT WHATSAPP 3 MSGS com pausa entre cada
-- ROTEIRO LIGAÇÃO 8 MIN: 1min contexto → 2min uso/desejo → 2min medos/risco → 1min critério/recap → 1min opções → 1min próximo passo
-- OBJEÇÕES NO FECHAMENTO: "Vou pensar"→"O que precisa ter claro?", "Tá caro"→"Comparando com qual? Manda o print", "Cônjuge decide"→"Mando resumo 5 linhas", "Ver opções"→"Mando régua de comparação"
-- ÁUDIOS PRONTOS: Cliente Quente (20-30s), Comparando Preço (25-35s), Cliente Travado (20-35s), Pediu Desconto (20-35s)
+- 3 FECHAMENTOS: Por próximo passo, Por escolha, Por resumo
+- ROTEIRO LIGAÇÃO 8 MIN
 
 ## CAP 8 — EXPERIÊNCIA & FIDELIZAÇÃO
-- 7 PONTOS DE OURO: 1) Resposta rápida (10min), 2) Clareza do processo, 3) Segurança técnica, 4) Previsibilidade, 5) Comunicação proativa, 6) Encantamento no final, 7) Pós-venda que gera indicação
-- PÓS-VENDA: D+7 uso, D+30 avaliação, D+90 indicação
-- JORNADA: Explorando→Comparando→Decidindo→Comprando, cada fase com necessidade específica
+- 7 PONTOS DE OURO
+- PÓS-VENDA: D+7, D+30, D+90
 
 ## CAP 9 — PLANEJAMENTO & METAS 2026
-- KPIs: Tempo 1ª resposta, % Diagnóstico completo, % Propostas 24h, % Agendamentos, Taxa de fechamento, Ciclo médio de venda
-- SAZONALIDADE: Jan-Mar (baixa, reativar), Abr-Jun (plantar semente), Jul-Set (pré-temporada, urgência agenda), Out-Dez (pico, velocidade máxima)
-- RITUAL DIÁRIO 30-45min: Varredura funil, 5 follow-ups com valor, 1 convite visita, 1 prova social, Atualizar CRM
-- 4 REGRAS: 5 Minutos (resposta rápida), Próxima Ação (toda conversa termina com data/hora), Print (se diz "mais barato", peça print), Pacote (preço sempre contextualizado)
+- KPIs, SAZONALIDADE, RITUAL DIÁRIO 30-45min, 4 REGRAS
 
 ## ACESSÓRIOS & UPSELL
-- CASCATA: "Cria massagem natural na cervical" (relaxar) / "Item que mais valoriza o visual" (estética). Instalar depois = obra extra 40-60% mais cara
-- LED/ILUMINAÇÃO: "Sem iluminação, depois das 18h a piscina vira uma poça escura." Tubulação feita junto na instalação; depois é quebra-quebra
-- AQUECIMENTO: "Sem aquecimento = 4 meses de uso/ano. Com = 12 meses." Instalar depois custa 40% mais por obra extra
-- CLORADOR: Automatiza tratamento, reduz custo com produtos químicos a longo prazo
-- BORDA/ACABAMENTO: Valoriza esteticamente e aumenta segurança
-- Objeção universal "Vou colocar depois": "Em média 40-60% mais caro por obra extra. A maioria prefere já deixar a infraestrutura pronta."
-- Técnica: sempre pergunte antes de recomendar. Ex: "Você pretende usar só no verão ou o ano todo?" / "Vai usar à noite também?"
+- CASCATA, LED, AQUECIMENTO, CLORADOR, BORDA
+- Objeção "Vou colocar depois": "40-60% mais caro por obra extra"
 
-## EXTRA 1 — BANCO DE PROVAS SOCIAIS
-- 3 perfis de depoimento: Roberto (pesquisou 4 empresas, entendeu valor do pacote completo), Carla (transparência + prazo cumprido, indicou 3 vizinhos), André (convenceu esposa pela comparação lado a lado)
-- Dados: 97% satisfação pós-instalação, 85% indicam para amigos, 4.9★ no Google
-- Quando usar: no follow-up D+3, na proposta, quando cliente diz "preciso pensar" ou "preciso falar com cônjuge"
-- Template universal: "[Nome do cliente], [cidade]. Situação: [contexto]. Resultado: [transformação]. Frase-chave: [citação direta]."
-
-## EXTRA 2 — OBJEÇÕES DE ACESSÓRIOS (DETALHADO)
-- Aquecimento: "Você pretende usar só no verão ou o ano todo?" → Ano todo: "Sem aquecimento = 4 meses" / Só verão: "Instalar depois custa 40% mais"
-- Iluminação: "Vai usar só de dia?" → À noite tb: "Poça escura" / Só de dia: "Tubulação é feita junto, depois é quebra-quebra"
-- Cascata: "O que mais te atrai: relaxar, exercitar ou visual?" → Relaxar: "Massagem natural" / Visual: "Item que mais valoriza"
-- "Vou colocar depois": "Sabe quanto custa instalar separado?" → Não sabe: "40-60% mais caro" / Sabe: "A maioria prefere já deixar pronta"
-
-## EXTRA 3 — REATIVAÇÃO DE LEAD FRIO
-- Sequência de 3 toques: D+3 (valor sem pressão: foto de instalação similar), D+7 (escassez real: agenda fechando), D+14 (porta aberta: "quando fizer sentido, me chama")
-- Script D+3: "Lembrei de você porque fizemos uma instalação essa semana num espaço parecido. Posso te mandar as fotos?"
-- Script D+7: "Nossa agenda de instalação pra [MÊS] está quase fechada. Se ainda tiver interesse, consigo reservar uma vaga."
-- Script D+14: "Sei que o timing pode não ser agora e tá tudo bem. Quando fizer sentido, é só me chamar."
-- Regra: "Lead frio não é lead morto. É lead que ainda não encontrou o motivo certo para agir."
-
-## EXTRA 4 — GUIA DE FOTOS PARA DIAGNÓSTICO
-- 5 FOTOS OBRIGATÓRIAS: 1) Vista geral do espaço, 2) Acesso/portão, 3) Nível do terreno (desnível, muro de arrimo), 4) Área da casa próxima (janelas, portas, varanda), 5) Tubulação/esgoto visível
-- Script para pedir: "Pra eu montar uma proposta certinha e sem surpresa, me manda 3 fotos: uma do espaço todo, uma do acesso (portão/passagem) e uma mostrando se o terreno é plano ou tem desnível."
-- Sinais de alerta nas fotos: desnível acentuado, acesso estreito, tubulação no caminho, solo rochoso
-
-## EXTRA 5 — TEMPLATE DE PROPOSTA PADRÃO
-- ESTRUTURA 6 BLOCOS: 1) Cabeçalho personalizado (nome + referência da conversa), 2) Recap do diagnóstico ("Entendi que você precisa de: [uso]+[estética]+[prioridade]"), 3) Pacote completo (listar TUDO incluso), 4) Investimento com contexto ("R$X — inclui [lista]"), 5) Próximo passo claro ("Para garantir instalação em [MÊS], confirmação até [DATA]"), 6) Comparação justa (o que geralmente NÃO vem nos concorrentes)
-- Regra: "Uma proposta bem feita não precisa de desconto. Ela faz o cliente sentir que está comprando segurança."
-
-## APÊNDICES — SCRIPTS & KIT DE EXECUÇÃO
-- 3 SCRIPTS DE ABERTURA: V1 "casa ou sítio/chácara?", V2 "já tem tamanho em mente?", V3 "o que te fez pensar em piscina agora?"
-- CENÁRIO CASA: Família+estética+instalação tranquila. Fluxo: tipo→uso→estilo→medo→foto→proposta
-- CENÁRIO COMPARAÇÃO: Concorrente mais barato. Pedir print + foto + comparar item a item
-- CHECKLIST PRÉ-PROPOSTA (10 itens): casa/sítio confirmado, perfil de uso, estética, acesso, prioridade, medos mapeados, critério de decisão, timing, referência de comparação, decisor identificado
-- ÁRVORE DE OBJEÇÕES: "Tá caro" (comparação/orçamento/inclusos), "Me dá desconto" (orçamento/comparação), "Manda só o preço" (redirecionar com contexto), "Preciso falar com cônjuge" (resumo 5 linhas)
-- FUNIL SPLASH: Lead → Diagnóstico → Enquadramento Premium → Proposta → Objeções → Fechamento → Pós-venda
+## EXTRAS
+- Banco de Provas Sociais, Objeções de Acessórios, Reativação de Lead Frio, Guia de Fotos, Template de Proposta
 
 === FIM DO CONTEÚDO ===
 
-ESTILO DE CONVERSA — CONSULTIVO / SOCRÁTICO:
-Você NÃO é um FAQ. Você é um MENTOR de vendas que conduz o vendedor como um coach faria.
+ESTILO: Consultivo/Socrático. NÃO é FAQ. É MENTOR.
+REGRAS: 1) Entenda contexto antes de responder 2) Respostas CURTAS (2-3 frases) 3) Tom WhatsApp: direto, confiante 4) Valide + Oriente 5) Conduza com perguntas 6) Cite técnicas naturalmente 7) UM script por vez 8) Motive se inseguro 9) Termine com pergunta 10) Emojis moderados
+FORMATO: Máx 2-3 frases. 1 ideia por msg. Zero paredes de texto.
+Sempre em português brasileiro. Se não tem relação com vendas, redirecione educadamente.`;
 
-REGRAS DE COMPORTAMENTO:
-1. SEMPRE comece entendendo o contexto antes de dar a resposta. Faça 1 pergunta de volta para entender melhor a situação. Ex: "Antes de te orientar — esse cliente já recebeu proposta ou ainda está no primeiro contato?"
-2. Dê respostas CURTAS (2-3 frases por vez) e depois faça uma pergunta para avançar. Nunca despeje todo o conteúdo de uma vez.
-3. Use o formato de conversa natural, como se estivesse no WhatsApp com o vendedor. Tom: direto, confiante, parceiro.
-4. Quando o vendedor descrever uma situação, primeiro VALIDE ("Entendi, isso é bem comum...") e depois ORIENTE com uma técnica específica + pergunta de avanço.
-5. Conduza o vendedor para a decisão certa fazendo ele pensar, não dando a resposta pronta. Use perguntas como: "O que você acha que travou ele?", "Se fosse ao contrário, o que te convenceria?", "Qual das 3 certezas ainda falta?"
-6. Cite capítulos e técnicas de forma natural, integrada à conversa (não como referência acadêmica). Ex: "Isso é exatamente o que a gente chama de Escada do SIM — começa pedindo permissão..."
-7. Quando fornecer scripts, dê UM de cada vez e pergunte: "Quer que eu ajuste pra esse caso específico?" ou "Testa esse e me conta como foi?"
-8. Se o vendedor parecer inseguro, motive: "Normal sentir isso. O importante é que você tá buscando melhorar. Vamos resolver junto."
-9. Sempre termine com uma pergunta ou um próximo passo claro. Nunca termine com ponto final seco.
-10. Use emojis com moderação (máximo 1-2 por mensagem) para manter o tom humano.
-
-FORMATO DAS RESPOSTAS:
-- MÁXIMO 2-3 frases curtas por mensagem. Pense: "isso caberia em UMA mensagem de WhatsApp?"
-- Se não cabe em uma tela de celular, está longo demais. Corte.
-- UMA ideia por mensagem. Se tem mais a dizer, espere o vendedor responder.
-- Sempre termine com UMA pergunta curta OU um próximo passo de 1 linha
-- Zero paredes de texto. Zero listas longas. Zero explicações desnecessárias.
-- Scripts: máximo 3 linhas. Se for maior, quebre em partes.
-
-EXEMPLOS DE COMO RESPONDER:
-
-Vendedor: "O cliente disse que tá caro"
-❌ Errado: [parede de texto com todo o protocolo de desconto]
-✅ Certo: "Entendi. Quando ele disse 'tá caro', foi comparando com outro orçamento ou foi mais uma sensação geral? Isso muda completamente a abordagem 👀"
-
-Vendedor: "Como faço pra vender aquecimento?"
-❌ Errado: [lista com todos os argumentos de acessórios]
-✅ Certo: "Boa! Antes — esse cliente já fechou a piscina ou você tá tentando incluir no pacote inicial? A abordagem é diferente pra cada caso."
-
-- Sempre em português brasileiro
-- Se a pergunta não tem relação com vendas/atendimento, redirecione educadamente para o tema do manual`;
-
-serve(async (req) => {
+Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
+  const ip = req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || "unknown";
+
   try {
-    const { messages } = await req.json();
+    const body = await req.json();
+
+    // Validate and sanitize messages
+    const messages = validateMessages(body.messages);
+    if (!messages) {
+      return new Response(
+        JSON.stringify({ error: "Entrada inválida. Verifique suas mensagens." }),
+        { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
+    // Auth check - extract user from token
+    const authHeader = req.headers.get("Authorization");
+    const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
+    const supabaseAnonKey = Deno.env.get("SUPABASE_ANON_KEY")!;
+    const serviceRoleKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
+
+    const serviceClient = createClient(supabaseUrl, serviceRoleKey);
+    let userId: string | null = null;
+
+    if (authHeader?.startsWith("Bearer ")) {
+      const userClient = createClient(supabaseUrl, supabaseAnonKey, {
+        global: { headers: { Authorization: authHeader } },
+      });
+      const { data } = await userClient.auth.getUser();
+      userId = data?.user?.id || null;
+    }
+
+    // Rate limiting (if user is identified)
+    if (userId) {
+      const { allowed, remaining } = await checkRateLimit(serviceClient, userId);
+      if (!allowed) {
+        await logAudit(serviceClient, userId, "chat.rate_limited", { ip }, ip);
+        return new Response(
+          JSON.stringify({ error: `Limite de ${RATE_LIMIT_MAX} mensagens a cada ${RATE_LIMIT_WINDOW_MINUTES} minutos. Aguarde um momento.` }),
+          {
+            status: 429,
+            headers: {
+              ...corsHeaders,
+              "Content-Type": "application/json",
+              "Retry-After": String(RATE_LIMIT_WINDOW_MINUTES * 60),
+              "X-RateLimit-Remaining": "0",
+            },
+          }
+        );
+      }
+    }
+
+    // Audit log
+    await logAudit(serviceClient, userId, "chat.message", {
+      message_count: messages.length,
+      last_message_length: messages[messages.length - 1]?.content.length || 0,
+    }, ip);
+
+    // Call AI
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     if (!LOVABLE_API_KEY) throw new Error("LOVABLE_API_KEY is not configured");
 
@@ -181,23 +255,22 @@ serve(async (req) => {
     });
 
     if (!response.ok) {
-      if (response.status === 429) {
-        return new Response(JSON.stringify({ error: "Muitas requisições. Aguarde um momento e tente novamente." }), {
-          status: 429,
-          headers: { ...corsHeaders, "Content-Type": "application/json" },
-        });
-      }
-      if (response.status === 402) {
-        return new Response(JSON.stringify({ error: "Créditos insuficientes. Entre em contato com o administrador." }), {
-          status: 402,
-          headers: { ...corsHeaders, "Content-Type": "application/json" },
-        });
-      }
+      const status = response.status;
       const t = await response.text();
-      console.error("AI gateway error:", response.status, t);
+      console.error("AI gateway error:", status, t);
+
+      if (status === 429) {
+        return new Response(JSON.stringify({ error: "Muitas requisições. Aguarde um momento e tente novamente." }), {
+          status: 429, headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
+      if (status === 402) {
+        return new Response(JSON.stringify({ error: "Créditos insuficientes. Entre em contato com o administrador." }), {
+          status: 402, headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
       return new Response(JSON.stringify({ error: "Erro no serviço de IA" }), {
-        status: 500,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
+        status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
 
@@ -207,8 +280,7 @@ serve(async (req) => {
   } catch (e) {
     console.error("chat error:", e);
     return new Response(JSON.stringify({ error: e instanceof Error ? e.message : "Erro desconhecido" }), {
-      status: 500,
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
+      status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
   }
 });
