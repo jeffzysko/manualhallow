@@ -1553,6 +1553,7 @@ body { overflow-x: hidden; }
   justify-content: space-between;
   margin-top: 12px;
   padding-top: 12px;
+  padding-bottom: env(safe-area-inset-bottom, 0px);
   border-top: 1px solid var(--border2);
 }
 .nd-editor__status {
