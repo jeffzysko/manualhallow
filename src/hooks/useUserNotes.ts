@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
+import { isOffline, enqueue } from "@/lib/syncQueue";
 
 export function useUserNotes(sectionId: string, chapterId: string) {
   const { user } = useAuth();
@@ -26,6 +27,25 @@ export function useUserNotes(sectionId: string, chapterId: string) {
     if (!user) return;
     setContent(text);
     setSaved(false);
+
+    if (isOffline()) {
+      if (!text.trim()) {
+        enqueue({ type: "delete_note", payload: { user_id: user.id, section_id: sectionId } });
+      } else {
+        enqueue({
+          type: "upsert_note",
+          payload: {
+            user_id: user.id,
+            section_id: sectionId,
+            chapter_id: chapterId,
+            content: text,
+            updated_at: new Date().toISOString(),
+          },
+        });
+      }
+      setSaved(true);
+      return;
+    }
 
     if (!text.trim()) {
       await supabase
