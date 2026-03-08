@@ -8,6 +8,18 @@ body { overflow-x: hidden; }
   html { scroll-behavior: auto; }
 }
 
+/* Global focus-visible outline for keyboard navigation (WCAG 2.4.7) */
+.manual-page *:focus-visible {
+  outline: 2px solid var(--gold, #C9A96A);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+.manual-page button:focus:not(:focus-visible),
+.manual-page a:focus:not(:focus-visible),
+.manual-page input:focus:not(:focus-visible) {
+  outline: none;
+}
+
 .manual-page {
   --bg:          #09090F;
   --bg2:         #0F1018;
