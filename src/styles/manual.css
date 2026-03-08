@@ -47,6 +47,8 @@ body { overflow-x: hidden; }
   word-wrap: break-word;
   min-height: 100vh;
   padding-top: calc(64px + env(safe-area-inset-top, 0px));
+  /* Sections should clear the fixed header */
+  scroll-padding-top: calc(72px + env(safe-area-inset-top, 0px));
   padding-bottom: 96px;
   -webkit-tap-highlight-color: transparent;
   touch-action: manipulation;
