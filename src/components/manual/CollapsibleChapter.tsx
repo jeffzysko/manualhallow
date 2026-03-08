@@ -31,12 +31,24 @@ const CollapsibleChapter = ({
 
   const handleExpand = useCallback(() => {
     const wasCollapsed = collapsed;
+    
+    // Save the section's position relative to viewport BEFORE state change
+    const rect = sectionRef.current?.getBoundingClientRect();
+    const offsetFromViewport = rect?.top ?? 0;
+    
     setCollapsed(prev => !prev);
-    // When expanding, scroll back to section after a tick so content renders
-    if (wasCollapsed) {
-      requestAnimationFrame(() => {
-        sectionRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
-      });
+    
+    // After render, restore the section to the same viewport position
+    if (wasCollapsed && sectionRef.current) {
+      // Use setTimeout to wait for React render + Suspense resolve
+      setTimeout(() => {
+        if (!sectionRef.current) return;
+        const newRect = sectionRef.current.getBoundingClientRect();
+        const drift = newRect.top - offsetFromViewport;
+        if (Math.abs(drift) > 5) {
+          window.scrollBy({ top: drift, behavior: "instant" as ScrollBehavior });
+        }
+      }, 50);
     }
   }, [collapsed]);
 
