@@ -23,11 +23,11 @@ export default defineConfig(({ mode }) => ({
         "robots.txt",
         "pwa-192x192.png",
         "pwa-512x512.png",
-        "manual.html",
       ],
       workbox: {
         navigateFallbackDenylist: [/^\/~oauth/],
         globPatterns: ["**/*.{js,css,html,ico,png,svg,woff2}"],
+        maximumFileSizeToCacheInBytes: 5 * 1024 * 1024,
         runtimeCaching: [
           {
             urlPattern: /^https:\/\/fonts\.googleapis\.com\/.*/i,
@@ -47,10 +47,20 @@ export default defineConfig(({ mode }) => ({
               cacheableResponse: { statuses: [0, 200] },
             },
           },
+          {
+            urlPattern: /^https:\/\/.*\.supabase\.co\/rest\/.*/i,
+            handler: "NetworkFirst",
+            options: {
+              cacheName: "supabase-api-cache",
+              expiration: { maxEntries: 50, maxAgeSeconds: 60 * 60 },
+              cacheableResponse: { statuses: [0, 200] },
+              networkTimeoutSeconds: 5,
+            },
+          },
         ],
       },
       manifest: {
-        id: "/manual.html",
+        id: "/",
         name: "Manual Hallow — Atendimento e Vendas",
         short_name: "Manual Hallow",
         description:
@@ -59,7 +69,7 @@ export default defineConfig(({ mode }) => ({
         background_color: "#09090F",
         display: "standalone",
         orientation: "portrait",
-        start_url: "/manual.html",
+        start_url: "/",
         scope: "/",
         lang: "pt-BR",
         dir: "ltr",

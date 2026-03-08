@@ -9,6 +9,7 @@ import TopHeader from "@/components/manual/TopHeader";
 import SearchOverlay from "@/components/manual/SearchOverlay";
 import FavoritesOverlay from "@/components/manual/FavoritesOverlay";
 import NotesDrawer from "@/components/manual/NotesDrawer";
+import AIChatDrawer from "@/components/manual/AIChatDrawer";
 import { useAuth } from "@/contexts/AuthContext";
 import { useFavorites } from "@/hooks/useFavorites";
 import { useReadingProgress } from "@/hooks/useReadingProgress";
@@ -33,6 +34,7 @@ const ManualPage = () => {
   const [scriptsMode, setScriptsMode] = useState(false);
   const [scrollProgress, setScrollProgress] = useState(0);
   const [notesOpen, setNotesOpen] = useState(false);
+  const [aiChatOpen, setAiChatOpen] = useState(false);
   const { user, signOut } = useAuth();
   const { favorites, isFavorite, toggleFavorite } = useFavorites();
   const { progress, toggleChapter } = useReadingProgress();
@@ -115,6 +117,7 @@ const ManualPage = () => {
           onRemove={handleRemoveFavorite}
         />
         <NotesDrawer open={notesOpen} onClose={() => setNotesOpen(false)} />
+        <AIChatDrawer open={aiChatOpen} onClose={() => setAiChatOpen(false)} />
 
         <main role="main">
           <ManualCover />
@@ -175,6 +178,7 @@ const ManualPage = () => {
             if (!user) { routerNavigate("/auth"); return; }
             setNotesOpen(true);
           }}
+          onOpenAI={() => setAiChatOpen(true)}
           onToggleScripts={() => setScriptsMode(!scriptsMode)}
           scriptsMode={scriptsMode}
         />
