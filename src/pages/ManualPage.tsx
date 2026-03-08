@@ -18,6 +18,7 @@ const SearchOverlay = lazy(() => import("@/components/manual/SearchOverlay"));
 const FavoritesOverlay = lazy(() => import("@/components/manual/FavoritesOverlay"));
 const NotesDrawer = lazy(() => import("@/components/manual/NotesDrawer"));
 const AIChatDrawer = lazy(() => import("@/components/manual/AIChatDrawer"));
+const ExportPDFModal = lazy(() => import("@/components/manual/ExportPDFModal"));
 
 const Chapter1Content = lazy(() => import("@/components/manual/chapters/Chapter1Content"));
 const Chapter2Content = lazy(() => import("@/components/manual/chapters/Chapter2Content"));
