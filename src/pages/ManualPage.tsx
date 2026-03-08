@@ -177,8 +177,6 @@ const ManualPage = () => {
             setNotesOpen(true);
           }}
           onOpenAI={() => setAiChatOpen(true)}
-          onToggleScripts={() => setScriptsMode(!scriptsMode)}
-          scriptsMode={scriptsMode}
         />
       </div>
     </FavoritesContext.Provider>
