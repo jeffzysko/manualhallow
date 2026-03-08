@@ -9,6 +9,7 @@ import TopHeader from "@/components/manual/TopHeader";
 import SearchOverlay from "@/components/manual/SearchOverlay";
 import FavoritesOverlay from "@/components/manual/FavoritesOverlay";
 import NotesDrawer from "@/components/manual/NotesDrawer";
+import AIChatDrawer from "@/components/manual/AIChatDrawer";
 import { useAuth } from "@/contexts/AuthContext";
 import { useFavorites } from "@/hooks/useFavorites";
 import { useReadingProgress } from "@/hooks/useReadingProgress";
