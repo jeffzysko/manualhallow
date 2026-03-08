@@ -25,17 +25,7 @@ interface UserRow {
   chapters_read: number;
 }
 
-const CHAPTER_NAMES: Record<string, string> = {
-  ch1: "01 · O Jogo do Premium",
-  ch2: "02 · Diagnóstico",
-  ch3: "03 · Espelhamento",
-  ch4: "04 · Escada do SIM",
-  ch5: "05 · Valor & Preço",
-  ch6: "06 · Persuasão",
-  ch7: "07 · Fechamento",
-  ch8: "08 · Experiência",
-  ch9: "09 · Planejamento",
-};
+import { CHAPTER_NAMES } from "@/data/chapters";
 
 const AdminPage = () => {
   const { user } = useAuth();
