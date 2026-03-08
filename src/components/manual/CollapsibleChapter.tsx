@@ -65,6 +65,8 @@ const CollapsibleChapter = ({
     };
   }, [isCollapsed]);
 
+  const { track, startTimer, stopTimer } = useAnalytics();
+
   const handleExpand = useCallback(() => {
     const wasCollapsed = collapsed;
     
@@ -76,8 +78,15 @@ const CollapsibleChapter = ({
       expandInfoRef.current = null;
     }
     
+    if (wasCollapsed) {
+      track("chapter_view", { chapter_id: id });
+      startTimer(id);
+    } else {
+      stopTimer(id);
+    }
+    
     setCollapsed(prev => !prev);
-  }, [collapsed]);
+  }, [collapsed, id, track, startTimer, stopTimer]);
 
   const chapterLabel = `Cap. ${num.replace(/^0/, "")} — ${tag}`;
 

@@ -57,6 +57,8 @@ const AIChatDrawer = ({ open, onClose }: { open: boolean; onClose: () => void })
     await supabase.from("chat_messages").insert({ user_id: user.id, role, content });
   }, [user]);
 
+  const { track } = useAnalytics();
+
   const sendMessage = useCallback(async (text: string) => {
     const sanitized = clampText(text, 2000);
     if (!sanitized || isLoading) return;
@@ -66,6 +68,7 @@ const AIChatDrawer = ({ open, onClose }: { open: boolean; onClose: () => void })
     setMessages(prev => [...prev, userMsg]);
     setIsLoading(true);
     persistMessage("user", text.trim());
+    track("ai_chat", { event_data: { length: sanitized.length } });
 
     let assistantSoFar = "";
     const allMessages = [...messages, userMsg];
