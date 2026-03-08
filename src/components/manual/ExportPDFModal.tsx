@@ -305,7 +305,7 @@ const ExportPDFModal = ({ open, onClose }: ExportPDFModalProps) => {
       setGenerating(false);
       setRenderForPDF(false);
     }
-  }, [selected, includeNotes, user]);
+  };
 
   if (!open) return null;
 
