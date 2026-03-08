@@ -14,6 +14,33 @@ export type Database = {
   }
   public: {
     Tables: {
+      audit_logs: {
+        Row: {
+          action: string
+          created_at: string
+          details: Json | null
+          id: string
+          ip_address: string | null
+          user_id: string | null
+        }
+        Insert: {
+          action: string
+          created_at?: string
+          details?: Json | null
+          id?: string
+          ip_address?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          action?: string
+          created_at?: string
+          details?: Json | null
+          id?: string
+          ip_address?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       chat_messages: {
         Row: {
           content: string
@@ -83,6 +110,30 @@ export type Database = {
           full_name?: string | null
           id?: string
           is_active?: boolean
+        }
+        Relationships: []
+      }
+      rate_limits: {
+        Row: {
+          endpoint: string
+          id: string
+          request_count: number
+          user_id: string
+          window_start: string
+        }
+        Insert: {
+          endpoint?: string
+          id?: string
+          request_count?: number
+          user_id: string
+          window_start?: string
+        }
+        Update: {
+          endpoint?: string
+          id?: string
+          request_count?: number
+          user_id?: string
+          window_start?: string
         }
         Relationships: []
       }
