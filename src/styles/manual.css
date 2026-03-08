@@ -19,7 +19,7 @@ html { scroll-behavior: smooth; -webkit-overflow-scrolling: touch; }
   --gold-dim:    rgba(201,169,106,0.12);
   --white:       #F4F0E8;
   --gray:        #9E9A92;
-  --gray2:       #6A6760;
+  --gray2:       #8A8680;
   --red:         #E05C5C;
   --red-dim:     rgba(224,92,92,0.12);
   --green:       #5CB88A;

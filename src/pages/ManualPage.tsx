@@ -120,7 +120,7 @@ const ManualPage = () => {
         <NotesDrawer open={notesOpen} onClose={() => setNotesOpen(false)} />
         <AIChatDrawer open={aiChatOpen} onClose={() => setAiChatOpen(false)} />
 
-        <main role="main">
+        <main role="main" id="main-content">
           <ManualCover />
           <ManualTOC onNavigate={navigate} />
 
