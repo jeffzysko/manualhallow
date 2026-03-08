@@ -14,6 +14,8 @@ import { useFavorites } from "@/hooks/useFavorites";
 import { useReadingProgress } from "@/hooks/useReadingProgress";
 import { FavoritesContext } from "@/contexts/FavoritesContext";
 
+import ChapterSkeleton from "@/components/manual/ChapterSkeleton";
+
 const Chapter1Content = lazy(() => import("@/components/manual/chapters/Chapter1Content"));
 const Chapter2Content = lazy(() => import("@/components/manual/chapters/Chapter2Content"));
 const Chapter3Content = lazy(() => import("@/components/manual/chapters/Chapter3Content"));
