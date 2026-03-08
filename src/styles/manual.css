@@ -429,7 +429,7 @@ html { scroll-behavior: smooth; -webkit-overflow-scrolling: touch; }
 /* PROGRESS BAR — GPU accelerated */
 .manual-page .progress-bar { position: fixed; top: 0; left: 0; width: 100%; height: 3px; background: linear-gradient(90deg, var(--gold), var(--gold-light)); z-index: 9999; transform-origin: left; will-change: transform; box-shadow: 0 0 12px rgba(201,169,106,0.6); contain: strict; }
 
-/* TOP HEADER */
+/* TOP HEADER — GPU composited */
 .top-header {
   position: fixed;
   top: 0;
@@ -444,6 +444,8 @@ html { scroll-behavior: smooth; -webkit-overflow-scrolling: touch; }
   -webkit-backdrop-filter: blur(20px);
   border-bottom: 1px solid transparent;
   transition: background 0.3s, border-color 0.3s, box-shadow 0.3s;
+  will-change: background, border-color;
+  contain: layout style;
 }
 .top-header--scrolled {
   background: rgba(9,9,15,0.92);
