@@ -56,10 +56,10 @@ const ExportPDFModal = ({ open, onClose }: ExportPDFModalProps) => {
     setGenerating(true);
 
     try {
-      // Step 1: Render chapters hidden
-      setRenderForPDF(true);
+      // Step 1: Render chapters hidden and wait for lazy load
       await new Promise<void>((resolve) => {
         generateResolveRef.current = resolve;
+        setRenderForPDF(true);
       });
 
       // Step 2: Fetch notes
