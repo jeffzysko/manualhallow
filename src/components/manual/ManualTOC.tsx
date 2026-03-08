@@ -34,6 +34,8 @@ const ManualTOC = memo(({ onNavigate }: ManualTOCProps) => (
 
     </div>
   </section>
-);
+));
+
+ManualTOC.displayName = "ManualTOC";
 
 export default ManualTOC;

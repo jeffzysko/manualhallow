@@ -28,6 +28,8 @@ const BottomTabBar = memo(({ onScrollTop, onOpenDrawer, onOpenNotes, onOpenAI }:
       <span>Notas</span>
     </button>
   </nav>
-);
+));
+
+BottomTabBar.displayName = "BottomTabBar";
 
 export default BottomTabBar;
