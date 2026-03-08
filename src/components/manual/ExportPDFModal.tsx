@@ -1,8 +1,7 @@
-import { useState, useCallback, useRef } from "react";
+import { useState, useCallback, useRef, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { TOC_ITEMS } from "@/data/chapters";
-import { jsPDF } from "jspdf";
 import HiddenChapterRenderer from "./pdf/HiddenChapterRenderer";
 import { extractBlocks, renderBlocksToPDF, sanitize, C, paintBg, addPage, checkSpace, drawGoldLine, type PDFCtx } from "./pdf/pdfRenderer";
 
@@ -22,8 +21,19 @@ const ExportPDFModal = ({ open, onClose }: ExportPDFModalProps) => {
   const [selected, setSelected] = useState<Set<string>>(new Set(CHAPTER_ITEMS.map(c => c.target)));
   const [includeNotes, setIncludeNotes] = useState(true);
   const [generating, setGenerating] = useState(false);
-  const [renderForPDF, setRenderForPDF] = useState(false);
+  // Always render hidden chapters when modal is open
+  const [readyForPDF, setReadyForPDF] = useState(false);
   const hiddenRef = useRef<HTMLDivElement>(null);
+
+  // When the modal opens, start rendering hidden chapters immediately
+  useEffect(() => {
+    if (open) {
+      setReadyForPDF(false);
+      // Give time for lazy components to load
+      const timer = setTimeout(() => setReadyForPDF(true), 2500);
+      return () => clearTimeout(timer);
+    }
+  }, [open]);
 
   const toggleChapter = useCallback((id: string) => {
     setSelected(prev => {
@@ -42,41 +52,15 @@ const ExportPDFModal = ({ open, onClose }: ExportPDFModalProps) => {
     }
   }, [selected.size]);
 
-  const waitForHiddenContent = (): Promise<void> => {
-    return new Promise((resolve) => {
-      let attempts = 0;
-      const check = () => {
-        attempts++;
-        const el = hiddenRef.current;
-        console.log(`[PDF] Polling attempt ${attempts}, ref exists: ${!!el}, children: ${el?.children?.length ?? 0}`);
-        if (el && el.children.length > 0) {
-          // Give lazy components extra time to render
-          setTimeout(resolve, 1500);
-        } else if (attempts >= 20) {
-          console.warn("[PDF] Gave up waiting for hidden content");
-          resolve();
-        } else {
-          setTimeout(check, 300);
-        }
-      };
-      setTimeout(check, 300);
-    });
-  };
-
-  const generatePDF = async () => {
+  const generatePDF = useCallback(async () => {
     if (selected.size === 0 || !user) return;
-    console.log("[PDF] Button clicked, starting...");
     setGenerating(true);
-    setRenderForPDF(true);
-
-    // Wait a tick for React to render HiddenChapterRenderer
-    await new Promise(r => setTimeout(r, 100));
-    await waitForHiddenContent();
-    console.log("[PDF] Hidden content ready, building PDF...");
 
     try {
+      // Dynamic import jsPDF to avoid module-level import issues
+      const { jsPDF } = await import("jspdf");
 
-      // Step 2: Fetch notes
+      // Fetch notes
       let notesByChapter: NotesByChapter = {};
       if (includeNotes) {
         const { data } = await supabase
@@ -93,7 +77,6 @@ const ExportPDFModal = ({ open, onClose }: ExportPDFModalProps) => {
       }
 
       // Build PDF
-      console.log("[PDF] Hidden ref:", !!hiddenRef.current, "children:", hiddenRef.current?.children.length);
       const doc = new jsPDF({ orientation: "portrait", unit: "mm", format: "a4" });
       const pageW = doc.internal.pageSize.getWidth();
       const pageH = doc.internal.pageSize.getHeight();
@@ -103,35 +86,32 @@ const ExportPDFModal = ({ open, onClose }: ExportPDFModalProps) => {
 
       // ── Cover page ──
       paintBg(ctx);
-      // Decorative gold line at top
       doc.setFillColor(...C.gold);
       doc.rect(0, 0, pageW, 2, "F");
-      
-      // Center content
+
       ctx.y = pageH / 2 - 35;
-      // Gold ornament
       doc.setDrawColor(...C.gold);
       doc.setLineWidth(0.5);
       doc.line(pageW / 2 - 30, ctx.y, pageW / 2 + 30, ctx.y);
       ctx.y += 12;
-      
+
       doc.setTextColor(...C.gold);
       doc.setFontSize(42);
       doc.setFont("helvetica", "bold");
       doc.text("HALLOW", pageW / 2, ctx.y, { align: "center" });
       ctx.y += 8;
-      
+
       doc.setFontSize(10);
       doc.setFont("helvetica", "normal");
       doc.setTextColor(...C.gray);
       doc.text("C O M U N I C A C A O", pageW / 2, ctx.y, { align: "center" });
       ctx.y += 16;
-      
+
       doc.setDrawColor(...C.gold);
       doc.setLineWidth(0.3);
       doc.line(pageW / 2 - 20, ctx.y, pageW / 2 + 20, ctx.y);
       ctx.y += 12;
-      
+
       doc.setFontSize(16);
       doc.setFont("helvetica", "bold");
       doc.setTextColor(...C.white);
@@ -142,8 +122,7 @@ const ExportPDFModal = ({ open, onClose }: ExportPDFModalProps) => {
       doc.setTextColor(...C.gray);
       doc.text("Splash Piscinas · Edicao 2026", pageW / 2, ctx.y, { align: "center" });
       ctx.y += 20;
-      
-      // User info
+
       doc.setFontSize(9);
       doc.setTextColor(...C.gray);
       const userName = user.user_metadata?.full_name || user.email || "";
@@ -153,8 +132,7 @@ const ExportPDFModal = ({ open, onClose }: ExportPDFModalProps) => {
         new Date().toLocaleDateString("pt-BR", { day: "2-digit", month: "long", year: "numeric" }),
         pageW / 2, ctx.y, { align: "center" }
       );
-      
-      // Bottom gold line
+
       doc.setFillColor(...C.gold);
       doc.rect(0, pageH - 2, pageW, 2, "F");
 
@@ -163,7 +141,7 @@ const ExportPDFModal = ({ open, onClose }: ExportPDFModalProps) => {
       doc.setFillColor(...C.gold);
       doc.rect(0, 0, pageW, 2, "F");
       ctx.y = margin + 5;
-      
+
       doc.setTextColor(...C.gold);
       doc.setFontSize(10);
       doc.setFont("helvetica", "bold");
@@ -174,19 +152,16 @@ const ExportPDFModal = ({ open, onClose }: ExportPDFModalProps) => {
 
       const selectedChapters = CHAPTER_ITEMS.filter(c => selected.has(c.target));
       for (const ch of selectedChapters) {
-        // Number badge
         doc.setFillColor(...C.gold);
         doc.roundedRect(margin, ctx.y - 3, 10, 7, 1.5, 1.5, "F");
         doc.setTextColor(...C.bg);
         doc.setFontSize(8);
         doc.setFont("helvetica", "bold");
         doc.text(ch.num, margin + 5, ctx.y + 1.5, { align: "center" });
-        // Title
         doc.setTextColor(...C.white);
         doc.setFontSize(10);
         doc.setFont("helvetica", "normal");
         doc.text(sanitize(ch.title), margin + 14, ctx.y + 1);
-        // Dots + description
         doc.setTextColor(...C.gray);
         doc.setFontSize(8);
         doc.setFont("helvetica", "normal");
@@ -198,12 +173,10 @@ const ExportPDFModal = ({ open, onClose }: ExportPDFModalProps) => {
       // ── Chapters ──
       for (const chapter of selectedChapters) {
         addPage(ctx);
-        // Top gold accent
         doc.setFillColor(...C.gold);
         doc.rect(0, 0, pageW, 2, "F");
         ctx.y = margin + 2;
 
-        // Chapter number badge
         doc.setFillColor(...C.gold);
         doc.roundedRect(margin, ctx.y, 16, 16, 3, 3, "F");
         doc.setTextColor(...C.bg);
@@ -211,7 +184,6 @@ const ExportPDFModal = ({ open, onClose }: ExportPDFModalProps) => {
         doc.setFont("helvetica", "bold");
         doc.text(chapter.num, margin + 8, ctx.y + 11, { align: "center" });
 
-        // Chapter title
         doc.setTextColor(...C.white);
         doc.setFontSize(22);
         doc.setFont("helvetica", "bold");
@@ -219,7 +191,6 @@ const ExportPDFModal = ({ open, onClose }: ExportPDFModalProps) => {
         doc.text(titleLines, margin + 20, ctx.y + 11);
         ctx.y += Math.max(titleLines.length * 10, 18) + 4;
 
-        // Chapter description
         doc.setTextColor(...C.gray);
         doc.setFontSize(10);
         doc.setFont("helvetica", "normal");
@@ -227,11 +198,10 @@ const ExportPDFModal = ({ open, onClose }: ExportPDFModalProps) => {
         doc.text(descLines, margin, ctx.y);
         ctx.y += descLines.length * 5 + 6;
 
-        // Separator
         drawGoldLine(ctx);
         ctx.y += 4;
 
-        // Extract and render structured blocks from DOM
+        // Extract content from hidden DOM
         const hiddenEl = hiddenRef.current?.querySelector(`[data-chapter-id="${chapter.target}"]`) as HTMLElement | null;
         if (hiddenEl) {
           const blocks = extractBlocks(hiddenEl);
@@ -258,7 +228,6 @@ const ExportPDFModal = ({ open, onClose }: ExportPDFModalProps) => {
 
           for (const note of chapterNotes) {
             checkSpace(ctx, 12);
-            // Note card
             const noteLines = doc.splitTextToSize(sanitize(note.content), contentW - 16);
             doc.setFontSize(9);
             const noteH = noteLines.length * 4.5 + 8;
@@ -267,10 +236,9 @@ const ExportPDFModal = ({ open, onClose }: ExportPDFModalProps) => {
             doc.setDrawColor(...C.blue);
             doc.setLineWidth(0.3);
             doc.roundedRect(margin, ctx.y, contentW, noteH, 2, 2, "S");
-            // Blue left accent
             doc.setFillColor(...C.blue);
             doc.rect(margin, ctx.y, 2, noteH, "F");
-            
+
             doc.setTextColor(...C.white);
             doc.setFont("helvetica", "normal");
             doc.text(noteLines, margin + 8, ctx.y + 5);
@@ -283,10 +251,8 @@ const ExportPDFModal = ({ open, onClose }: ExportPDFModalProps) => {
       const totalPages = doc.getNumberOfPages();
       for (let i = 2; i <= totalPages; i++) {
         doc.setPage(i);
-        // Bottom gold line
         doc.setFillColor(...C.gold);
         doc.rect(0, pageH - 2, pageW, 2, "F");
-        // Page number
         doc.setTextColor(...C.gray);
         doc.setFontSize(7.5);
         doc.setFont("helvetica", "normal");
@@ -296,20 +262,18 @@ const ExportPDFModal = ({ open, onClose }: ExportPDFModalProps) => {
         );
       }
 
-      console.log("[PDF] Saving file...");
       doc.save("Manual-Hallow.pdf");
-      console.log("[PDF] Done!");
     } catch (err) {
       console.error("[PDF] generation error:", err);
+      alert("Erro ao gerar PDF: " + (err instanceof Error ? err.message : String(err)));
     } finally {
       setGenerating(false);
-      setRenderForPDF(false);
     }
-  };
+  }, [selected, includeNotes, user]);
 
   if (!open) return null;
 
-  const selectedIds = Array.from(selected);
+  const allChapterIds = CHAPTER_ITEMS.map(c => c.target);
 
   return (
     <div className="pdf-export-overlay" onClick={onClose}>
@@ -352,12 +316,17 @@ const ExportPDFModal = ({ open, onClose }: ExportPDFModalProps) => {
         <button
           className="pdf-export-btn"
           onClick={generatePDF}
-          disabled={generating || selected.size === 0}
+          disabled={generating || selected.size === 0 || !readyForPDF}
         >
           {generating ? (
             <>
               <span className="pdf-export-spinner" />
               Gerando PDF...
+            </>
+          ) : !readyForPDF ? (
+            <>
+              <span className="pdf-export-spinner" />
+              Preparando conteúdo...
             </>
           ) : (
             <>
@@ -372,9 +341,8 @@ const ExportPDFModal = ({ open, onClose }: ExportPDFModalProps) => {
         </button>
       </div>
 
-      {renderForPDF && (
-        <HiddenChapterRenderer ref={hiddenRef} chapterIds={selectedIds} />
-      )}
+      {/* Always render hidden chapters when modal is open */}
+      <HiddenChapterRenderer ref={hiddenRef} chapterIds={allChapterIds} />
     </div>
   );
 };
