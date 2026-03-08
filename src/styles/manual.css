@@ -54,6 +54,12 @@ body { overflow-x: hidden; }
   touch-action: manipulation;
 }
 
+/* Content-visibility: skip rendering of off-screen chapter sections */
+.manual-page > main > section {
+  content-visibility: auto;
+  contain-intrinsic-size: auto 800px;
+}
+
 .manual-page *, .manual-page *::before, .manual-page *::after { box-sizing: border-box; }
 .manual-page .display { font-family: 'Cormorant Garamond', serif; font-weight: 600; }
 .manual-page h1,.manual-page h2,.manual-page h3,.manual-page h4 { font-family: 'Cormorant Garamond', serif; line-height: 1.2; margin: 0; }
