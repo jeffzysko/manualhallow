@@ -24,28 +24,18 @@ const ExportPDFModal = ({ open, onClose }: ExportPDFModalProps) => {
   const [generating, setGenerating] = useState(false);
   const [renderForPDF, setRenderForPDF] = useState(false);
   const hiddenRef = useRef<HTMLDivElement>(null);
-  const generateResolveRef = useRef<(() => void) | null>(null);
+  const pendingGenerateRef = useRef(false);
 
+  // When renderForPDF becomes true and DOM is ready, proceed with generation
   useEffect(() => {
-    if (!renderForPDF) return;
-    // Poll until the hidden container is mounted and has rendered children
-    let attempts = 0;
-    const maxAttempts = 30;
-    const interval = setInterval(() => {
-      attempts++;
-      const el = hiddenRef.current;
-      if (el && el.children.length > 0 && el.querySelector('[data-chapter-id]')) {
-        clearInterval(interval);
-        // Extra delay for lazy components to finish rendering
-        setTimeout(() => {
-          generateResolveRef.current?.();
-        }, 800);
-      } else if (attempts >= maxAttempts) {
-        clearInterval(interval);
-        generateResolveRef.current?.();
-      }
-    }, 200);
-    return () => clearInterval(interval);
+    if (!renderForPDF || !pendingGenerateRef.current) return;
+    // Wait for lazy components to load
+    const timer = setTimeout(() => {
+      pendingGenerateRef.current = false;
+      actuallyGeneratePDF();
+    }, 2000);
+    return () => clearTimeout(timer);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [renderForPDF]);
 
   const toggleChapter = useCallback((id: string) => {
@@ -65,16 +55,18 @@ const ExportPDFModal = ({ open, onClose }: ExportPDFModalProps) => {
     }
   }, [selected.size]);
 
-  const generatePDF = useCallback(async () => {
+  const generatePDF = useCallback(() => {
     if (selected.size === 0 || !user) return;
     setGenerating(true);
+    pendingGenerateRef.current = true;
+    setRenderForPDF(true);
+  }, [selected, user]);
+
+  const actuallyGeneratePDF = useCallback(async () => {
+    if (!user) return;
+    console.log("[PDF] Starting generation...");
 
     try {
-      // Step 1: Render chapters hidden and wait for lazy load
-      await new Promise<void>((resolve) => {
-        generateResolveRef.current = resolve;
-        setRenderForPDF(true);
-      });
 
       // Step 2: Fetch notes
       let notesByChapter: NotesByChapter = {};
