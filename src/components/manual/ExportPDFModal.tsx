@@ -27,11 +27,25 @@ const ExportPDFModal = ({ open, onClose }: ExportPDFModalProps) => {
   const generateResolveRef = useRef<(() => void) | null>(null);
 
   useEffect(() => {
-    if (!renderForPDF || !hiddenRef.current) return;
-    const timer = setTimeout(() => {
-      generateResolveRef.current?.();
-    }, 1500);
-    return () => clearTimeout(timer);
+    if (!renderForPDF) return;
+    // Poll until the hidden container is mounted and has rendered children
+    let attempts = 0;
+    const maxAttempts = 30;
+    const interval = setInterval(() => {
+      attempts++;
+      const el = hiddenRef.current;
+      if (el && el.children.length > 0 && el.querySelector('[data-chapter-id]')) {
+        clearInterval(interval);
+        // Extra delay for lazy components to finish rendering
+        setTimeout(() => {
+          generateResolveRef.current?.();
+        }, 800);
+      } else if (attempts >= maxAttempts) {
+        clearInterval(interval);
+        generateResolveRef.current?.();
+      }
+    }, 200);
+    return () => clearInterval(interval);
   }, [renderForPDF]);
 
   const toggleChapter = useCallback((id: string) => {
