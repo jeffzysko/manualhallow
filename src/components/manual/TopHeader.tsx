@@ -57,10 +57,10 @@ const TopHeader = ({ onOpenSearch, onOpenFavorites }: TopHeaderProps) => {
     <header className={`top-header${scrolled ? " top-header--scrolled" : ""}`}>
       <div className="top-header__inner">
         {/* Logo */}
-        <div className="top-header__logo" onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}>
+        <button className="top-header__logo" onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })} aria-label="Voltar ao topo">
           <span className="top-header__logo-text">HALLOW</span>
           <span className="top-header__logo-sub">Manual de Vendas</span>
-        </div>
+        </button>
 
         {/* Actions */}
         <div className="top-header__actions">
