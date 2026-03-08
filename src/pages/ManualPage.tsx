@@ -111,16 +111,20 @@ const ManualPage = () => {
 
         <TopHeader onOpenSearch={() => setSearchOpen(true)} onOpenFavorites={handleOpenFavorites} onToggleScripts={() => setScriptsMode(!scriptsMode)} scriptsMode={scriptsMode} />
 
-        <SearchOverlay open={searchOpen} onClose={() => setSearchOpen(false)} onNavigate={navigate} />
-        <FavoritesOverlay
-          open={favoritesOpen}
-          onClose={() => setFavoritesOpen(false)}
-          favorites={favorites}
-          onNavigate={navigate}
-          onRemove={handleRemoveFavorite}
-        />
-        <NotesDrawer open={notesOpen} onClose={() => setNotesOpen(false)} />
-        <AIChatDrawer open={aiChatOpen} onClose={() => setAiChatOpen(false)} />
+        <Suspense fallback={null}>
+          {searchOpen && <SearchOverlay open={searchOpen} onClose={() => setSearchOpen(false)} onNavigate={navigate} />}
+          {favoritesOpen && (
+            <FavoritesOverlay
+              open={favoritesOpen}
+              onClose={() => setFavoritesOpen(false)}
+              favorites={favorites}
+              onNavigate={navigate}
+              onRemove={handleRemoveFavorite}
+            />
+          )}
+          {notesOpen && <NotesDrawer open={notesOpen} onClose={() => setNotesOpen(false)} />}
+          {aiChatOpen && <AIChatDrawer open={aiChatOpen} onClose={() => setAiChatOpen(false)} />}
+        </Suspense>
 
         <main role="main" id="main-content">
           <ManualCover />
