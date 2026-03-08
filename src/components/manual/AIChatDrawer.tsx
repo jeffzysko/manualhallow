@@ -3,6 +3,7 @@ import ReactMarkdown from "react-markdown";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { clampText } from "@/lib/sanitize";
+import { useAnalytics } from "@/hooks/useAnalytics";
 
 type Msg = { role: "user" | "assistant"; content: string };
 
