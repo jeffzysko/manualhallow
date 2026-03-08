@@ -11,11 +11,11 @@ const ManualCover = () => (
           <span>Padrão Hallow · Edição 2026</span>
         </div>
 
-        <div className="cover-title">
+        <h1 className="cover-title">
           Manual de<br/>
           Atendimento<br/>
           <em>& Vendas</em>
-        </div>
+        </h1>
         <div className="cover-subtitle">Hallow Comunicação · Splash Piscinas</div>
 
         <div className="cover-desc">

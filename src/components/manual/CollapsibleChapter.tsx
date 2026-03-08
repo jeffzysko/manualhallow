@@ -86,7 +86,14 @@ const CollapsibleChapter = ({
         )}
 
         {!scriptsMode && isCollapsed && (
-          <div className="expand-cta" onClick={() => setCollapsed(false)}>
+          <div
+            className="expand-cta"
+            role="button"
+            tabIndex={0}
+            onClick={() => setCollapsed(false)}
+            onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); setCollapsed(false); } }}
+            aria-label={`Expandir conteúdo do capítulo ${num}`}
+          >
             <span className="expand-cta-text">Expandir conteúdo completo</span>
             <svg className="expand-cta-icon" viewBox="0 0 24 24">
               <polyline points="6 9 12 15 18 9" />
@@ -94,20 +101,22 @@ const CollapsibleChapter = ({
           </div>
         )}
 
-        <div className={`section-collapsible${isCollapsed ? " collapsed" : ""}`}>
-          {tldr && (
-            <div className="chapter-tldr">
-              <div className="chapter-tldr-header">
-                <span className="chapter-tldr-badge">TL;DR</span>
-                <span className="chapter-tldr-title">Pontos-chave</span>
+        {!isCollapsed && (
+          <div className="section-collapsible">
+            {tldr && (
+              <div className="chapter-tldr">
+                <div className="chapter-tldr-header">
+                  <span className="chapter-tldr-badge">TL;DR</span>
+                  <span className="chapter-tldr-title">Pontos-chave</span>
+                </div>
+                <ul className="chapter-tldr-list">
+                  {tldr.map((point, i) => <li key={i}>{point}</li>)}
+                </ul>
               </div>
-              <ul className="chapter-tldr-list">
-                {tldr.map((point, i) => <li key={i}>{point}</li>)}
-              </ul>
-            </div>
-          )}
-          {children}
-        </div>
+            )}
+            {children}
+          </div>
+        )}
       </div>
     </section>
   );
