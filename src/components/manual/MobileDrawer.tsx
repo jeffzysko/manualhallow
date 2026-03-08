@@ -21,7 +21,7 @@ const items: DrawerItem[] = [
   { label: "Persuasão", target: "ch6" },
   { label: "Fechamento", target: "ch7" },
   { label: "Fidelização", target: "ch8" },
-  { label: "Acessórios", target: "chacc" },
+  { label: "Acessórios", target: "choa" },
   { label: "Metas 2026", target: "ch9" },
   { label: "Provas Sociais", target: "chps" },
   { label: "Objeções Acessórios", target: "choa" },
