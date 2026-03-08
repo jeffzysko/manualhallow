@@ -801,6 +801,7 @@ html { scroll-behavior: smooth; -webkit-overflow-scrolling: touch; }
   .manual-page .callout p { font-size: 16px; }
 
   /* ── Scripts ── */
+  .manual-page .card-script { margin-bottom: 20px; }
   .manual-page .script-line { grid-template-columns: 50px 1fr; gap: 6px; margin-bottom: 10px; }
   .manual-page .script-who { min-width: 0 !important; font-size: 9px !important; letter-spacing: 0.5px; text-align: left; padding-top: 4px; }
   .manual-page .script-text { font-size: 13px; padding: 8px 10px; line-height: 1.6; }
