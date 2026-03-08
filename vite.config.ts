@@ -60,7 +60,7 @@ export default defineConfig(({ mode }) => ({
         ],
       },
       manifest: {
-        id: "/manual.html",
+        id: "/",
         name: "Manual Hallow — Atendimento e Vendas",
         short_name: "Manual Hallow",
         description:
@@ -69,7 +69,7 @@ export default defineConfig(({ mode }) => ({
         background_color: "#09090F",
         display: "standalone",
         orientation: "portrait",
-        start_url: "/manual.html",
+        start_url: "/",
         scope: "/",
         lang: "pt-BR",
         dir: "ltr",
