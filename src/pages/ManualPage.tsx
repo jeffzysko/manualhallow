@@ -117,6 +117,7 @@ const ManualPage = () => {
           onRemove={handleRemoveFavorite}
         />
         <NotesDrawer open={notesOpen} onClose={() => setNotesOpen(false)} />
+        <AIChatDrawer open={aiChatOpen} onClose={() => setAiChatOpen(false)} />
 
         <main role="main">
           <ManualCover />
