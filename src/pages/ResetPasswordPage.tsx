@@ -55,7 +55,7 @@ const ResetPasswordPage = () => {
     const { error } = await supabase.auth.updateUser({ password });
     
     if (error) {
-      setError(error.message);
+      setError(translateAuthError(error.message));
     } else {
       setMessage("Senha atualizada com sucesso! Redirecionando...");
       setTimeout(() => navigate("/"), 2000);

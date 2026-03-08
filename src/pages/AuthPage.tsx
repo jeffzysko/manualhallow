@@ -45,7 +45,7 @@ const AuthPage = () => {
       const { error } = await supabase.auth.resetPasswordForEmail(email, {
         redirectTo: `${window.location.origin}/reset-password`,
       });
-      if (error) setError(error.message);
+      if (error) setError(translateAuthError(error.message));
       else setMessage("E-mail de recuperação enviado! Verifique sua caixa de entrada.");
     }
     setLoading(false);
