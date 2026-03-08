@@ -18,6 +18,7 @@ const SearchOverlay = lazy(() => import("@/components/manual/SearchOverlay"));
 const FavoritesOverlay = lazy(() => import("@/components/manual/FavoritesOverlay"));
 const NotesDrawer = lazy(() => import("@/components/manual/NotesDrawer"));
 const AIChatDrawer = lazy(() => import("@/components/manual/AIChatDrawer"));
+const ExportPDFModal = lazy(() => import("@/components/manual/ExportPDFModal"));
 
 const Chapter1Content = lazy(() => import("@/components/manual/chapters/Chapter1Content"));
 const Chapter2Content = lazy(() => import("@/components/manual/chapters/Chapter2Content"));
@@ -37,6 +38,7 @@ const ManualPage = () => {
   const [scrollProgress, setScrollProgress] = useState(0);
   const [notesOpen, setNotesOpen] = useState(false);
   const [aiChatOpen, setAiChatOpen] = useState(false);
+  const [pdfExportOpen, setPdfExportOpen] = useState(false);
   const { user, signOut } = useAuth();
   const { favorites, isFavorite, toggleFavorite } = useFavorites();
   const { progress, toggleChapter } = useReadingProgress();
@@ -109,7 +111,7 @@ const ManualPage = () => {
         <a href="#main-content" className="skip-to-content">Pular para o conteúdo</a>
         <div className="progress-bar" style={{ transform: `scaleX(${scrollProgress / 100})` }} />
 
-        <TopHeader onOpenSearch={() => setSearchOpen(true)} onOpenFavorites={handleOpenFavorites} onToggleScripts={() => setScriptsMode(!scriptsMode)} scriptsMode={scriptsMode} />
+        <TopHeader onOpenSearch={() => setSearchOpen(true)} onOpenFavorites={handleOpenFavorites} onToggleScripts={() => setScriptsMode(!scriptsMode)} scriptsMode={scriptsMode} onExportPDF={() => { if (!user) { routerNavigate("/auth"); return; } setPdfExportOpen(true); }} />
 
         <Suspense fallback={null}>
           {searchOpen && <SearchOverlay open={searchOpen} onClose={() => setSearchOpen(false)} onNavigate={navigate} />}
@@ -124,6 +126,7 @@ const ManualPage = () => {
           )}
           {notesOpen && <NotesDrawer open={notesOpen} onClose={() => setNotesOpen(false)} />}
           {aiChatOpen && <AIChatDrawer open={aiChatOpen} onClose={() => setAiChatOpen(false)} />}
+          {pdfExportOpen && <ExportPDFModal open={pdfExportOpen} onClose={() => setPdfExportOpen(false)} />}
         </Suspense>
 
         <main role="main" id="main-content">
