@@ -13,6 +13,25 @@ export default defineConfig(({ mode }) => ({
       overlay: false,
     },
   },
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          // Vendor splitting — heavy deps in their own chunks
+          "vendor-react": ["react", "react-dom"],
+          "vendor-router": ["react-router-dom"],
+          "vendor-supabase": ["@supabase/supabase-js"],
+          "vendor-query": ["@tanstack/react-query"],
+          "vendor-ui": ["@radix-ui/react-dialog", "@radix-ui/react-accordion", "@radix-ui/react-collapsible", "@radix-ui/react-tooltip", "@radix-ui/react-popover", "@radix-ui/react-dropdown-menu"],
+          "vendor-recharts": ["recharts"],
+        },
+      },
+    },
+    // Target modern browsers for smaller output
+    target: "es2020",
+    // Increase chunk size warning limit (some vendor chunks are naturally large)
+    chunkSizeWarningLimit: 600,
+  },
   plugins: [
     react(),
     mode === "development" && componentTagger(),
@@ -30,7 +49,6 @@ export default defineConfig(({ mode }) => ({
         navigateFallbackDenylist: [/^\/~oauth/],
         globPatterns: ["**/*.{js,css,html,ico,png,svg,woff2}"],
         maximumFileSizeToCacheInBytes: 5 * 1024 * 1024,
-        // Offline fallback for navigation requests
         offlineGoogleAnalytics: false,
         runtimeCaching: [
           // Google Fonts stylesheets
@@ -64,12 +82,12 @@ export default defineConfig(({ mode }) => ({
               networkTimeoutSeconds: 5,
             },
           },
-          // Supabase Edge Functions — network only (no caching mutations)
+          // Supabase Edge Functions — network only
           {
             urlPattern: /^https:\/\/.*\.supabase\.co\/functions\/.*/i,
             handler: "NetworkOnly",
           },
-          // Static images from CDN or public
+          // Static images
           {
             urlPattern: /\.(?:png|jpg|jpeg|svg|gif|webp)$/i,
             handler: "CacheFirst",
