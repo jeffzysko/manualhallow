@@ -1,4 +1,4 @@
-import { useState, ReactNode } from "react";
+import { useState, useRef, useCallback, ReactNode } from "react";
 import FavoriteButton from "./FavoriteButton";
 import { useFavoritesContext } from "@/contexts/FavoritesContext";
 import { useInView } from "@/hooks/useInView";
@@ -27,11 +27,23 @@ const CollapsibleChapter = ({
   const isCollapsed = scriptsMode ? false : collapsed;
   const { isFavorite, toggleFavorite, isLoggedIn } = useFavoritesContext();
   const { ref: animRef, isVisible } = useInView();
+  const sectionRef = useRef<HTMLElement>(null);
+
+  const handleExpand = useCallback(() => {
+    const wasCollapsed = collapsed;
+    setCollapsed(prev => !prev);
+    // When expanding, scroll back to section after a tick so content renders
+    if (wasCollapsed) {
+      requestAnimationFrame(() => {
+        sectionRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+      });
+    }
+  }, [collapsed]);
 
   const chapterLabel = `Cap. ${num.replace(/^0/, "")} — ${tag}`;
 
   return (
-    <section id={id} style={{ background: bgStyle, position: "relative" }}>
+    <section id={id} ref={sectionRef} style={{ background: bgStyle, position: "relative" }}>
       <div
         ref={animRef}
         className={`page-wrap section-gap chapter-animate${isVisible ? " chapter-visible" : ""}`}
@@ -71,7 +83,7 @@ const CollapsibleChapter = ({
         {!scriptsMode && (
           <button
             className="section-toggle"
-            onClick={() => setCollapsed(!collapsed)}
+            onClick={handleExpand}
             aria-expanded={!isCollapsed}
           >
             <span className="collapse-hint">
@@ -90,8 +102,8 @@ const CollapsibleChapter = ({
             className="expand-cta"
             role="button"
             tabIndex={0}
-            onClick={() => setCollapsed(false)}
-            onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); setCollapsed(false); } }}
+            onClick={handleExpand}
+            onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); handleExpand(); } }}
             aria-label={`Expandir conteúdo do capítulo ${num}`}
           >
             <span className="expand-cta-text">Expandir conteúdo completo</span>
