@@ -26,8 +26,6 @@ const BottomTabBar = ({ onScrollTop, onOpenDrawer, onOpenNotes, onOpenAI }: Bott
       <span>Notas</span>
     </button>
   </nav>
-));
-
-BottomTabBar.displayName = "BottomTabBar";
+);
 
 export default BottomTabBar;

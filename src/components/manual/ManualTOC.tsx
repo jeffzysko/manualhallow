@@ -33,8 +33,6 @@ const ManualTOC = ({ onNavigate }: ManualTOCProps) => (
 
     </div>
   </section>
-));
-
-ManualTOC.displayName = "ManualTOC";
+);
 
 export default ManualTOC;
