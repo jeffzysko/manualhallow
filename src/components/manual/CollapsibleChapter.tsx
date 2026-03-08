@@ -1,6 +1,7 @@
 import { useState, ReactNode } from "react";
 import FavoriteButton from "./FavoriteButton";
 import { useFavoritesContext } from "@/contexts/FavoritesContext";
+import { useInView } from "@/hooks/useInView";
 
 interface CollapsibleChapterProps {
   id: string;
@@ -25,12 +26,16 @@ const CollapsibleChapter = ({
   const [collapsed, setCollapsed] = useState(true);
   const isCollapsed = scriptsMode ? false : collapsed;
   const { isFavorite, toggleFavorite, isLoggedIn } = useFavoritesContext();
+  const { ref: animRef, isVisible } = useInView();
 
   const chapterLabel = `Cap. ${num.replace(/^0/, "")} — ${tag}`;
 
   return (
     <section id={id} style={{ background: bgStyle, position: "relative" }}>
-      <div className="page-wrap section-gap">
+      <div
+        ref={animRef}
+        className={`page-wrap section-gap chapter-animate${isVisible ? " chapter-visible" : ""}`}
+      >
         <div className="chapter-header" style={{ position: "relative" }}>
           <div className="ch-num">{num}</div>
           <div className="ch-label">
