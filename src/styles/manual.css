@@ -138,7 +138,7 @@ html { scroll-behavior: smooth; -webkit-overflow-scrolling: touch; }
 
 /* CHAPTER HEADER */
 .manual-page .chapter-header { padding: 72px 0 32px; position: relative; }
-.manual-page .chapter-header .ch-num { font-family: 'Cormorant Garamond', serif; font-size: 160px; font-weight: 700; line-height: 1; color: rgba(255,255,255,0.03); position: absolute; top: 40px; right: 0; pointer-events: none; letter-spacing: -8px; }
+.manual-page .chapter-header .ch-num { font-family: 'Cormorant Garamond', serif; font-size: 160px; font-weight: 700; line-height: 1; color: rgba(255,255,255,0.03); position: absolute; top: 40px; right: 0; pointer-events: none; letter-spacing: -8px; overflow: hidden; max-width: 100%; }
 .manual-page .ch-label { display: inline-flex; align-items: center; gap: 10px; margin-bottom: 12px; }
 .manual-page .ch-label-num { width: 32px; height: 32px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700; }
 .manual-page .ch-label-tag { font-size: 11px; letter-spacing: 3px; text-transform: uppercase; font-weight: 600; }
