@@ -102,8 +102,8 @@ const CollapsibleChapter = ({
             className="expand-cta"
             role="button"
             tabIndex={0}
-            onClick={() => setCollapsed(false)}
-            onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); setCollapsed(false); } }}
+            onClick={handleExpand}
+            onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); handleExpand(); } }}
             aria-label={`Expandir conteúdo do capítulo ${num}`}
           >
             <span className="expand-cta-text">Expandir conteúdo completo</span>
