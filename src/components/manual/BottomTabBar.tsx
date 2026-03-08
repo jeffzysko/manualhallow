@@ -1,5 +1,3 @@
-import { memo } from "react";
-
 interface BottomTabBarProps {
   onScrollTop: () => void;
   onOpenDrawer: () => void;
@@ -7,7 +5,7 @@ interface BottomTabBarProps {
   onOpenAI?: () => void;
 }
 
-const BottomTabBar = memo(({ onScrollTop, onOpenDrawer, onOpenNotes, onOpenAI }: BottomTabBarProps) => (
+const BottomTabBar = ({ onScrollTop, onOpenDrawer, onOpenNotes, onOpenAI }: BottomTabBarProps) => (
   <nav className="bottom-tab-bar" id="bottom-tab-bar">
     <button className="tab-item" onClick={onScrollTop} aria-label="Início">
       <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
