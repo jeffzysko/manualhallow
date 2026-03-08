@@ -3,6 +3,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
 import TopHeader from "@/components/manual/TopHeader";
+import AnalyticsDashboard from "@/components/admin/AnalyticsDashboard";
 import { CHAPTER_NAMES } from "@/data/chapters";
 import "@/styles/manual.css";
 
@@ -31,7 +32,7 @@ const AdminPage = () => {
   const navigate = useNavigate();
   const [stats, setStats] = useState<AdminStats | null>(null);
   const [users, setUsers] = useState<UserRow[]>([]);
-  const [tab, setTab] = useState<"overview" | "users">("overview");
+  const [tab, setTab] = useState<"overview" | "users" | "analytics">("overview");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [togglingId, setTogglingId] = useState<string | null>(null);
@@ -103,6 +104,7 @@ const AdminPage = () => {
         <div className="admin-tabs">
           <button className={`admin-tab${tab === "overview" ? " admin-tab--active" : ""}`} onClick={() => setTab("overview")}>Visão Geral</button>
           <button className={`admin-tab${tab === "users" ? " admin-tab--active" : ""}`} onClick={() => setTab("users")}>Usuários ({users.length})</button>
+          <button className={`admin-tab${tab === "analytics" ? " admin-tab--active" : ""}`} onClick={() => setTab("analytics")}>Analytics</button>
         </div>
 
         {tab === "overview" && (
@@ -200,6 +202,7 @@ const AdminPage = () => {
             </div>
           </div>
         )}
+        {tab === "analytics" && <AnalyticsDashboard />}
       </div>
     </div>
   );
