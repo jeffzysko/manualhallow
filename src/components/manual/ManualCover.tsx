@@ -24,7 +24,7 @@ const ManualCover = () => (
 
         <div className="cover-stats">
           <div className="cover-stat">
-            <span className="cover-stat-num">12</span>
+            <span className="cover-stat-num">9</span>
             <div className="cover-stat-label">Capítulos</div>
           </div>
           <div className="cover-stat">

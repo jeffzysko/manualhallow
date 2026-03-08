@@ -23,11 +23,17 @@ const FavoritesOverlay = ({ open, onClose, favorites, onNavigate, onRemove }: Fa
   };
 
   return (
-    <div className={`search-overlay${open ? " open" : ""}`} onClick={handleClose}>
+    <div
+      className={`search-overlay${open ? " open" : ""}`}
+      onClick={handleClose}
+      role="dialog"
+      aria-modal="true"
+      aria-label="Favoritos salvos"
+    >
       <div className="search-box fav-overlay-box" onClick={e => e.stopPropagation()}>
         <div className="fav-overlay-header">
           <h3 className="display fav-overlay-title">★ Favoritos</h3>
-          <button className="fav-overlay-close" onClick={handleClose} aria-label="Fechar">✕</button>
+          <button className="fav-overlay-close" onClick={handleClose} aria-label="Fechar favoritos">✕</button>
         </div>
 
         <div className="fav-overlay-list">

@@ -8,6 +8,18 @@ body { overflow-x: hidden; }
   html { scroll-behavior: auto; }
 }
 
+/* Global focus-visible outline for keyboard navigation (WCAG 2.4.7) */
+.manual-page *:focus-visible {
+  outline: 2px solid var(--gold, #C9A96A);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+.manual-page button:focus:not(:focus-visible),
+.manual-page a:focus:not(:focus-visible),
+.manual-page input:focus:not(:focus-visible) {
+  outline: none;
+}
+
 .manual-page {
   --bg:          #09090F;
   --bg2:         #0F1018;
@@ -1721,13 +1733,16 @@ body { overflow-x: hidden; }
 .auth-recovery-header { text-align: center; margin-bottom: 28px; }
 .auth-recovery-title { color: var(--white); font-size: 16px; font-weight: 600; margin-bottom: 8px; }
 .auth-recovery-desc { color: var(--gray); font-size: 13px; }
-.auth-form { display: flex; flex-direction: column; gap: 14px; }
-.auth-input { background: var(--bg); border: 1px solid var(--border); border-radius: 10px; padding: 14px 16px; color: var(--white); font-size: 16px; outline: none; transition: border-color 0.15s; width: 100%; box-sizing: border-box; -webkit-appearance: none; }
-.auth-input:focus { border-color: var(--gold); }
+.auth-form { display: flex; flex-direction: column; gap: 16px; }
+.auth-field { display: flex; flex-direction: column; gap: 6px; }
+.auth-label { font-size: 12px; font-weight: 600; color: var(--gray); letter-spacing: 1px; text-transform: uppercase; }
+.auth-input { background: var(--bg); border: 1px solid var(--border); border-radius: 10px; padding: 14px 16px; color: var(--white); font-size: 16px; outline: none; transition: border-color 0.15s, box-shadow 0.15s; width: 100%; box-sizing: border-box; -webkit-appearance: none; }
+.auth-input:focus { border-color: var(--gold); box-shadow: 0 0 0 3px rgba(201,169,106,0.15); }
 .auth-error { color: var(--red); font-size: 13px; }
 .auth-success { color: var(--green); font-size: 13px; }
-.auth-submit { background: var(--gold); color: #09090F; border: none; border-radius: 10px; padding: 14px; font-size: 14px; font-weight: 700; cursor: pointer; margin-top: 4px; transition: opacity 0.15s; }
+.auth-submit { background: var(--gold); color: #09090F; border: none; border-radius: 10px; padding: 14px; font-size: 14px; font-weight: 700; cursor: pointer; margin-top: 4px; transition: opacity 0.15s, box-shadow 0.15s; }
 .auth-submit:disabled { opacity: 0.6; }
+.auth-submit:focus-visible { box-shadow: 0 0 0 3px rgba(201,169,106,0.4); outline: none; }
 .auth-footer { text-align: center; margin-top: 20px; }
 .auth-link { background: none; border: none; color: var(--gold); font-size: 13px; cursor: pointer; text-decoration: underline; opacity: 0.8; }
 .auth-link:hover { opacity: 1; }
