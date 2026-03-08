@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import CHAPTERS from "@/data/chapters";
+import { clampText } from "@/lib/sanitize";
 
 interface Note {
   id: string;
