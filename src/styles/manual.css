@@ -1043,8 +1043,18 @@ body { overflow-x: hidden; }
   .reading-progress { padding: 16px 16px 0; }
   .reading-progress__chip { padding: 4px 10px; font-size: 10px; min-height: 32px; }
 
-  /* ── Notes drawer ── */
-  .nd-panel { width: min(360px, 95vw); }
+  /* ── Notes drawer → fullscreen on mobile ── */
+  .nd-overlay { background: rgba(0,0,0,0.85); }
+  .nd-panel {
+    width: 100vw;
+    height: 100vh;
+    height: 100dvh;
+    top: 0; right: 0; bottom: 0; left: 0;
+    border-left: none;
+    border-radius: 0;
+    animation: fadeIn 0.25s ease-out;
+    padding-top: env(safe-area-inset-top, 0px);
+  }
   .nd-header { padding: 16px 16px 14px; }
   .nd-header__title { font-size: 18px; }
   .nd-tabs { padding: 10px 16px; }
@@ -1054,7 +1064,7 @@ body { overflow-x: hidden; }
   .nd-editor { padding: 16px; }
   .nd-textarea { font-size: 16px; min-height: 200px; }
   .nd-all { padding: 16px; }
-  .nd-close { width: 36px; height: 36px; }
+  .nd-close { width: 40px; height: 40px; }
 
   /* ── Auth pages ── */
   .auth-wrapper { padding: 16px; }
