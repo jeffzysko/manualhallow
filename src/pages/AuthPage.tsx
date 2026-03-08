@@ -28,7 +28,7 @@ const AuthPage = () => {
 
     if (mode === "login") {
       const { error } = await supabase.auth.signInWithPassword({ email, password });
-      if (error) setError(error.message);
+      if (error) setError(translateAuthError(error.message));
       else navigate("/");
     } else if (mode === "signup") {
       const { error } = await supabase.auth.signUp({
