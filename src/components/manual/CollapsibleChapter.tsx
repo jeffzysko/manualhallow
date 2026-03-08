@@ -94,20 +94,22 @@ const CollapsibleChapter = ({
           </div>
         )}
 
-        <div className={`section-collapsible${isCollapsed ? " collapsed" : ""}`}>
-          {tldr && (
-            <div className="chapter-tldr">
-              <div className="chapter-tldr-header">
-                <span className="chapter-tldr-badge">TL;DR</span>
-                <span className="chapter-tldr-title">Pontos-chave</span>
+        {!isCollapsed && (
+          <div className="section-collapsible">
+            {tldr && (
+              <div className="chapter-tldr">
+                <div className="chapter-tldr-header">
+                  <span className="chapter-tldr-badge">TL;DR</span>
+                  <span className="chapter-tldr-title">Pontos-chave</span>
+                </div>
+                <ul className="chapter-tldr-list">
+                  {tldr.map((point, i) => <li key={i}>{point}</li>)}
+                </ul>
               </div>
-              <ul className="chapter-tldr-list">
-                {tldr.map((point, i) => <li key={i}>{point}</li>)}
-              </ul>
-            </div>
-          )}
-          {children}
-        </div>
+            )}
+            {children}
+          </div>
+        )}
       </div>
     </section>
   );
