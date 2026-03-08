@@ -27,6 +27,18 @@ const CollapsibleChapter = ({
   const isCollapsed = scriptsMode ? false : collapsed;
   const { isFavorite, toggleFavorite, isLoggedIn } = useFavoritesContext();
   const { ref: animRef, isVisible } = useInView();
+  const sectionRef = useRef<HTMLElement>(null);
+
+  const handleExpand = useCallback(() => {
+    const wasCollapsed = collapsed;
+    setCollapsed(prev => !prev);
+    // When expanding, scroll back to section after a tick so content renders
+    if (wasCollapsed) {
+      requestAnimationFrame(() => {
+        sectionRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+      });
+    }
+  }, [collapsed]);
 
   const chapterLabel = `Cap. ${num.replace(/^0/, "")} — ${tag}`;
 
