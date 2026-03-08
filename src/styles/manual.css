@@ -559,6 +559,11 @@ html { scroll-behavior: smooth; -webkit-overflow-scrolling: touch; }
 .top-header__icon-btn svg {
   flex-shrink: 0;
 }
+.top-header__icon-btn--active {
+  color: var(--gold);
+  background: var(--gold-dim);
+  border-color: var(--border);
+}
 .top-header__user {
   position: relative;
 }

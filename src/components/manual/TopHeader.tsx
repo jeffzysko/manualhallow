@@ -6,9 +6,11 @@ import { supabase } from "@/integrations/supabase/client";
 interface TopHeaderProps {
   onOpenSearch?: () => void;
   onOpenFavorites?: () => void;
+  onToggleScripts?: () => void;
+  scriptsMode?: boolean;
 }
 
-const TopHeader = ({ onOpenSearch, onOpenFavorites }: TopHeaderProps) => {
+const TopHeader = ({ onOpenSearch, onOpenFavorites, onToggleScripts, scriptsMode }: TopHeaderProps) => {
   const { user, signOut } = useAuth();
   const navigate = useNavigate();
   const [scrolled, setScrolled] = useState(false);
@@ -64,6 +66,22 @@ const TopHeader = ({ onOpenSearch, onOpenFavorites }: TopHeaderProps) => {
 
         {/* Actions */}
         <div className="top-header__actions">
+          {onToggleScripts && (
+            <button
+              className={`top-header__icon-btn${scriptsMode ? " top-header__icon-btn--active" : ""}`}
+              onClick={onToggleScripts}
+              aria-label="Modo Scripts"
+              title="Modo Scripts"
+            >
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M14.5 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V7.5L14.5 2z"/>
+                <polyline points="14 2 14 8 20 8"/>
+                <line x1="16" y1="13" x2="8" y2="13"/>
+                <line x1="16" y1="17" x2="8" y2="17"/>
+                <line x1="10" y1="9" x2="8" y2="9"/>
+              </svg>
+            </button>
+          )}
           {onOpenSearch && (
             <button className="top-header__icon-btn" onClick={onOpenSearch} aria-label="Buscar" title="Buscar (⌘K)">
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
