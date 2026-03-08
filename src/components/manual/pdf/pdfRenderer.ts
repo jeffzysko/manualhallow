@@ -1,19 +1,20 @@
 import { jsPDF } from "jspdf";
 
 // ─── Colors ───
+type RGB = [number, number, number];
 const C = {
-  bg:       [9, 9, 15] as const,
-  gold:     [201, 169, 106] as const,
-  white:    [244, 240, 232] as const,
-  gray:     [158, 154, 146] as const,
-  darkCard: [18, 18, 26] as const,
-  cardBorder: [40, 40, 52] as const,
-  blue:     [91, 155, 213] as const,
-  green:    [92, 184, 138] as const,
-  red:      [224, 92, 92] as const,
-  purple:   [160, 123, 224] as const,
-  scriptBg: [14, 14, 22] as const,
-  calloutBg:[28, 25, 18] as const,
+  bg:       [9, 9, 15] as RGB,
+  gold:     [201, 169, 106] as RGB,
+  white:    [244, 240, 232] as RGB,
+  gray:     [158, 154, 146] as RGB,
+  darkCard: [18, 18, 26] as RGB,
+  cardBorder: [40, 40, 52] as RGB,
+  blue:     [91, 155, 213] as RGB,
+  green:    [92, 184, 138] as RGB,
+  red:      [224, 92, 92] as RGB,
+  purple:   [160, 123, 224] as RGB,
+  scriptBg: [14, 14, 22] as RGB,
+  calloutBg:[28, 25, 18] as RGB,
 };
 
 interface PDFCtx {
