@@ -114,7 +114,7 @@ const ResetPasswordPage = () => {
     <div className="manual-page auth-wrapper">
       <div className="auth-card">
         <h1 className="display auth-logo">HALLOW</h1>
-        <p className="auth-subtitle">MANUAL DE VENDAS</p>
+        <p className="auth-subtitle" style={{ marginBottom: 32 }}>MANUAL DE VENDAS</p>
 
         <div className="auth-recovery-header">
           <p className="auth-recovery-title">Redefinir Senha</p>
