@@ -1551,3 +1551,25 @@
   letter-spacing: 0.5px;
   backdrop-filter: blur(12px);
 }
+
+/* AUTH PAGE */
+.auth-wrapper { min-height: 100vh; display: flex; align-items: center; justify-content: center; padding-top: 0; }
+.auth-card { background: var(--card); border: 1px solid var(--border); border-radius: 20px; padding: 48px 36px; max-width: 420px; width: 100%; margin: 0 20px; }
+.auth-logo { font-size: 32px; color: var(--gold); margin-bottom: 8px; text-align: center; }
+.auth-subtitle { color: var(--gray); font-size: 13px; text-align: center; margin-bottom: 32px; letter-spacing: 2px; }
+.auth-tab-group { display: flex; gap: 0; margin-bottom: 28px; border-radius: 10px; overflow: hidden; border: 1px solid var(--border); }
+.auth-tab { flex: 1; padding: 12px 0; font-size: 13px; font-weight: 600; letter-spacing: 1px; background: transparent; color: var(--gray); border: none; cursor: pointer; transition: background 0.15s, color 0.15s; }
+.auth-tab--active { background: var(--gold-dim); color: var(--gold); }
+.auth-recovery-header { text-align: center; margin-bottom: 28px; }
+.auth-recovery-title { color: var(--white); font-size: 16px; font-weight: 600; margin-bottom: 8px; }
+.auth-recovery-desc { color: var(--gray); font-size: 13px; }
+.auth-form { display: flex; flex-direction: column; gap: 14px; }
+.auth-input { background: var(--bg); border: 1px solid var(--border); border-radius: 10px; padding: 14px 16px; color: var(--white); font-size: 14px; outline: none; transition: border-color 0.15s; }
+.auth-input:focus { border-color: var(--gold); }
+.auth-error { color: var(--red); font-size: 13px; }
+.auth-success { color: var(--green); font-size: 13px; }
+.auth-submit { background: var(--gold); color: #09090F; border: none; border-radius: 10px; padding: 14px; font-size: 14px; font-weight: 700; cursor: pointer; margin-top: 4px; transition: opacity 0.15s; }
+.auth-submit:disabled { opacity: 0.6; }
+.auth-footer { text-align: center; margin-top: 20px; }
+.auth-link { background: none; border: none; color: var(--gold); font-size: 13px; cursor: pointer; text-decoration: underline; opacity: 0.8; }
+.auth-link:hover { opacity: 1; }
