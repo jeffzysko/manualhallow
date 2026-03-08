@@ -417,7 +417,7 @@ html { scroll-behavior: smooth; -webkit-overflow-scrolling: touch; }
 .manual-page .section-collapsible.collapsed { max-height: 0; opacity: 0; padding-top: 0; }
 
 /* CHAPTER TL;DR */
-.manual-page .chapter-tldr { background: linear-gradient(135deg, rgba(201,169,106,0.06), rgba(201,169,106,0.02)); border: 1px solid rgba(201,169,106,0.15); border-radius: 16px; padding: 28px 32px; margin: -20px 0 48px; position: relative; overflow: hidden; }
+.manual-page .chapter-tldr { background: linear-gradient(135deg, rgba(201,169,106,0.06), rgba(201,169,106,0.02)); border: 1px solid rgba(201,169,106,0.15); border-radius: 16px; padding: 28px 32px; margin: -12px 0 40px; position: relative; overflow: hidden; }
 .manual-page .chapter-tldr::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: linear-gradient(90deg, transparent, var(--gold), transparent); }
 .manual-page .chapter-tldr-header { display: flex; align-items: center; gap: 10px; margin-bottom: 16px; }
 .manual-page .chapter-tldr-badge { background: var(--gold-dim); color: var(--gold); font-size: 9px; letter-spacing: 2px; text-transform: uppercase; font-weight: 700; padding: 4px 12px; border-radius: 100px; }
