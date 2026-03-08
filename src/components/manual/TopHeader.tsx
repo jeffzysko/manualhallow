@@ -7,7 +7,6 @@ interface TopHeaderProps {
   onOpenSearch?: () => void;
   onOpenFavorites?: () => void;
   onToggleScripts?: () => void;
-  onExportPDF?: () => void;
   scriptsMode?: boolean;
 }
 
