@@ -106,7 +106,7 @@ const ManualPage = () => {
       <div className={`manual-page${scriptsMode ? " scripts-mode" : ""}`}>
         <div className="progress-bar" style={{ transform: `scaleX(${scrollProgress / 100})` }} />
 
-        <TopHeader onOpenSearch={() => setSearchOpen(true)} onOpenFavorites={handleOpenFavorites} />
+        <TopHeader onOpenSearch={() => setSearchOpen(true)} onOpenFavorites={handleOpenFavorites} onToggleScripts={() => setScriptsMode(!scriptsMode)} scriptsMode={scriptsMode} />
 
         <SearchOverlay open={searchOpen} onClose={() => setSearchOpen(false)} onNavigate={navigate} />
         <FavoritesOverlay
