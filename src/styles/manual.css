@@ -896,7 +896,7 @@ html { scroll-behavior: smooth; -webkit-overflow-scrolling: touch; }
   .manual-page .rubric-score-item { padding: 6px 10px; }
 
   /* ── TL;DR ── */
-  .manual-page .chapter-tldr { padding: 16px 18px; margin: -8px 0 24px; }
+  .manual-page .chapter-tldr { padding: 16px 18px; margin: -4px 0 28px; }
   .manual-page .chapter-tldr-list li { font-size: 12px; gap: 8px; }
   .manual-page .chapter-tldr-title { font-size: 16px; }
 
