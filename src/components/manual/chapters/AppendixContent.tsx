@@ -29,7 +29,6 @@ const AppendixContent = () => (
 
     {/* Extras: Objeções de Acessórios */}
     <section id="choa" style={{background:'var(--bg2)'}}>
-      <div id="choa-obj"></div>
       <div className="page-wrap section-gap">
         <div className="chapter-header reveal">
           <div className="ch-num" style={{fontSize:120}}>OA</div>
