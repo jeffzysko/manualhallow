@@ -1,8 +1,9 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, useRef, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { TOC_ITEMS } from "@/data/chapters";
 import { jsPDF } from "jspdf";
+import HiddenChapterRenderer from "./pdf/HiddenChapterRenderer";
 
 interface ExportPDFModalProps {
   open: boolean;
@@ -15,78 +16,156 @@ interface NotesByChapter {
 
 const CHAPTER_ITEMS = TOC_ITEMS.filter(item => item.num.match(/^0[1-9]$/));
 
-// Static chapter summaries for PDF (DOM may not be expanded)
 const CHAPTER_SUMMARIES: Record<string, string[]> = {
   ch1: [
-    "O cliente não compra produto — compra risco evitado e previsibilidade.",
-    "Preço premium se sustenta quando o valor percebido supera a âncora de custo.",
-    "Nunca entre na guerra de preço; entre na lógica risco × transformação.",
+    "O cliente nao compra produto — compra risco evitado e previsibilidade.",
+    "Preco premium se sustenta quando o valor percebido supera a ancora de custo.",
+    "Nunca entre na guerra de preco; entre na logica risco x transformacao.",
     "As 3 Certezas: certeza no produto, certeza no vendedor, certeza no momento.",
-    "Quem vende premium não desconta — demonstra que o custo de NÃO comprar é maior.",
+    "Quem vende premium nao desconta — demonstra que o custo de NAO comprar e maior.",
   ],
   ch2: [
-    "Diagnóstico bom = entender cenário + critério de decisão + próximo passo.",
-    "Use SPIN: Situação → Problema → Implicação → Ganho.",
-    "Follow-up sempre com avanço de valor, nunca com 'e aí?'.",
-    "Perguntas abertas extraem mais informação que perguntas fechadas.",
+    "Diagnostico bom = entender cenario + criterio de decisao + proximo passo.",
+    "Use SPIN: Situacao -> Problema -> Implicacao -> Ganho.",
+    "Follow-up sempre com avanco de valor, nunca com 'e ai?'.",
+    "Perguntas abertas extraem mais informacao que perguntas fechadas.",
     "Documente tudo: cada detalhe vira argumento na proposta.",
   ],
   ch3: [
-    "Espelhamento acontece em 3 níveis: palavras, ritmo e emoção.",
-    "Reflita o vocabulário e tom do cliente para gerar confiança em minutos.",
-    "Espelhar é entender, não manipular — faça com ética.",
+    "Espelhamento acontece em 3 niveis: palavras, ritmo e emocao.",
+    "Reflita o vocabulario e tom do cliente para gerar confianca em minutos.",
+    "Espelhar e entender, nao manipular — faca com etica.",
     "Adapte o canal: WhatsApp pede objetividade, telefone permite mais rapport.",
-    "Valide antes de avançar: 'Entendi certo que...' cria conexão.",
+    "Valide antes de avancar: 'Entendi certo que...' cria conexao.",
   ],
   ch4: [
-    "Microcompromissos reduzem resistência e tornam o 'sim' final natural.",
-    "Cada confirmação pequena gera consistência psicológica.",
-    "Use a técnica Rotular + Validar + Perguntar em cada interação.",
+    "Microcompromissos reduzem resistencia e tornam o 'sim' final natural.",
+    "Cada confirmacao pequena gera consistencia psicologica.",
+    "Use a tecnica Rotular + Validar + Perguntar em cada interacao.",
     "Nunca pule etapas — a escada funciona degrau por degrau.",
-    "O 'sim' final é consequência de vários 'sims' menores.",
+    "O 'sim' final e consequencia de varios 'sims' menores.",
   ],
   ch5: [
-    "Preço só entra quando já existe: cenário + critério + encaixe.",
-    "Ancoragem positiva antes do valor: mostre o que está incluso primeiro.",
-    "Use a fórmula: custo da inação > investimento na solução.",
-    "Nunca apresente preço isolado — sempre dentro de um contexto de valor.",
-    "Parcelamento e condições são ferramentas, não concessões.",
+    "Preco so entra quando ja existe: cenario + criterio + encaixe.",
+    "Ancoragem positiva antes do valor: mostre o que esta incluso primeiro.",
+    "Use a formula: custo da inacao > investimento na solucao.",
+    "Nunca apresente preco isolado — sempre dentro de um contexto de valor.",
+    "Parcelamento e condicoes sao ferramentas, nao concessoes.",
   ],
   ch6: [
-    "Reciprocidade, prova social e escassez são os 3 gatilhos mais eficazes.",
-    "Urgência real (agenda limitada) funciona melhor que pressão artificial.",
-    "Autoridade se constrói com dados e cases, não com autopromoção.",
-    "Gatilho mental não é frase mágica — é estrutura de comunicação.",
-    "Persuasão ética = ajudar o cliente a decidir com segurança.",
+    "Reciprocidade, prova social e escassez sao os 3 gatilhos mais eficazes.",
+    "Urgencia real (agenda limitada) funciona melhor que pressao artificial.",
+    "Autoridade se constroi com dados e cases, nao com autopromocao.",
+    "Gatilho mental nao e frase magica — e estrutura de comunicacao.",
+    "Persuasao etica = ajudar o cliente a decidir com seguranca.",
   ],
   ch7: [
-    "Fechamento premium = próximo passo claro, não pedido de compra.",
-    "Os 3 melhores: por próximo passo, por escolha, por resumo.",
+    "Fechamento premium = proximo passo claro, nao pedido de compra.",
+    "Os 3 melhores: por proximo passo, por escolha, por resumo.",
     "Nunca deixe o cliente sem saber o que fazer depois.",
-    "Objeção não é rejeição — é pedido de mais informação.",
-    "Silencie após apresentar: quem fala primeiro perde poder de negociação.",
+    "Objecao nao e rejeicao — e pedido de mais informacao.",
+    "Silencie apos apresentar: quem fala primeiro perde poder de negociacao.",
   ],
   ch8: [
-    "Pós-venda gera recompra e indicações — é o início do próximo ciclo.",
-    "Follow-up de entrega cria confiança e previne cancelamentos.",
-    "Cada cliente satisfeito vale 3 indicações em média.",
-    "Os 7 pontos de ouro: boas-vindas, acompanhamento, entrega, check-in, feedback, indicação, recompra.",
-    "Experiência premium é consistência em cada ponto de contato.",
+    "Pos-venda gera recompra e indicacoes — e o inicio do proximo ciclo.",
+    "Follow-up de entrega cria confianca e previne cancelamentos.",
+    "Cada cliente satisfeito vale 3 indicacoes em media.",
+    "Os 7 pontos de ouro: boas-vindas, acompanhamento, entrega, check-in, feedback, indicacao, recompra.",
+    "Experiencia premium e consistencia em cada ponto de contato.",
   ],
   ch9: [
-    "Metas claras geram foco — sem meta, sem direção.",
-    "Acompanhe semanalmente, não apenas no final do mês.",
-    "Celebre conquistas intermediárias para manter motivação.",
-    "Foque em taxa de avanço por etapa do funil.",
+    "Metas claras geram foco — sem meta, sem direcao.",
+    "Acompanhe semanalmente, nao apenas no final do mes.",
+    "Celebre conquistas intermediarias para manter motivacao.",
+    "Foque em taxa de avanco por etapa do funil.",
     "Planeje por trimestre, execute por semana, revise diariamente.",
   ],
 };
+
+/** Sanitize text: remove emojis and non-latin chars that Helvetica can't render */
+function sanitize(text: string): string {
+  return text
+    .replace(/[\u{1F000}-\u{1FFFF}]/gu, "")
+    .replace(/[\u2600-\u27BF\u2B50\u2B55\u23CF\u23E9-\u23F3\u23F8-\u23FA\u25AA\u25AB\u25B6\u25C0\u25FB-\u25FE\u2602-\u2605\u260E\u2611\u2614\u2615\u2618\u261D\u2620\u2622-\u2623\u2626\u262A\u262E-\u262F\u2638-\u263A\u2640\u2642\u2648-\u2653\u265F\u2660\u2663\u2665-\u2666\u2668\u267B\u267E-\u267F\u2692-\u2697\u2699\u269B-\u269C\u26A0-\u26A1\u26A7\u26AA-\u26AB\u26B0-\u26B1\u26BD-\u26BE\u26C4-\u26C5\u26C8\u26CE-\u26CF\u26D1\u26D3-\u26D4\u26E9-\u26EA\u26F0-\u26F5\u26F7-\u26FA\u26FD\u2702\u2705\u2708-\u270D\u270F\u2712\u2714\u2716\u271D\u2721\u2728\u2733-\u2734\u2744\u2747\u274C\u274E\u2753-\u2755\u2757\u2763-\u2764\u2795-\u2797\u27A1\u27B0\u27BF]/g, "")
+    .replace(/[\u{FE00}-\u{FE0F}]/gu, "")
+    .replace(/[\u200D]/g, "")
+    .replace(/[❌✅✨🚫]/g, "")
+    .trim();
+}
+
+/** Extract structured text from a DOM container for PDF rendering */
+function extractContentFromDOM(container: HTMLElement): Array<{ tag: string; text: string }> {
+  const results: Array<{ tag: string; text: string }> = [];
+  const selectors = "h3, h4, p, li, blockquote, .script-text, .script-who, .fu-day, .fu-msg, .fu-tag, .compare-cell, .compare-head-cell, .phrase-item, .check-text, .obj-q, .obj-branch-text, .obj-branch-if, .ponto-content h4, .ponto-content p, .audio-text, .season-strategy, .season-period, .kpi-card h4, .kpi-card p";
+  
+  const elements = container.querySelectorAll(selectors);
+  
+  for (const el of elements) {
+    const text = sanitize(el.textContent?.trim() || "");
+    if (!text || text.length < 2) continue;
+    
+    const tag = el.tagName.toLowerCase();
+    const classList = el.className || "";
+    
+    // Classify the element
+    if (tag === "h3") {
+      results.push({ tag: "h3", text });
+    } else if (tag === "h4") {
+      results.push({ tag: "h4", text });
+    } else if (tag === "blockquote" || classList.includes("callout")) {
+      results.push({ tag: "quote", text });
+    } else if (classList.includes("script-who")) {
+      results.push({ tag: "script-who", text });
+    } else if (classList.includes("script-text")) {
+      results.push({ tag: "script-text", text });
+    } else if (classList.includes("fu-day")) {
+      results.push({ tag: "fu-day", text });
+    } else if (classList.includes("fu-msg")) {
+      results.push({ tag: "fu-msg", text });
+    } else if (classList.includes("audio-text")) {
+      results.push({ tag: "quote", text });
+    } else if (classList.includes("obj-q")) {
+      results.push({ tag: "quote", text });
+    } else if (classList.includes("obj-branch-if")) {
+      results.push({ tag: "label", text });
+    } else if (classList.includes("obj-branch-text")) {
+      results.push({ tag: "body", text });
+    } else if (classList.includes("phrase-item")) {
+      results.push({ tag: "li", text });
+    } else if (classList.includes("check-text")) {
+      results.push({ tag: "li", text });
+    } else if (classList.includes("compare-head-cell")) {
+      results.push({ tag: "th", text });
+    } else if (classList.includes("compare-cell")) {
+      results.push({ tag: "td", text });
+    } else if (tag === "li") {
+      results.push({ tag: "li", text });
+    } else if (tag === "p") {
+      results.push({ tag: "p", text });
+    }
+  }
+  
+  return results;
+}
 
 const ExportPDFModal = ({ open, onClose }: ExportPDFModalProps) => {
   const { user } = useAuth();
   const [selected, setSelected] = useState<Set<string>>(new Set(CHAPTER_ITEMS.map(c => c.target)));
   const [includeNotes, setIncludeNotes] = useState(true);
   const [generating, setGenerating] = useState(false);
+  const [renderForPDF, setRenderForPDF] = useState(false);
+  const hiddenRef = useRef<HTMLDivElement>(null);
+  const generateResolveRef = useRef<(() => void) | null>(null);
+
+  // When hidden chapters finish rendering, resolve the promise
+  useEffect(() => {
+    if (!renderForPDF || !hiddenRef.current) return;
+    // Wait for Suspense/lazy to load
+    const timer = setTimeout(() => {
+      generateResolveRef.current?.();
+    }, 1500);
+    return () => clearTimeout(timer);
+  }, [renderForPDF]);
 
   const toggleChapter = useCallback((id: string) => {
     setSelected(prev => {
@@ -110,7 +189,13 @@ const ExportPDFModal = ({ open, onClose }: ExportPDFModalProps) => {
     setGenerating(true);
 
     try {
-      // Fetch notes if requested
+      // Step 1: Render chapters in hidden container
+      setRenderForPDF(true);
+      await new Promise<void>((resolve) => {
+        generateResolveRef.current = resolve;
+      });
+
+      // Step 2: Fetch notes if requested
       let notesByChapter: NotesByChapter = {};
       if (includeNotes) {
         const { data } = await supabase
@@ -126,6 +211,7 @@ const ExportPDFModal = ({ open, onClose }: ExportPDFModalProps) => {
         }
       }
 
+      // Step 3: Build PDF
       const doc = new jsPDF({ orientation: "portrait", unit: "mm", format: "a4" });
       const pageW = doc.internal.pageSize.getWidth();
       const pageH = doc.internal.pageSize.getHeight();
@@ -163,7 +249,7 @@ const ExportPDFModal = ({ open, onClose }: ExportPDFModalProps) => {
       doc.setFontSize(10);
       doc.setTextColor(158, 154, 146);
       const userName = user.user_metadata?.full_name || user.email || "";
-      doc.text(`Exportado por: ${userName}`, pageW / 2, pageH / 2 + 15, { align: "center" });
+      doc.text(`Exportado por: ${sanitize(userName)}`, pageW / 2, pageH / 2 + 15, { align: "center" });
       doc.text(
         new Date().toLocaleDateString("pt-BR", { day: "2-digit", month: "long", year: "numeric" }),
         pageW / 2,
@@ -187,7 +273,7 @@ const ExportPDFModal = ({ open, onClose }: ExportPDFModalProps) => {
         doc.text(ch.num, margin, y);
         doc.setTextColor(244, 240, 232);
         doc.setFont("helvetica", "normal");
-        doc.text(ch.title, margin + 12, y);
+        doc.text(sanitize(ch.title), margin + 12, y);
         y += 7;
       }
       y += 5;
@@ -208,14 +294,14 @@ const ExportPDFModal = ({ open, onClose }: ExportPDFModalProps) => {
         doc.setTextColor(244, 240, 232);
         doc.setFontSize(20);
         doc.setFont("helvetica", "bold");
-        doc.text(chapter.title, margin + 18, y + 10);
+        doc.text(sanitize(chapter.title), margin + 18, y + 10);
         y += 22;
 
         // Chapter description
         doc.setTextColor(158, 154, 146);
         doc.setFontSize(10);
         doc.setFont("helvetica", "normal");
-        const descLines = doc.splitTextToSize(chapter.desc, contentW);
+        const descLines = doc.splitTextToSize(sanitize(chapter.desc), contentW);
         doc.text(descLines, margin, y);
         y += descLines.length * 5 + 8;
 
@@ -225,28 +311,44 @@ const ExportPDFModal = ({ open, onClose }: ExportPDFModalProps) => {
         doc.line(margin, y, margin + contentW, y);
         y += 10;
 
-        // Try DOM content first, fallback to static summaries
-        const el = document.getElementById(chapter.target);
-        let hasContent = false;
+        // Try scraping from hidden renderer first
+        const hiddenEl = hiddenRef.current?.querySelector(`[data-chapter-id="${chapter.target}"]`) as HTMLElement | null;
+        let contentItems: Array<{ tag: string; text: string }> = [];
 
-        if (el) {
-          const textEls = el.querySelectorAll("p, li, h3, h4, blockquote");
-          if (textEls.length > 5) {
-            hasContent = true;
-            for (const textEl of textEls) {
-              const text = textEl.textContent?.trim();
-              if (!text || text.length < 3) continue;
+        if (hiddenEl) {
+          contentItems = extractContentFromDOM(hiddenEl);
+        }
 
-              const tag = textEl.tagName.toLowerCase();
-              if (tag === "h3" || tag === "h4") {
+        if (contentItems.length > 3) {
+          // Render full content
+          for (const item of contentItems) {
+            const text = item.text;
+            if (!text) continue;
+
+            switch (item.tag) {
+              case "h3": {
                 checkSpace(14);
+                y += 4;
                 doc.setTextColor(201, 169, 106);
-                doc.setFontSize(tag === "h3" ? 13 : 11);
+                doc.setFontSize(13);
                 doc.setFont("helvetica", "bold");
                 const lines = doc.splitTextToSize(text, contentW);
                 doc.text(lines, margin, y);
                 y += lines.length * 6 + 4;
-              } else if (tag === "blockquote") {
+                break;
+              }
+              case "h4": {
+                checkSpace(12);
+                y += 2;
+                doc.setTextColor(220, 216, 208);
+                doc.setFontSize(11);
+                doc.setFont("helvetica", "bold");
+                const lines = doc.splitTextToSize(text, contentW);
+                doc.text(lines, margin, y);
+                y += lines.length * 5.5 + 3;
+                break;
+              }
+              case "quote": {
                 checkSpace(12);
                 doc.setTextColor(201, 169, 106);
                 doc.setFontSize(9);
@@ -254,15 +356,84 @@ const ExportPDFModal = ({ open, onClose }: ExportPDFModalProps) => {
                 const lines = doc.splitTextToSize(`"${text}"`, contentW - 10);
                 doc.text(lines, margin + 5, y);
                 y += lines.length * 4.5 + 4;
-              } else if (tag === "li") {
+                break;
+              }
+              case "li": {
                 checkSpace(8);
-                doc.setTextColor(244, 240, 232);
+                doc.setTextColor(220, 216, 208);
                 doc.setFontSize(9);
                 doc.setFont("helvetica", "normal");
                 const lines = doc.splitTextToSize(`  - ${text}`, contentW - 6);
                 doc.text(lines, margin + 3, y);
                 y += lines.length * 4.5 + 2;
-              } else {
+                break;
+              }
+              case "script-who": {
+                checkSpace(10);
+                y += 2;
+                doc.setTextColor(201, 169, 106);
+                doc.setFontSize(8);
+                doc.setFont("helvetica", "bold");
+                doc.text(text.toUpperCase(), margin + 3, y);
+                y += 4;
+                break;
+              }
+              case "script-text": {
+                doc.setTextColor(220, 216, 208);
+                doc.setFontSize(9);
+                doc.setFont("helvetica", "normal");
+                const lines = doc.splitTextToSize(text, contentW - 10);
+                doc.text(lines, margin + 6, y);
+                y += lines.length * 4.5 + 3;
+                break;
+              }
+              case "fu-day": {
+                checkSpace(10);
+                y += 2;
+                doc.setTextColor(201, 169, 106);
+                doc.setFontSize(9);
+                doc.setFont("helvetica", "bold");
+                doc.text(text, margin + 3, y);
+                y += 5;
+                break;
+              }
+              case "fu-msg": {
+                doc.setTextColor(220, 216, 208);
+                doc.setFontSize(9);
+                doc.setFont("helvetica", "normal");
+                const lines = doc.splitTextToSize(text, contentW - 10);
+                doc.text(lines, margin + 6, y);
+                y += lines.length * 4.5 + 3;
+                break;
+              }
+              case "label": {
+                checkSpace(8);
+                doc.setTextColor(91, 155, 213);
+                doc.setFontSize(9);
+                doc.setFont("helvetica", "bold");
+                doc.text(text, margin + 3, y);
+                y += 5;
+                break;
+              }
+              case "th": {
+                checkSpace(8);
+                doc.setTextColor(201, 169, 106);
+                doc.setFontSize(9);
+                doc.setFont("helvetica", "bold");
+                doc.text(text, margin + 3, y);
+                y += 5;
+                break;
+              }
+              case "td": {
+                doc.setTextColor(200, 196, 188);
+                doc.setFontSize(9);
+                doc.setFont("helvetica", "normal");
+                const lines = doc.splitTextToSize(text, contentW - 10);
+                doc.text(lines, margin + 6, y);
+                y += lines.length * 4.5 + 2;
+                break;
+              }
+              default: {
                 checkSpace(8);
                 doc.setTextColor(220, 216, 208);
                 doc.setFontSize(9);
@@ -273,10 +444,8 @@ const ExportPDFModal = ({ open, onClose }: ExportPDFModalProps) => {
               }
             }
           }
-        }
-
-        // Fallback: static summary content
-        if (!hasContent) {
+        } else {
+          // Fallback: static summary
           const summary = CHAPTER_SUMMARIES[chapter.target];
           if (summary) {
             doc.setTextColor(201, 169, 106);
@@ -318,7 +487,7 @@ const ExportPDFModal = ({ open, onClose }: ExportPDFModalProps) => {
             doc.setTextColor(200, 196, 188);
             doc.setFontSize(9);
             doc.setFont("helvetica", "normal");
-            const lines = doc.splitTextToSize(note.content, contentW - 4);
+            const lines = doc.splitTextToSize(sanitize(note.content), contentW - 4);
             doc.text(lines, margin + 2, y);
             y += lines.length * 4.5 + 4;
           }
@@ -345,10 +514,13 @@ const ExportPDFModal = ({ open, onClose }: ExportPDFModalProps) => {
       console.error("PDF generation error:", err);
     } finally {
       setGenerating(false);
+      setRenderForPDF(false);
     }
   }, [selected, includeNotes, user]);
 
   if (!open) return null;
+
+  const selectedIds = Array.from(selected);
 
   return (
     <div className="pdf-export-overlay" onClick={onClose}>
@@ -405,11 +577,16 @@ const ExportPDFModal = ({ open, onClose }: ExportPDFModalProps) => {
                 <polyline points="7 10 12 15 17 10" />
                 <line x1="12" y1="15" x2="12" y2="3" />
               </svg>
-              Exportar {selected.size} capítulo{selected.size !== 1 ? "s" : ""}
+              Exportar {selected.size} capitulo{selected.size !== 1 ? "s" : ""}
             </>
           )}
         </button>
       </div>
+
+      {/* Hidden renderer: loads chapter components off-screen for PDF scraping */}
+      {renderForPDF && (
+        <HiddenChapterRenderer ref={hiddenRef} chapterIds={selectedIds} />
+      )}
     </div>
   );
 };
