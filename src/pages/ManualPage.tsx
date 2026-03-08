@@ -104,6 +104,7 @@ const ManualPage = () => {
   return (
     <FavoritesContext.Provider value={{ isFavorite, toggleFavorite, isLoggedIn: !!user }}>
       <div className={`manual-page${scriptsMode ? " scripts-mode" : ""}`}>
+        <a href="#main-content" className="skip-to-content">Pular para o conteúdo</a>
         <div className="progress-bar" style={{ transform: `scaleX(${scrollProgress / 100})` }} />
 
         <TopHeader onOpenSearch={() => setSearchOpen(true)} onOpenFavorites={handleOpenFavorites} onToggleScripts={() => setScriptsMode(!scriptsMode)} scriptsMode={scriptsMode} />
