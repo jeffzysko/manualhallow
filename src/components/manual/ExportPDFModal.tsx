@@ -84,7 +84,8 @@ const ExportPDFModal = ({ open, onClose }: ExportPDFModalProps) => {
         }
       }
 
-      // Step 3: Build PDF
+      // Build PDF
+      console.log("[PDF] Hidden ref:", !!hiddenRef.current, "children:", hiddenRef.current?.children.length);
       const doc = new jsPDF({ orientation: "portrait", unit: "mm", format: "a4" });
       const pageW = doc.internal.pageSize.getWidth();
       const pageH = doc.internal.pageSize.getHeight();
