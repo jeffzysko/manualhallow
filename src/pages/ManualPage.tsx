@@ -111,7 +111,7 @@ const ManualPage = () => {
         <a href="#main-content" className="skip-to-content">Pular para o conteúdo</a>
         <div className="progress-bar" style={{ transform: `scaleX(${scrollProgress / 100})` }} />
 
-        <TopHeader onOpenSearch={() => setSearchOpen(true)} onOpenFavorites={handleOpenFavorites} onToggleScripts={() => setScriptsMode(!scriptsMode)} scriptsMode={scriptsMode} />
+        <TopHeader onOpenSearch={() => setSearchOpen(true)} onOpenFavorites={handleOpenFavorites} onToggleScripts={() => setScriptsMode(!scriptsMode)} scriptsMode={scriptsMode} onExportPDF={() => { if (!user) { routerNavigate("/auth"); return; } setPdfExportOpen(true); }} />
 
         <Suspense fallback={null}>
           {searchOpen && <SearchOverlay open={searchOpen} onClose={() => setSearchOpen(false)} onNavigate={navigate} />}
