@@ -38,6 +38,7 @@ const ManualPage = () => {
   const [scrollProgress, setScrollProgress] = useState(0);
   const [notesOpen, setNotesOpen] = useState(false);
   const [aiChatOpen, setAiChatOpen] = useState(false);
+  const [pdfExportOpen, setPdfExportOpen] = useState(false);
   const { user, signOut } = useAuth();
   const { favorites, isFavorite, toggleFavorite } = useFavorites();
   const { progress, toggleChapter } = useReadingProgress();
