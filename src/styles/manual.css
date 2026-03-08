@@ -1366,89 +1366,9 @@ body { overflow-x: hidden; }
   background: rgba(92,184,138,0.18);
 }
 
-/* ===== NOTES DRAWER v2 ===== */
-.nd-overlay {
-  position: fixed;
-  inset: 0;
-  z-index: 10000;
-  background: rgba(0,0,0,0.65);
-  backdrop-filter: blur(4px);
-  -webkit-backdrop-filter: blur(4px);
-  animation: fadeIn 0.2s ease-out;
-}
+/* ===== NOTES DRAWER v2 (uses ai-chat-overlay + ai-chat-drawer as base) ===== */
+.nd-drawer .ai-chat-icon { color: var(--gold); }
 
-.nd-panel {
-  position: fixed;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  z-index: 10001;
-  width: min(420px, 92vw);
-  background: linear-gradient(180deg, #0E1019 0%, #090A0F 100%);
-  border-left: 1px solid var(--border);
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-  animation: slideInRight 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-  box-shadow: -20px 0 60px rgba(0,0,0,0.5);
-}
-
-/* Header */
-.nd-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 24px 24px 20px;
-  border-bottom: 1px solid var(--border);
-  background: rgba(201,169,106,0.03);
-}
-.nd-header__left {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-}
-.nd-header__icon {
-  width: 40px;
-  height: 40px;
-  border-radius: 12px;
-  background: var(--gold-dim);
-  border: 1px solid var(--border);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: var(--gold);
-}
-.nd-header__title {
-  font-family: 'Cormorant Garamond', serif;
-  font-size: 22px;
-  font-weight: 600;
-  color: var(--white);
-  margin: 0;
-  line-height: 1;
-}
-.nd-header__subtitle {
-  font-size: 11px;
-  color: var(--gray);
-  margin-top: 3px;
-}
-.nd-close {
-  width: 32px;
-  height: 32px;
-  border-radius: 8px;
-  background: var(--card);
-  border: 1px solid var(--border2);
-  color: var(--gray);
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: all 0.15s;
-}
-.nd-close:hover {
-  color: var(--white);
-  border-color: var(--border);
-  background: var(--card2);
-}
 
 /* Tabs */
 .nd-tabs {
