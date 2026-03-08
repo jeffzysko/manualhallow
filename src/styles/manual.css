@@ -361,7 +361,7 @@
 .manual-page .search-close:hover { background: rgba(255,255,255,0.1); color: var(--white); }
 .manual-page .search-results { margin-top: 12px; max-height: 65vh; overflow-y: auto; display: flex; flex-direction: column; gap: 4px; }
 .manual-page .search-result-item { background: var(--card); border: 1px solid var(--border2); border-radius: 12px; padding: 16px 20px; cursor: pointer; transition: background .15s, border-color .15s; }
-.manual-page .search-result-item:hover { background: var(--card2); border-color: var(--border); }
+.manual-page .search-result-item:hover, .manual-page .search-result-item--active { background: var(--card2); border-color: var(--border); }
 .manual-page .search-result-chapter { font-size: 10px; letter-spacing: 2px; text-transform: uppercase; color: var(--gold); font-weight: 700; margin-bottom: 6px; }
 .manual-page .search-result-text { font-size: 14px; color: var(--white); line-height: 1.5; }
 .manual-page .search-result-text mark { background: rgba(201,169,106,0.3); color: var(--gold-light); border-radius: 3px; padding: 1px 3px; }
