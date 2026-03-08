@@ -178,6 +178,7 @@ const ManualPage = () => {
             if (!user) { routerNavigate("/auth"); return; }
             setNotesOpen(true);
           }}
+          onOpenAI={() => setAiChatOpen(true)}
           onToggleScripts={() => setScriptsMode(!scriptsMode)}
           scriptsMode={scriptsMode}
         />
