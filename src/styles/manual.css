@@ -2,7 +2,8 @@
 /* All styles scoped to .manual-page to avoid Tailwind conflicts */
 
 /* GPU-accelerated smooth scrolling */
-html { scroll-behavior: smooth; -webkit-overflow-scrolling: touch; }
+html { scroll-behavior: smooth; -webkit-overflow-scrolling: touch; overflow-x: hidden; }
+body { overflow-x: hidden; }
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
 }
