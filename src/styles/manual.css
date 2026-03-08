@@ -1133,7 +1133,7 @@ body { overflow-x: hidden; }
   .manual-page .card-check { padding: 14px; }
   .manual-page .card-obj { padding: 14px; }
   .manual-page .card-audio { padding: 14px; }
-  .nd-panel { width: 100vw; }
+  .nd-panel { width: 100vw; height: 100vh; height: 100dvh; }
 
   /* Auth extra small */
   .auth-card { padding: 24px 16px; border-radius: 14px; }
