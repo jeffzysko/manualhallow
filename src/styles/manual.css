@@ -357,7 +357,7 @@ html { scroll-behavior: smooth; -webkit-overflow-scrolling: touch; }
 /* HAMBURGER — removed, using bottom tab bar instead */
 
 /* SEARCH */
-.manual-page .search-overlay { position: fixed; inset: 0; z-index: 1000; background: rgba(0,0,0,0.75); backdrop-filter: blur(8px); display: flex; flex-direction: column; align-items: center; padding-top: 80px; opacity: 0; pointer-events: none; transition: opacity .25s ease; }
+.manual-page .search-overlay { position: fixed; inset: 0; z-index: 10000; background: rgba(0,0,0,0.75); backdrop-filter: blur(8px); display: flex; flex-direction: column; align-items: center; padding-top: 80px; opacity: 0; pointer-events: none; transition: opacity .25s ease; }
 .manual-page .search-overlay.open { opacity: 1; pointer-events: all; }
 .manual-page .search-box { width: 100%; max-width: 680px; padding: 0 24px; }
 .manual-page .search-input-wrap { display: flex; align-items: center; gap: 16px; background: var(--card2); border: 1px solid var(--border); border-radius: 16px; padding: 18px 24px; box-shadow: 0 24px 64px rgba(0,0,0,0.6); }
