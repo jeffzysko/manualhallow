@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "react-router-dom";
+import { translateAuthError } from "@/lib/authErrors";
 import "@/styles/manual.css";
 
 const ResetPasswordPage = () => {
@@ -54,7 +55,7 @@ const ResetPasswordPage = () => {
     const { error } = await supabase.auth.updateUser({ password });
     
     if (error) {
-      setError(error.message);
+      setError(translateAuthError(error.message));
     } else {
       setMessage("Senha atualizada com sucesso! Redirecionando...");
       setTimeout(() => navigate("/"), 2000);
@@ -64,30 +65,21 @@ const ResetPasswordPage = () => {
 
   if (checking) {
     return (
-      <div className="manual-page" style={{ minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", paddingTop: 0 }}>
-        <p style={{ color: "var(--gray)", fontSize: 14, letterSpacing: 2, textTransform: "uppercase" }}>Verificando…</p>
+      <div className="manual-page auth-wrapper">
+        <p className="admin-loading-text" style={{ letterSpacing: 2, textTransform: "uppercase" }}>Verificando…</p>
       </div>
     );
   }
 
   if (!validSession) {
     return (
-      <div className="manual-page" style={{ minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", paddingTop: 0 }}>
-        <div style={{
-          background: "var(--card)", border: "1px solid var(--border)", borderRadius: 20,
-          padding: "48px 36px", maxWidth: 420, width: "100%", margin: "0 20px", textAlign: "center",
-        }}>
+      <div className="manual-page auth-wrapper">
+        <div className="auth-card" style={{ textAlign: "center" }}>
           <h1 className="display" style={{ fontSize: 28, color: "var(--red)", marginBottom: 16 }}>Link inválido</h1>
-          <p style={{ color: "var(--gray)", fontSize: 14, marginBottom: 24 }}>
+          <p className="auth-recovery-desc" style={{ marginBottom: 24 }}>
             Este link de recuperação expirou ou é inválido. Solicite um novo link.
           </p>
-          <button
-            onClick={() => navigate("/auth")}
-            style={{
-              background: "var(--gold)", color: "#09090F", border: "none", borderRadius: 10,
-              padding: "12px 24px", fontSize: 14, fontWeight: 700, cursor: "pointer",
-            }}
-          >
+          <button className="auth-submit" onClick={() => navigate("/auth")}>
             Voltar ao login
           </button>
         </div>
@@ -96,22 +88,15 @@ const ResetPasswordPage = () => {
   }
 
   return (
-    <div className="manual-page" style={{ minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", paddingTop: 0 }}>
-      <div style={{
-        background: "var(--card)", border: "1px solid var(--border)", borderRadius: 20,
-        padding: "48px 36px", maxWidth: 420, width: "100%", margin: "0 20px",
-      }}>
-        <h1 className="display" style={{ fontSize: 32, color: "var(--gold)", marginBottom: 8, textAlign: "center" }}>
-          HALLOW
-        </h1>
-        <p style={{ color: "var(--gray)", fontSize: 13, textAlign: "center", marginBottom: 12, letterSpacing: 2 }}>
-          REDEFINIR SENHA
-        </p>
-        <p style={{ color: "var(--gray)", fontSize: 13, textAlign: "center", marginBottom: 28 }}>
+    <div className="manual-page auth-wrapper">
+      <div className="auth-card">
+        <h1 className="display auth-logo">HALLOW</h1>
+        <p className="auth-subtitle">REDEFINIR SENHA</p>
+        <p className="auth-recovery-desc" style={{ marginBottom: 28 }}>
           Digite sua nova senha abaixo.
         </p>
 
-        <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: 14 }}>
+        <form onSubmit={handleSubmit} className="auth-form">
           <input
             type="password"
             placeholder="Nova senha"
@@ -119,10 +104,7 @@ const ResetPasswordPage = () => {
             onChange={e => setPassword(e.target.value)}
             required
             minLength={6}
-            style={{
-              background: "var(--bg)", border: "1px solid var(--border)", borderRadius: 10,
-              padding: "14px 16px", color: "var(--white)", fontSize: 14, outline: "none",
-            }}
+            className="auth-input"
           />
           <input
             type="password"
@@ -131,24 +113,13 @@ const ResetPasswordPage = () => {
             onChange={e => setConfirmPassword(e.target.value)}
             required
             minLength={6}
-            style={{
-              background: "var(--bg)", border: "1px solid var(--border)", borderRadius: 10,
-              padding: "14px 16px", color: "var(--white)", fontSize: 14, outline: "none",
-            }}
+            className="auth-input"
           />
 
-          {error && <p style={{ color: "var(--red)", fontSize: 13 }}>{error}</p>}
-          {message && <p style={{ color: "var(--green)", fontSize: 13 }}>{message}</p>}
+          {error && <p className="auth-error">{error}</p>}
+          {message && <p className="auth-success">{message}</p>}
 
-          <button
-            type="submit"
-            disabled={loading}
-            style={{
-              background: "var(--gold)", color: "#09090F", border: "none", borderRadius: 10,
-              padding: "14px", fontSize: 14, fontWeight: 700, cursor: "pointer",
-              opacity: loading ? 0.6 : 1, marginTop: 4,
-            }}
-          >
+          <button type="submit" disabled={loading} className="auth-submit">
             {loading ? "Atualizando..." : "Atualizar senha"}
           </button>
         </form>

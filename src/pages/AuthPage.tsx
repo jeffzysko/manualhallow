@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
+import { translateAuthError } from "@/lib/authErrors";
 import "@/styles/manual.css";
 
 const AuthPage = () => {
@@ -27,7 +28,7 @@ const AuthPage = () => {
 
     if (mode === "login") {
       const { error } = await supabase.auth.signInWithPassword({ email, password });
-      if (error) setError(error.message);
+      if (error) setError(translateAuthError(error.message));
       else navigate("/");
     } else if (mode === "signup") {
       const { error } = await supabase.auth.signUp({
@@ -38,13 +39,13 @@ const AuthPage = () => {
           emailRedirectTo: window.location.origin,
         },
       });
-      if (error) setError(error.message);
+      if (error) setError(translateAuthError(error.message));
       else setMessage("Verifique seu e-mail para confirmar o cadastro.");
     } else if (mode === "recovery") {
       const { error } = await supabase.auth.resetPasswordForEmail(email, {
         redirectTo: `${window.location.origin}/reset-password`,
       });
-      if (error) setError(error.message);
+      if (error) setError(translateAuthError(error.message));
       else setMessage("E-mail de recuperação enviado! Verifique sua caixa de entrada.");
     }
     setLoading(false);
