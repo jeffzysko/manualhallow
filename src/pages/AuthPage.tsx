@@ -59,19 +59,23 @@ const AuthPage = () => {
 
   return (
     <div className="manual-page auth-wrapper">
-      <div className="auth-card">
+      <div className="auth-card" role="main">
         <h1 className="display auth-logo">HALLOW</h1>
         <p className="auth-subtitle">MANUAL DE VENDAS</p>
 
         {mode !== "recovery" ? (
-          <div className="auth-tab-group">
+          <div className="auth-tab-group" role="tablist" aria-label="Modo de autenticação">
             <button
               className={`auth-tab${mode === "login" ? " auth-tab--active" : ""}`}
               onClick={() => switchMode("login")}
+              role="tab"
+              aria-selected={mode === "login"}
             >ENTRAR</button>
             <button
               className={`auth-tab${mode === "signup" ? " auth-tab--active" : ""}`}
               onClick={() => switchMode("signup")}
+              role="tab"
+              aria-selected={mode === "signup"}
             >CADASTRAR</button>
           </div>
         ) : (
@@ -81,39 +85,55 @@ const AuthPage = () => {
           </div>
         )}
 
-        <form onSubmit={handleSubmit} className="auth-form">
+        <form onSubmit={handleSubmit} className="auth-form" noValidate>
           {mode === "signup" && (
-            <input
-              type="text"
-              placeholder="Nome completo"
-              value={fullName}
-              onChange={e => setFullName(e.target.value)}
-              required
-              className="auth-input"
-            />
+            <div className="auth-field">
+              <label htmlFor="auth-fullname" className="auth-label">Nome completo</label>
+              <input
+                id="auth-fullname"
+                type="text"
+                placeholder="Seu nome completo"
+                value={fullName}
+                onChange={e => setFullName(e.target.value)}
+                required
+                autoComplete="name"
+                className="auth-input"
+              />
+            </div>
           )}
-          <input
-            type="email"
-            placeholder="E-mail"
-            value={email}
-            onChange={e => setEmail(e.target.value)}
-            required
-            className="auth-input"
-          />
-          {mode !== "recovery" && (
+          <div className="auth-field">
+            <label htmlFor="auth-email" className="auth-label">E-mail</label>
             <input
-              type="password"
-              placeholder="Senha"
-              value={password}
-              onChange={e => setPassword(e.target.value)}
+              id="auth-email"
+              type="email"
+              placeholder="seu@email.com"
+              value={email}
+              onChange={e => setEmail(e.target.value)}
               required
-              minLength={6}
+              autoComplete="email"
+              inputMode="email"
               className="auth-input"
             />
+          </div>
+          {mode !== "recovery" && (
+            <div className="auth-field">
+              <label htmlFor="auth-password" className="auth-label">Senha</label>
+              <input
+                id="auth-password"
+                type="password"
+                placeholder="Mínimo 6 caracteres"
+                value={password}
+                onChange={e => setPassword(e.target.value)}
+                required
+                minLength={6}
+                autoComplete={mode === "login" ? "current-password" : "new-password"}
+                className="auth-input"
+              />
+            </div>
           )}
 
-          {error && <p className="auth-error">{error}</p>}
-          {message && <p className="auth-success">{message}</p>}
+          {error && <p className="auth-error" role="alert">{error}</p>}
+          {message && <p className="auth-success" role="status">{message}</p>}
 
           <button type="submit" disabled={loading} className="auth-submit">
             {loading ? "Aguarde..." : mode === "login" ? "Entrar" : mode === "signup" ? "Criar conta" : "Enviar link"}
