@@ -413,7 +413,7 @@ html { scroll-behavior: smooth; -webkit-overflow-scrolling: touch; }
 .manual-page .expand-cta-icon { width: 20px; height: 20px; fill: none; stroke: var(--gold); stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; animation: manual-bounceDown 1.5s ease-in-out infinite; }
 @keyframes manual-subtlePulse { 0%, 100% { opacity: 0.85; } 50% { opacity: 1; } }
 @keyframes manual-bounceDown { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(4px); } }
-.manual-page .section-collapsible { overflow: hidden; transition: max-height .4s cubic-bezier(0.4,0,0.2,1), opacity .3s ease; max-height: 9999px; opacity: 1; display: flex; flex-direction: column; padding-top: 24px; }
+.manual-page .section-collapsible { overflow: hidden; transition: max-height .4s cubic-bezier(0.4,0,0.2,1), opacity .3s ease; max-height: 9999px; opacity: 1; display: flex; flex-direction: column; padding-top: 32px; gap: 4px; }
 .manual-page .section-collapsible.collapsed { max-height: 0; opacity: 0; padding-top: 0; }
 
 /* CHAPTER TL;DR */
