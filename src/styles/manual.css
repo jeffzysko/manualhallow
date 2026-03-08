@@ -867,7 +867,7 @@ html { scroll-behavior: smooth; -webkit-overflow-scrolling: touch; }
   .manual-page .ponto-content p { font-size: 11px; }
 
   /* ── Key phrase ── */
-  .manual-page .key-phrase { font-size: clamp(20px, 5vw, 28px); padding: 20px 0; margin: 20px 0; }
+  .manual-page .key-phrase { font-size: clamp(20px, 5vw, 28px); padding: 28px 0; margin: 28px 0; }
 
   /* ── Objections ── */
   .manual-page .obj-branch { flex-direction: column; gap: 4px; padding: 8px 12px; }
