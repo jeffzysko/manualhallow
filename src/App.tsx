@@ -10,26 +10,36 @@ import AdminPage from "./pages/AdminPage";
 import ResetPasswordPage from "./pages/ResetPasswordPage";
 import NotFound from "./pages/NotFound";
 import ProtectedRoute from "./components/ProtectedRoute";
+import OfflineBanner from "./components/OfflineBanner";
+import { useOfflineSync } from "./hooks/useOfflineSync";
 
 const queryClient = new QueryClient();
+
+const SyncProvider = ({ children }: { children: React.ReactNode }) => {
+  useOfflineSync();
+  return <>{children}</>;
+};
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <AuthProvider>
-      <TooltipProvider>
-        <Toaster />
-        <Sonner />
-        <BrowserRouter>
-          <Routes>
-            <Route path="/" element={<ProtectedRoute><ManualPage /></ProtectedRoute>} />
-            <Route path="/auth" element={<AuthPage />} />
-            <Route path="/reset-password" element={<ResetPasswordPage />} />
-            <Route path="/admin" element={<ProtectedRoute><AdminPage /></ProtectedRoute>} />
-            {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        </BrowserRouter>
-      </TooltipProvider>
+      <SyncProvider>
+        <TooltipProvider>
+          <Toaster />
+          <Sonner />
+          <OfflineBanner />
+          <BrowserRouter>
+            <Routes>
+              <Route path="/" element={<ProtectedRoute><ManualPage /></ProtectedRoute>} />
+              <Route path="/auth" element={<AuthPage />} />
+              <Route path="/reset-password" element={<ResetPasswordPage />} />
+              <Route path="/admin" element={<ProtectedRoute><AdminPage /></ProtectedRoute>} />
+              {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </BrowserRouter>
+        </TooltipProvider>
+      </SyncProvider>
     </AuthProvider>
   </QueryClientProvider>
 );

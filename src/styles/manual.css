@@ -1991,3 +1991,19 @@ body { overflow-x: hidden; }
   .analytics-bar-row { grid-template-columns: 100px 1fr 50px; gap: 8px; }
   .analytics-bar-label { font-size: 12px; }
 }
+
+/* ===== OFFLINE BANNER ===== */
+.offline-banner {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 9999;
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+  background: var(--red-dim, rgba(224,92,92,0.12));
+  border-bottom: 1px solid rgba(224,92,92,0.25);
+  color: #E05C5C; font-size: 13px; font-weight: 500;
+  padding: 8px 16px; font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+  backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+  animation: slideDown 0.3s ease;
+}
+@keyframes slideDown {
+  from { transform: translateY(-100%); }
+  to { transform: translateY(0); }
+}

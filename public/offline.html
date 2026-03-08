@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<meta name="theme-color" content="#09090F" />
+<title>Offline — Manual Hallow</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#09090F;color:#F4F0E8;font-family:'Plus Jakarta Sans',system-ui,sans-serif;
+  display:flex;align-items:center;justify-content:center;min-height:100vh;min-height:100dvh;
+  padding:24px;text-align:center}
+.wrap{max-width:380px}
+.icon{font-size:56px;margin-bottom:20px;opacity:.6}
+h1{font-size:22px;font-weight:700;margin-bottom:8px;color:#C9A96A}
+p{font-size:15px;line-height:1.6;color:#9E9A92;margin-bottom:24px}
+.retry{
+  display:inline-flex;align-items:center;gap:8px;
+  background:rgba(201,169,106,.12);color:#C9A96A;border:1px solid rgba(201,169,106,.18);
+  border-radius:10px;padding:12px 28px;font-size:15px;font-family:inherit;font-weight:600;
+  cursor:pointer;transition:background .15s,color .15s;text-decoration:none}
+.retry:hover{background:rgba(201,169,106,.22);color:#E2C88A}
+.hint{font-size:12px;color:#8A8680;margin-top:20px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="icon">📡</div>
+  <h1>Sem conexão</h1>
+  <p>Parece que você está offline. Verifique sua conexão com a internet e tente novamente.</p>
+  <a href="/" class="retry" onclick="window.location.reload();return false;">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+    Tentar novamente
+  </a>
+  <p class="hint">As anotações feitas offline serão sincronizadas quando a conexão voltar.</p>
+</div>
+</body>
+</html>

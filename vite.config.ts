@@ -23,12 +23,17 @@ export default defineConfig(({ mode }) => ({
         "robots.txt",
         "pwa-192x192.png",
         "pwa-512x512.png",
+        "offline.html",
       ],
       workbox: {
+        navigateFallback: "/index.html",
         navigateFallbackDenylist: [/^\/~oauth/],
         globPatterns: ["**/*.{js,css,html,ico,png,svg,woff2}"],
         maximumFileSizeToCacheInBytes: 5 * 1024 * 1024,
+        // Offline fallback for navigation requests
+        offlineGoogleAnalytics: false,
         runtimeCaching: [
+          // Google Fonts stylesheets
           {
             urlPattern: /^https:\/\/fonts\.googleapis\.com\/.*/i,
             handler: "CacheFirst",
@@ -38,6 +43,7 @@ export default defineConfig(({ mode }) => ({
               cacheableResponse: { statuses: [0, 200] },
             },
           },
+          // Google Fonts files
           {
             urlPattern: /^https:\/\/fonts\.gstatic\.com\/.*/i,
             handler: "CacheFirst",
@@ -47,14 +53,30 @@ export default defineConfig(({ mode }) => ({
               cacheableResponse: { statuses: [0, 200] },
             },
           },
+          // Supabase API — network first with offline fallback
           {
             urlPattern: /^https:\/\/.*\.supabase\.co\/rest\/.*/i,
             handler: "NetworkFirst",
             options: {
               cacheName: "supabase-api-cache",
-              expiration: { maxEntries: 50, maxAgeSeconds: 60 * 60 },
+              expiration: { maxEntries: 100, maxAgeSeconds: 60 * 60 * 24 },
               cacheableResponse: { statuses: [0, 200] },
               networkTimeoutSeconds: 5,
+            },
+          },
+          // Supabase Edge Functions — network only (no caching mutations)
+          {
+            urlPattern: /^https:\/\/.*\.supabase\.co\/functions\/.*/i,
+            handler: "NetworkOnly",
+          },
+          // Static images from CDN or public
+          {
+            urlPattern: /\.(?:png|jpg|jpeg|svg|gif|webp)$/i,
+            handler: "CacheFirst",
+            options: {
+              cacheName: "images-cache",
+              expiration: { maxEntries: 60, maxAgeSeconds: 60 * 60 * 24 * 30 },
+              cacheableResponse: { statuses: [0, 200] },
             },
           },
         ],
