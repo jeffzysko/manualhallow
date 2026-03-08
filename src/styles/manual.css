@@ -550,6 +550,29 @@ html { scroll-behavior: smooth; -webkit-overflow-scrolling: touch; }
   justify-content: center;
   cursor: pointer;
   transition: color 0.2s, background 0.2s, border-color 0.2s;
+  position: relative;
+}
+.top-header__icon-btn[data-tooltip]::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--card2);
+  color: var(--white);
+  font-size: 11px;
+  font-weight: 500;
+  padding: 4px 10px;
+  border-radius: 6px;
+  white-space: nowrap;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.2s;
+  border: 1px solid var(--border);
+  z-index: 100;
+}
+.top-header__icon-btn[data-tooltip]:hover::after {
+  opacity: 1;
 }
 .top-header__icon-btn:hover {
   color: var(--gold);
