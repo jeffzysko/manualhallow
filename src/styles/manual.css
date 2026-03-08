@@ -1574,6 +1574,27 @@
 .auth-link { background: none; border: none; color: var(--gold); font-size: 13px; cursor: pointer; text-decoration: underline; opacity: 0.8; }
 .auth-link:hover { opacity: 1; }
 
+/* RESET PASSWORD PAGE */
+.reset-icon-wrap { display: flex; justify-content: center; margin-bottom: 12px; }
+.reset-icon-wrap svg { opacity: 0.9; }
+.reset-icon-wrap--error svg { filter: drop-shadow(0 0 8px rgba(239,68,68,0.3)); }
+.reset-icon-wrap--success svg { filter: drop-shadow(0 0 10px rgba(34,197,94,0.3)); }
+.reset-heading { font-size: 22px; font-weight: 700; letter-spacing: 0.02em; margin-bottom: 8px; }
+.reset-input-wrap { position: relative; }
+.reset-eye-btn { position: absolute; right: 12px; top: 50%; transform: translateY(-50%); background: none; border: none; color: var(--gray); cursor: pointer; padding: 4px; display: flex; align-items: center; transition: color 0.15s; }
+.reset-eye-btn:hover { color: var(--white); }
+.reset-strength { display: flex; align-items: center; gap: 10px; margin: -4px 0 4px; }
+.reset-strength-bar { display: flex; gap: 4px; flex: 1; }
+.reset-strength-segment { height: 4px; flex: 1; border-radius: 2px; transition: background 0.25s; }
+.reset-strength-label { font-size: 11px; font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase; white-space: nowrap; min-width: 54px; text-align: right; }
+.reset-match-msg { font-size: 12px; margin: -4px 0 4px; font-weight: 500; }
+.reset-match-msg--ok { color: var(--green); }
+.reset-match-msg--err { color: var(--red); opacity: 0.8; }
+.auth-input--valid { border-color: var(--green) !important; }
+.auth-input--error { border-color: var(--red) !important; }
+.reset-spinner { width: 24px; height: 24px; border: 2px solid var(--border); border-top-color: var(--gold); border-radius: 50%; animation: spin 0.8s linear infinite; margin: 0 auto; }
+@keyframes spin { to { transform: rotate(360deg); } }
+
 /* ADMIN PAGE CLASSES */
 .admin-center { min-height: 100vh; display: flex; align-items: center; justify-content: center; }
 .admin-error-page { flex-direction: column; gap: 16px; padding-top: 0; }
