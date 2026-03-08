@@ -3,6 +3,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
 import TopHeader from "@/components/manual/TopHeader";
+import AnalyticsDashboard from "@/components/admin/AnalyticsDashboard";
 import { CHAPTER_NAMES } from "@/data/chapters";
 import "@/styles/manual.css";
 
