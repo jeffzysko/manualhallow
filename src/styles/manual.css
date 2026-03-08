@@ -793,11 +793,11 @@ html { scroll-behavior: smooth; -webkit-overflow-scrolling: touch; }
   .manual-page .ch-label-tag { font-size: 10px; letter-spacing: 2px; }
 
   /* ── Cards ── */
-  .manual-page .card { padding: 18px; margin-bottom: 14px; border-radius: 12px; }
-  .manual-page .card-check { padding: 18px; margin-bottom: 14px; }
-  .manual-page .card-obj { padding: 18px; }
-  .manual-page .card-audio { padding: 18px; margin-bottom: 14px; }
-  .manual-page .callout { padding: 14px 18px; margin: 16px 0; }
+  .manual-page .card { padding: 18px; margin-bottom: 20px; border-radius: 12px; }
+  .manual-page .card-check { padding: 18px; margin-bottom: 20px; }
+  .manual-page .card-obj { padding: 18px; margin-bottom: 20px; }
+  .manual-page .card-audio { padding: 18px; margin-bottom: 20px; }
+  .manual-page .callout { padding: 14px 18px; margin: 24px 0; }
   .manual-page .callout p { font-size: 16px; }
 
   /* ── Scripts ── */
