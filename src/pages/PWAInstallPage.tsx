@@ -3,8 +3,8 @@ import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import "@/styles/manual.css";
 
-/* ── Floating particles (matching auth page) ── */
-const PARTICLE_COUNT = 25;
+/* ── Particles ── */
+const PARTICLE_COUNT = 30;
 const particles = Array.from({ length: PARTICLE_COUNT }, (_, i) => ({
   id: i,
   x: Math.random() * 100,
@@ -15,67 +15,78 @@ const particles = Array.from({ length: PARTICLE_COUNT }, (_, i) => ({
   opacity: Math.random() * 0.4 + 0.1,
 }));
 
-const GoldParticles = () => (
-  <div className="auth-particles" aria-hidden="true">
-    {particles.map((p) => (
-      <motion.div
-        key={p.id}
-        className="auth-particle"
-        style={{ left: `${p.x}%`, top: `${p.y}%`, width: p.size, height: p.size }}
-        animate={{ y: [0, -80, -160], x: [0, Math.sin(p.id) * 30, 0], opacity: [0, p.opacity, 0] }}
-        transition={{ duration: p.duration, repeat: Infinity, delay: p.delay, ease: "linear" }}
-      />
-    ))}
-  </div>
-);
-
-/* ── Phone mockup icon ── */
-const PhoneIcon = () => (
+/* ── Animated phone mockup with app screen ── */
+const PhoneMockup = () => (
   <motion.div
-    className="pwa-phone-icon"
-    initial={{ scale: 0, rotate: -15 }}
-    animate={{ scale: 1, rotate: 0 }}
-    transition={{ type: "spring", stiffness: 200, damping: 15, delay: 0.2 }}
+    className="pwa-mockup"
+    initial={{ opacity: 0, y: 40, rotateY: 15 }}
+    animate={{ opacity: 1, y: 0, rotateY: 0 }}
+    transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1], delay: 0.15 }}
   >
+    {/* Glow behind phone */}
     <motion.div
-      className="pwa-phone-glow"
-      animate={{ opacity: [0.3, 0.7, 0.3], scale: [1, 1.15, 1] }}
-      transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
+      className="pwa-mockup-glow"
+      animate={{ opacity: [0.4, 0.8, 0.4], scale: [0.95, 1.05, 0.95] }}
+      transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
     />
-    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-      <rect x="5" y="2" width="14" height="20" rx="2" ry="2" />
-      <line x1="12" y1="18" x2="12" y2="18" />
-    </svg>
+    {/* Phone frame */}
+    <div className="pwa-mockup-frame">
+      {/* Status bar */}
+      <div className="pwa-mockup-statusbar">
+        <span>9:41</span>
+        <div className="pwa-mockup-notch" />
+        <span style={{ display: "flex", gap: 3 }}>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z" opacity="0"/><rect x="1" y="16" width="4" height="5" rx="1"/><rect x="7" y="12" width="4" height="9" rx="1"/><rect x="13" y="8" width="4" height="13" rx="1"/><rect x="19" y="4" width="4" height="17" rx="1"/></svg>
+        </span>
+      </div>
+      {/* App content preview */}
+      <div className="pwa-mockup-screen">
+        <div className="pwa-mockup-app-header">
+          <span className="pwa-mockup-logo">H</span>
+          <div>
+            <div className="pwa-mockup-bar" style={{ width: 80 }} />
+            <div className="pwa-mockup-bar pwa-mockup-bar--sm" style={{ width: 50 }} />
+          </div>
+        </div>
+        <div className="pwa-mockup-content">
+          <div className="pwa-mockup-bar pwa-mockup-bar--gold" style={{ width: "70%" }} />
+          <div className="pwa-mockup-bar" style={{ width: "100%" }} />
+          <div className="pwa-mockup-bar" style={{ width: "85%" }} />
+          <div className="pwa-mockup-bar" style={{ width: "60%" }} />
+          <div className="pwa-mockup-card-mini">
+            <div className="pwa-mockup-bar pwa-mockup-bar--gold" style={{ width: 40 }} />
+            <div className="pwa-mockup-bar" style={{ width: "90%" }} />
+            <div className="pwa-mockup-bar" style={{ width: "70%" }} />
+          </div>
+        </div>
+      </div>
+      {/* Home indicator */}
+      <div className="pwa-mockup-home" />
+    </div>
+    {/* Floating badge */}
     <motion.div
-      className="pwa-download-arrow"
-      animate={{ y: [0, 4, 0] }}
-      transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
+      className="pwa-mockup-badge"
+      initial={{ scale: 0 }}
+      animate={{ scale: 1 }}
+      transition={{ delay: 0.8, type: "spring", stiffness: 300 }}
     >
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-        <path d="M12 5v14M5 12l7 7 7-7" />
-      </svg>
+      ✦
     </motion.div>
   </motion.div>
 );
 
 const IOS_STEPS = [
-  { title: "Abra no Safari", desc: "O app só pode ser instalado pelo navegador Safari no iPhone.", icon: "🧭" },
-  { title: "Toque em compartilhar", desc: "Toque no ícone ⬆ na barra inferior do Safari.", icon: "⬆️" },
-  { title: "\"Adicionar à Tela Início\"", desc: "Role a lista e selecione esta opção.", icon: "➕" },
-  { title: "Confirme e pronto!", desc: "O ícone do Manual Hallow aparecerá na sua tela inicial.", icon: "✅" },
+  { num: "1", title: "Abra no Safari", desc: "Acesse pelo navegador Safari" },
+  { num: "2", title: "Toque em ⬆", desc: "Ícone de compartilhar na barra inferior" },
+  { num: "3", title: "Adicionar à Tela", desc: "Selecione \"Adicionar à Tela de Início\"" },
+  { num: "4", title: "Pronto! ✦", desc: "O app aparece na sua tela inicial" },
 ];
 
 const ANDROID_STEPS = [
-  { title: "Abra no Chrome", desc: "Acesse este site pelo navegador Chrome.", icon: "🌐" },
-  { title: "Toque no menu ⋮", desc: "Os três pontinhos no canto superior direito.", icon: "⋮" },
-  { title: "\"Instalar aplicativo\"", desc: "Ou \"Adicionar à tela inicial\", dependendo da versão.", icon: "📲" },
-  { title: "Confirme e pronto!", desc: "O Manual Hallow vira um app na sua tela.", icon: "✅" },
-];
-
-const BENEFITS = [
-  { icon: "⚡", label: "Mais rápido" },
-  { icon: "📴", label: "Funciona offline" },
-  { icon: "🔔", label: "Sempre à mão" },
+  { num: "1", title: "Abra no Chrome", desc: "Acesse pelo navegador Chrome" },
+  { num: "2", title: "Menu ⋮", desc: "Três pontinhos no canto superior direito" },
+  { num: "3", title: "Instalar app", desc: "Ou \"Adicionar à tela inicial\"" },
+  { num: "4", title: "Pronto! ✦", desc: "O app aparece na sua tela inicial" },
 ];
 
 const PWAInstallPage = () => {
@@ -86,8 +97,6 @@ const PWAInstallPage = () => {
   useEffect(() => {
     const ua = navigator.userAgent.toLowerCase();
     if (/iphone|ipad|ipod/.test(ua)) setPlatform("ios");
-    else setPlatform("android");
-
     const mq = window.matchMedia("(display-mode: standalone)");
     setIsStandalone(mq.matches || (navigator as any).standalone === true);
   }, []);
@@ -96,129 +105,161 @@ const PWAInstallPage = () => {
 
   return (
     <div className="manual-page pwa-install-page">
-      <GoldParticles />
+      {/* Background particles */}
+      <div className="auth-particles" aria-hidden="true">
+        {particles.map((p) => (
+          <motion.div
+            key={p.id}
+            className="auth-particle"
+            style={{ left: `${p.x}%`, top: `${p.y}%`, width: p.size, height: p.size }}
+            animate={{ y: [0, -80, -160], x: [0, Math.sin(p.id) * 30, 0], opacity: [0, p.opacity, 0] }}
+            transition={{ duration: p.duration, repeat: Infinity, delay: p.delay, ease: "linear" }}
+          />
+        ))}
+      </div>
 
-      <motion.div
-        className="pwa-install-card"
-        initial={{ opacity: 0, y: 30, scale: 0.95 }}
-        animate={{ opacity: 1, y: 0, scale: 1 }}
-        transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-      >
-        {/* Header */}
-        <div className="pwa-install-header">
-          <PhoneIcon />
-          <motion.h1
-            className="pwa-install-title"
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.4, duration: 0.5 }}
-          >
-            {isStandalone ? "App Instalado!" : "Instale o Manual Hallow"}
-          </motion.h1>
-          <motion.p
-            className="pwa-install-subtitle"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.5, duration: 0.5 }}
-          >
-            {isStandalone
-              ? "Você já está usando como aplicativo. Experiência completa ativada."
-              : "Tenha o manual sempre no bolso. Como um app de verdade."}
-          </motion.p>
+      {/* Radial gradient backdrop */}
+      <div className="pwa-backdrop" aria-hidden="true" />
+
+      <div className="pwa-install-layout">
+        {/* Hero section with phone mockup */}
+        <div className="pwa-hero-section">
+          <PhoneMockup />
         </div>
 
-        {/* Benefits */}
+        {/* Content section */}
         <motion.div
-          className="pwa-benefits"
-          initial={{ opacity: 0, y: 10 }}
+          className="pwa-content-section"
+          initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.55, duration: 0.4 }}
+          transition={{ delay: 0.4, duration: 0.6 }}
         >
-          {BENEFITS.map((b, i) => (
-            <motion.div
-              key={i}
-              className="pwa-benefit"
-              initial={{ opacity: 0, scale: 0.8 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ delay: 0.6 + i * 0.1, type: "spring", stiffness: 300 }}
-            >
-              <span className="pwa-benefit-icon">{b.icon}</span>
-              <span className="pwa-benefit-label">{b.label}</span>
-            </motion.div>
-          ))}
-        </motion.div>
+          {/* Title */}
+          <motion.div
+            className="pwa-install-header"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.5 }}
+          >
+            <h1 className="pwa-install-title">
+              {isStandalone ? (
+                <>Tudo pronto <span className="pwa-gold">✦</span></>
+              ) : (
+                <>Seu manual, <span className="pwa-gold">sempre no bolso</span></>
+              )}
+            </h1>
+            <p className="pwa-install-subtitle">
+              {isStandalone
+                ? "Você já está usando o Manual Hallow como aplicativo."
+                : "Instale como app e tenha acesso rápido, offline e com a experiência completa."}
+            </p>
+          </motion.div>
 
-        {!isStandalone && (
-          <>
-            {/* Platform tabs */}
-            <motion.div
-              className="pwa-platform-tabs"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.7 }}
-            >
-              <button
-                className={`pwa-platform-tab ${platform === "ios" ? "pwa-platform-tab--active" : ""}`}
-                onClick={() => setPlatform("ios")}
-              >
-                <span>🍎</span> iPhone
-              </button>
-              <button
-                className={`pwa-platform-tab ${platform === "android" ? "pwa-platform-tab--active" : ""}`}
-                onClick={() => setPlatform("android")}
-              >
-                <span>🤖</span> Android
-              </button>
-            </motion.div>
-
-            {/* Steps */}
-            <AnimatePresence mode="wait">
+          {/* Benefits row */}
+          <motion.div
+            className="pwa-benefits"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.6 }}
+          >
+            {[
+              { icon: "⚡", label: "Acesso instantâneo" },
+              { icon: "📴", label: "Funciona offline" },
+              { icon: "🎯", label: "Tela cheia" },
+            ].map((b, i) => (
               <motion.div
-                key={platform}
-                className="pwa-install-steps"
-                initial={{ opacity: 0, x: platform === "ios" ? -20 : 20 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: platform === "ios" ? 20 : -20 }}
-                transition={{ duration: 0.3 }}
+                key={i}
+                className="pwa-benefit"
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.65 + i * 0.08 }}
               >
-                {steps.map((step, i) => (
-                  <motion.div
-                    key={i}
-                    className="pwa-step"
-                    initial={{ opacity: 0, x: -15 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: 0.1 * i, duration: 0.3 }}
+                <span className="pwa-benefit-icon">{b.icon}</span>
+                <span className="pwa-benefit-label">{b.label}</span>
+              </motion.div>
+            ))}
+          </motion.div>
+
+          {!isStandalone && (
+            <>
+              {/* Platform selector */}
+              <motion.div
+                className="pwa-platform-tabs"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.75 }}
+              >
+                {(["ios", "android"] as const).map((p) => (
+                  <button
+                    key={p}
+                    className={`pwa-platform-tab ${platform === p ? "pwa-platform-tab--active" : ""}`}
+                    onClick={() => setPlatform(p)}
                   >
-                    <span className="pwa-step-num">
-                      <span className="pwa-step-emoji">{step.icon}</span>
-                    </span>
-                    <div>
-                      <p className="pwa-step-title">{step.title}</p>
-                      <p className="pwa-step-desc">{step.desc}</p>
-                    </div>
-                  </motion.div>
+                    {p === "ios" ? "🍎 iPhone" : "🤖 Android"}
+                  </button>
                 ))}
               </motion.div>
-            </AnimatePresence>
-          </>
-        )}
 
-        {/* CTA */}
-        <motion.div
-          className="pwa-install-cta"
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.9, duration: 0.4 }}
-        >
-          <button className="pwa-cta-btn" onClick={() => navigate("/", { replace: true })}>
-            <span>{isStandalone ? "Acessar o Manual" : "Continuar para o Manual"}</span>
-            <span className="pwa-cta-icon">✦</span>
-          </button>
-          {!isStandalone && (
-            <p className="pwa-skip-text">Você pode instalar depois a qualquer momento</p>
+              {/* Steps — horizontal timeline */}
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={platform}
+                  className="pwa-timeline"
+                  initial={{ opacity: 0, x: platform === "ios" ? -20 : 20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: platform === "ios" ? 20 : -20 }}
+                  transition={{ duration: 0.25 }}
+                >
+                  {/* Connecting line */}
+                  <div className="pwa-timeline-line" />
+                  {steps.map((step, i) => (
+                    <motion.div
+                      key={i}
+                      className="pwa-timeline-step"
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: 0.08 * i }}
+                    >
+                      <div className="pwa-timeline-dot">
+                        <span>{step.num}</span>
+                      </div>
+                      <p className="pwa-timeline-title">{step.title}</p>
+                      <p className="pwa-timeline-desc">{step.desc}</p>
+                    </motion.div>
+                  ))}
+                </motion.div>
+              </AnimatePresence>
+            </>
           )}
+
+          {/* CTA */}
+          <motion.div
+            className="pwa-install-cta"
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 1 }}
+          >
+            <motion.button
+              className="pwa-cta-btn"
+              onClick={() => navigate("/", { replace: true })}
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+            >
+              <span>{isStandalone ? "Acessar o Manual" : "Continuar para o Manual"}</span>
+              <motion.span
+                className="pwa-cta-icon"
+                animate={{ rotate: [0, 15, -15, 0] }}
+                transition={{ duration: 2, repeat: Infinity, repeatDelay: 3 }}
+              >
+                ✦
+              </motion.span>
+            </motion.button>
+            {!isStandalone && (
+              <p className="pwa-skip-text">Você pode instalar depois a qualquer momento</p>
+            )}
+          </motion.div>
         </motion.div>
-      </motion.div>
+      </div>
     </div>
   );
 };
