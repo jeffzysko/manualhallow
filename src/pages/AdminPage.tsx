@@ -203,7 +203,7 @@ const AdminPage = () => {
                 </div>
                 {stats.onboarding_levels && (
                   <div style={{ marginTop: 12 }}>
-                    <h4 style={{ color: "var(--gold)", fontSize: 13, marginBottom: 8 }}>Nível de experiência</h4>
+                    <h4 style={{ color: "var(--gold)", fontSize: 13, marginBottom: 8 }}>Etapa onde mais perdem vendas</h4>
                     <div style={{ display: "flex", gap: 8 }}>
                       {stats.onboarding_levels.map((l, i) => (
                         <span key={i} className="admin-badge admin-badge--blue" style={{ textTransform: "capitalize" }}>

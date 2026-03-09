@@ -22,10 +22,13 @@ const OBJECTIONS = [
   "\"Agora não é o momento\"",
 ];
 
-const CONFIDENCE = [
-  { value: "iniciante", label: "Iniciante", desc: "Estou começando e quero aprender do zero" },
-  { value: "intermediario", label: "Intermediário", desc: "Já vendo mas quero melhorar meus resultados" },
-  { value: "avancado", label: "Avançado", desc: "Tenho experiência e busco refinar técnicas" },
+const SALES_STAGES = [
+  "No primeiro contato (cliente ainda frio)",
+  "Após enviar o orçamento",
+  "Na hora de fechar (cliente enrola)",
+  "No follow-up (cliente some)",
+  "Quando o cliente compara com concorrência",
+  "Quando preciso justificar o preço premium",
 ];
 
 const OnboardingPage = () => {
@@ -34,18 +37,18 @@ const OnboardingPage = () => {
   const [step, setStep] = useState(0);
   const [challenge, setChallenge] = useState("");
   const [objection, setObjection] = useState("");
-  const [confidence, setConfidence] = useState("");
+  const [salesStage, setSalesStage] = useState("");
   const [saving, setSaving] = useState(false);
 
   const handleFinish = async () => {
-    if (!user || !challenge || !objection || !confidence) return;
+    if (!user || !challenge || !objection || !salesStage) return;
     setSaving(true);
     try {
       await supabase.from("user_onboarding").insert({
         user_id: user.id,
         biggest_challenge: challenge,
         common_objection: objection,
-        confidence_level: confidence,
+        confidence_level: salesStage,
       });
       navigate("/", { replace: true });
     } catch {
@@ -55,7 +58,7 @@ const OnboardingPage = () => {
     }
   };
 
-  const canAdvance = step === 0 ? !!challenge : step === 1 ? !!objection : !!confidence;
+  const canAdvance = step === 0 ? !!challenge : step === 1 ? !!objection : !!salesStage;
 
   return (
     <div className="manual-page" style={{ minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center" }}>
@@ -72,12 +75,12 @@ const OnboardingPage = () => {
           <h1 className="onboarding-title">
             {step === 0 && "Qual sua maior dificuldade em vendas?"}
             {step === 1 && "Qual objeção você mais enfrenta?"}
-            {step === 2 && "Qual seu nível de experiência?"}
+            {step === 2 && "Em qual etapa você mais perde vendas?"}
           </h1>
           <p className="onboarding-subtitle">
             {step === 0 && "Isso nos ajuda a personalizar sua experiência no manual."}
             {step === 1 && "Vamos focar nas técnicas certas pra você."}
-            {step === 2 && "Assim o Mentor Hallow adapta as orientações ao seu perfil."}
+            {step === 2 && "Vamos focar nas técnicas certas pra esse gargalo."}
           </p>
         </div>
 
@@ -102,14 +105,13 @@ const OnboardingPage = () => {
             </button>
           ))}
 
-          {step === 2 && CONFIDENCE.map(c => (
+          {step === 2 && SALES_STAGES.map(s => (
             <button
-              key={c.value}
-              className={`onboarding-option onboarding-option--wide ${confidence === c.value ? "onboarding-option--selected" : ""}`}
-              onClick={() => setConfidence(c.value)}
+              key={s}
+              className={`onboarding-option ${salesStage === s ? "onboarding-option--selected" : ""}`}
+              onClick={() => setSalesStage(s)}
             >
-              <strong>{c.label}</strong>
-              <span className="onboarding-option-desc">{c.desc}</span>
+              {s}
             </button>
           ))}
         </div>
