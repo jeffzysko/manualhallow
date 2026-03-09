@@ -101,9 +101,13 @@ const AIChatDrawer = ({ open, onClose }: { open: boolean; onClose: () => void })
     if (open) setTimeout(() => inputRef.current?.focus(), 300);
   }, [open]);
 
-  const persistMessage = useCallback(async (role: "user" | "assistant", content: string) => {
+  const persistMessage = useCallback(async (role: "user" | "assistant", content: string, imageUrl?: string) => {
     if (!user) return;
-    await supabase.from("chat_messages").insert({ user_id: user.id, role, content });
+    // If there's an image, store as JSON so we can reconstruct on load
+    const stored = imageUrl
+      ? JSON.stringify({ text: content, image_url: imageUrl })
+      : content;
+    await supabase.from("chat_messages").insert({ user_id: user.id, role, content: stored });
   }, [user]);
 
   const { track } = useAnalytics();
