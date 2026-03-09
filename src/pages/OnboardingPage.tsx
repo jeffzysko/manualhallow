@@ -22,10 +22,13 @@ const OBJECTIONS = [
   "\"Agora não é o momento\"",
 ];
 
-const CONFIDENCE = [
-  { value: "iniciante", label: "Iniciante", desc: "Estou começando e quero aprender do zero" },
-  { value: "intermediario", label: "Intermediário", desc: "Já vendo mas quero melhorar meus resultados" },
-  { value: "avancado", label: "Avançado", desc: "Tenho experiência e busco refinar técnicas" },
+const SALES_STAGES = [
+  "No primeiro contato (cliente ainda frio)",
+  "Após enviar o orçamento",
+  "Na hora de fechar (cliente enrola)",
+  "No follow-up (cliente some)",
+  "Quando o cliente compara com concorrência",
+  "Quando preciso justificar o preço premium",
 ];
 
 const OnboardingPage = () => {
