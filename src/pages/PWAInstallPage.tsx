@@ -163,9 +163,9 @@ const PWAInstallPage = () => {
             transition={{ delay: 0.6 }}
           >
             {[
-              { icon: "⚡", label: "Acesso instantâneo" },
-              { icon: "📴", label: "Funciona offline" },
-              { icon: "🎯", label: "Tela cheia" },
+              { icon: "⚡", line1: "Acesso", line2: "instantâneo" },
+              { icon: "📴", line1: "Funciona", line2: "offline" },
+              { icon: "🎯", line1: "Tela", line2: "cheia" },
             ].map((b, i) => (
               <motion.div
                 key={i}
@@ -175,7 +175,7 @@ const PWAInstallPage = () => {
                 transition={{ delay: 0.65 + i * 0.08 }}
               >
                 <span className="pwa-benefit-icon">{b.icon}</span>
-                <span className="pwa-benefit-label">{b.label}</span>
+                <span className="pwa-benefit-label">{b.line1}<br />{b.line2}</span>
               </motion.div>
             ))}
           </motion.div>
