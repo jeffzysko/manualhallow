@@ -41,7 +41,7 @@ const OnboardingPage = () => {
   const [saving, setSaving] = useState(false);
 
   const handleFinish = async () => {
-    if (!user || !challenge || !objection || !confidence) return;
+    if (!user || !challenge || !objection || !salesStage) return;
     setSaving(true);
     try {
       await supabase.from("user_onboarding").insert({
