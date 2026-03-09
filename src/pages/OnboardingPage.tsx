@@ -37,7 +37,7 @@ const OnboardingPage = () => {
   const [step, setStep] = useState(0);
   const [challenge, setChallenge] = useState("");
   const [objection, setObjection] = useState("");
-  const [confidence, setConfidence] = useState("");
+  const [salesStage, setSalesStage] = useState("");
   const [saving, setSaving] = useState(false);
 
   const handleFinish = async () => {
