@@ -1999,7 +1999,7 @@ body { overflow-x: hidden; }
   background: rgba(9,9,15,0.6);
   border: 1px solid rgba(201,169,106,0.12);
   border-radius: 14px;
-  padding: 12px 16px;
+  padding: 10px 14px;
   color: var(--white);
   font-size: 15px;
   font-family: 'Plus Jakarta Sans', sans-serif;
