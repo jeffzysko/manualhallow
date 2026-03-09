@@ -1909,7 +1909,7 @@ body { overflow-x: hidden; }
 .auth-tabs-v2 {
   display: flex;
   gap: 0;
-  margin-bottom: 28px;
+  margin-bottom: 18px;
   position: relative;
 }
 
