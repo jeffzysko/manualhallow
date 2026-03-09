@@ -176,6 +176,45 @@ const AdminPage = () => {
                 <p className="admin-empty">Nenhum usuário cadastrado.</p>
               )}
             </div>
+
+            {/* Onboarding Insights */}
+            {(stats?.onboarding_challenges || stats?.onboarding_objections) && (
+              <div className="admin-section">
+                <h3 className="admin-section-title">🎯 Dores dos Vendedores (Onboarding)</h3>
+                <div className="admin-stats-grid" style={{ gridTemplateColumns: "1fr 1fr" }}>
+                  <div>
+                    <h4 style={{ color: "var(--gold)", fontSize: 13, marginBottom: 8 }}>Maiores dificuldades</h4>
+                    {stats.onboarding_challenges?.map((c, i) => (
+                      <div key={i} className="admin-table-row" style={{ padding: "6px 0" }}>
+                        <span className="admin-table-name" style={{ fontSize: 13 }}>{c.challenge}</span>
+                        <span className="admin-badge">{c.total}</span>
+                      </div>
+                    )) || <p className="admin-empty">Sem dados</p>}
+                  </div>
+                  <div>
+                    <h4 style={{ color: "var(--gold)", fontSize: 13, marginBottom: 8 }}>Objeções mais enfrentadas</h4>
+                    {stats.onboarding_objections?.map((o, i) => (
+                      <div key={i} className="admin-table-row" style={{ padding: "6px 0" }}>
+                        <span className="admin-table-name" style={{ fontSize: 13 }}>{o.objection}</span>
+                        <span className="admin-badge">{o.total}</span>
+                      </div>
+                    )) || <p className="admin-empty">Sem dados</p>}
+                  </div>
+                </div>
+                {stats.onboarding_levels && (
+                  <div style={{ marginTop: 12 }}>
+                    <h4 style={{ color: "var(--gold)", fontSize: 13, marginBottom: 8 }}>Nível de experiência</h4>
+                    <div style={{ display: "flex", gap: 8 }}>
+                      {stats.onboarding_levels.map((l, i) => (
+                        <span key={i} className="admin-badge admin-badge--blue" style={{ textTransform: "capitalize" }}>
+                          {l.level}: {l.total}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
           </>
         )}
 
