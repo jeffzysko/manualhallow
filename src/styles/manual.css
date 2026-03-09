@@ -1898,7 +1898,7 @@ body { overflow-x: hidden; }
 
 .auth-divider {
   height: 1px;
-  margin: 28px 0;
+  margin: 20px 0;
   background: linear-gradient(90deg, transparent, rgba(201,169,106,0.25), transparent);
   transform-origin: center;
 }
