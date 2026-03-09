@@ -51,6 +51,17 @@ function parseSuggestions(text: string): { clean: string; suggestions: string[] 
   return { clean, suggestions };
 }
 
+/** Split a response into two parts if the AI used ---PARTE2--- */
+function splitParts(text: string): string[] {
+  const marker = "---PARTE2---";
+  const idx = text.indexOf(marker);
+  if (idx === -1) return [text];
+  const part1 = text.slice(0, idx).trim();
+  const part2 = text.slice(idx + marker.length).trim();
+  if (!part2) return [part1];
+  return [part1, part2];
+}
+
 const MAX_IMAGE_SIZE = 4 * 1024 * 1024; // 4MB
 
 const AIChatDrawer = ({ open, onClose }: { open: boolean; onClose: () => void }) => {
