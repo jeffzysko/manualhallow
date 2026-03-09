@@ -25,11 +25,41 @@ const CollapsibleChapter = ({
   id, num, numBg, numColor = "#000", tag, tagColor, title, lead, bgStyle = "var(--bg)", tldr, children, isRead, onToggleRead, scriptsMode = false
 }: CollapsibleChapterProps) => {
   const [collapsed, setCollapsed] = useState(true);
+  // Track whether user manually set collapse state
+  const userCollapsedRef = useRef(true);
   const isCollapsed = scriptsMode ? false : collapsed;
   const { isFavorite, toggleFavorite, isLoggedIn } = useFavoritesContext();
   const { ref: animRef, isVisible } = useInView();
   const sectionRef = useRef<HTMLElement>(null);
   const expandInfoRef = useRef<{ viewportTop: number } | null>(null);
+
+  // Listen for search events: expand-all, collapse-all, expand-chapter
+  useEffect(() => {
+    const handleExpandAll = () => {
+      userCollapsedRef.current = collapsed; // save current state
+      setCollapsed(false);
+    };
+    const handleCollapseAll = () => {
+      // Restore to state before expand-all
+      setCollapsed(userCollapsedRef.current);
+    };
+    const handleExpandChapter = (e: Event) => {
+      const target = (e as CustomEvent).detail;
+      if (target === id) {
+        setCollapsed(false);
+        userCollapsedRef.current = false;
+      }
+    };
+
+    window.addEventListener("manual:expand-all", handleExpandAll);
+    window.addEventListener("manual:collapse-all", handleCollapseAll);
+    window.addEventListener("manual:expand-chapter", handleExpandChapter);
+    return () => {
+      window.removeEventListener("manual:expand-all", handleExpandAll);
+      window.removeEventListener("manual:collapse-all", handleCollapseAll);
+      window.removeEventListener("manual:expand-chapter", handleExpandChapter);
+    };
+  }, [id, collapsed]);
 
   // ResizeObserver: when section resizes after expand, correct scroll drift
   useEffect(() => {
@@ -47,12 +77,10 @@ const CollapsibleChapter = ({
       if (Math.abs(drift) > 2) {
         window.scrollBy({ top: drift, behavior: "instant" as ScrollBehavior });
       }
-      // Keep observing for a bit (lazy content may load in stages)
     });
 
     observer.observe(section);
 
-    // Clean up after 3s — lazy content should be loaded by then
     const cleanup = setTimeout(() => {
       observer.disconnect();
       expandInfoRef.current = null;
@@ -70,7 +98,6 @@ const CollapsibleChapter = ({
   const handleExpand = useCallback(() => {
     const wasCollapsed = collapsed;
     
-    // Save section's viewport position BEFORE state change
     if (wasCollapsed && sectionRef.current) {
       const rect = sectionRef.current.getBoundingClientRect();
       expandInfoRef.current = { viewportTop: rect.top };
@@ -85,7 +112,9 @@ const CollapsibleChapter = ({
       stopTimer(id);
     }
     
-    setCollapsed(prev => !prev);
+    const newState = !collapsed;
+    setCollapsed(newState);
+    userCollapsedRef.current = newState;
   }, [collapsed, id, track, startTimer, stopTimer]);
 
   const chapterLabel = `Cap. ${num.replace(/^0/, "")} — ${tag}`;

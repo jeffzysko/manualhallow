@@ -22,10 +22,14 @@ const SearchOverlay = ({ open, onClose, onNavigate }: SearchOverlayProps) => {
   const overlayRef = useRef<HTMLDivElement>(null);
   const resultsRef = useRef<HTMLDivElement>(null);
 
-  // Build search index from DOM
+  // Build search index: expand all chapters, scrape DOM, collapse back
   const buildIndex = useCallback(() => {
     if (indexRef.current.length > 0) { setIndexReady(true); return; }
 
+    // Ask all chapters to expand so their content enters the DOM
+    window.dispatchEvent(new CustomEvent("manual:expand-all"));
+
+    // Wait for React to render expanded content + lazy Suspense
     setTimeout(() => {
       const sections = document.querySelectorAll(".manual-page section[id]");
       const items: SearchableItem[] = [];
@@ -48,7 +52,10 @@ const SearchOverlay = ({ open, onClose, onNavigate }: SearchOverlayProps) => {
 
       indexRef.current = items;
       setIndexReady(true);
-    }, 200);
+
+      // Collapse chapters back to their original state
+      window.dispatchEvent(new CustomEvent("manual:collapse-all"));
+    }, 600);
   }, []);
 
   useEffect(() => {
@@ -98,12 +105,21 @@ const SearchOverlay = ({ open, onClose, onNavigate }: SearchOverlayProps) => {
       setActiveIndex(prev => Math.max(prev - 1, -1));
     } else if (e.key === "Enter" && activeIndex >= 0 && results[activeIndex]) {
       e.preventDefault();
-      onNavigate(results[activeIndex].sectionId);
-      onClose();
+      handleNavigate(results[activeIndex].sectionId);
     } else if (e.key === "Escape") {
       onClose();
     }
-  }, [results, activeIndex, onNavigate, onClose]);
+  }, [results, activeIndex, onClose]);
+
+  const handleNavigate = useCallback((sectionId: string) => {
+    // Expand the target chapter before navigating
+    window.dispatchEvent(new CustomEvent("manual:expand-chapter", { detail: sectionId }));
+    // Small delay for the chapter to expand, then scroll
+    setTimeout(() => {
+      onNavigate(sectionId);
+    }, 150);
+    onClose();
+  }, [onNavigate, onClose]);
 
   // Scroll active result into view
   useEffect(() => {
@@ -184,7 +200,7 @@ const SearchOverlay = ({ open, onClose, onNavigate }: SearchOverlayProps) => {
               key={i}
               id={`search-result-${i}`}
               className={`search-result-item${i === activeIndex ? " search-result-item--active" : ""}`}
-              onClick={() => { onNavigate(item.sectionId); onClose(); }}
+              onClick={() => handleNavigate(item.sectionId)}
               role="option"
               aria-selected={i === activeIndex}
             >
