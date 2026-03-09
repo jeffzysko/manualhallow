@@ -16,26 +16,30 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
       return;
     }
 
+    let cancelled = false;
+
     const check = async () => {
+      setCheckingActive(true);
       const [profileRes, onboardingRes] = await Promise.all([
         supabase.from("profiles").select("is_active").eq("id", user.id).single(),
         supabase.from("user_onboarding").select("id").eq("user_id", user.id).maybeSingle(),
       ]);
 
+      if (cancelled) return;
+
       if (profileRes.data && !profileRes.data.is_active) {
         setIsActive(false);
         await signOut();
+        return;
       }
 
-      if (!onboardingRes.data) {
-        setNeedsOnboarding(true);
-      }
-
+      setNeedsOnboarding(!onboardingRes.data);
       setCheckingActive(false);
     };
 
     check();
-  }, [user, signOut]);
+    return () => { cancelled = true; };
+  }, [user, signOut, location.pathname]);
 
   if (loading || checkingActive) {
     return (
@@ -47,7 +51,6 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
 
   if (!user || !isActive) return <Navigate to="/auth" replace />;
 
-  // Redirect to onboarding if not completed (unless already on onboarding page)
   if (needsOnboarding && location.pathname !== "/onboarding") {
     return <Navigate to="/onboarding" replace />;
   }
