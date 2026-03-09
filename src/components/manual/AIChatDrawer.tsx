@@ -87,7 +87,23 @@ const AIChatDrawer = ({ open, onClose }: { open: boolean; onClose: () => void })
       .limit(50)
       .then(({ data }) => {
         if (data && data.length > 0) {
-          setMessages(data.map(d => ({ role: d.role as "user" | "assistant", content: d.content })));
+          setMessages(data.map(d => {
+            const role = d.role as "user" | "assistant";
+            // Try to reconstruct multimodal messages from stored JSON
+            if (d.content.startsWith("{")) {
+              try {
+                const parsed = JSON.parse(d.content);
+                if (parsed.image_url) {
+                  const parts: MsgContent = [
+                    { type: "text", text: parsed.text || "" },
+                    { type: "image_url", image_url: { url: parsed.image_url } },
+                  ];
+                  return { role, content: parts };
+                }
+              } catch { /* not JSON, treat as plain text */ }
+            }
+            return { role, content: d.content };
+          }));
         }
         setHistoryLoaded(true);
       });
