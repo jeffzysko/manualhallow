@@ -1973,7 +1973,7 @@ body { overflow-x: hidden; }
 .auth-form-v2 {
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  gap: 12px;
 }
 
 .auth-field-v2 {
