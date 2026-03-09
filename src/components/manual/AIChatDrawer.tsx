@@ -51,6 +51,17 @@ function parseSuggestions(text: string): { clean: string; suggestions: string[] 
   return { clean, suggestions };
 }
 
+/** Split a response into two parts if the AI used ---PARTE2--- */
+function splitParts(text: string): string[] {
+  const marker = "---PARTE2---";
+  const idx = text.indexOf(marker);
+  if (idx === -1) return [text];
+  const part1 = text.slice(0, idx).trim();
+  const part2 = text.slice(idx + marker.length).trim();
+  if (!part2) return [part1];
+  return [part1, part2];
+}
+
 const MAX_IMAGE_SIZE = 4 * 1024 * 1024; // 4MB
 
 const AIChatDrawer = ({ open, onClose }: { open: boolean; onClose: () => void }) => {
@@ -227,7 +238,26 @@ const AIChatDrawer = ({ open, onClose }: { open: boolean; onClose: () => void })
       }
 
       if (assistantSoFar) {
-        persistMessage("assistant", assistantSoFar);
+        // Split into two messages if ---PARTE2--- is present
+        const parts = splitParts(assistantSoFar);
+        if (parts.length === 2) {
+          // Replace the streamed message with just part 1
+          setMessages(prev => {
+            const updated = [...prev];
+            const lastIdx = updated.length - 1;
+            if (updated[lastIdx]?.role === "assistant") {
+              updated[lastIdx] = { ...updated[lastIdx], content: parts[0] };
+            }
+            return updated;
+          });
+          persistMessage("assistant", parts[0]);
+          // Add part 2 after a brief delay for natural feel
+          await new Promise(r => setTimeout(r, 800));
+          setMessages(prev => [...prev, { role: "assistant", content: parts[1] }]);
+          persistMessage("assistant", parts[1]);
+        } else {
+          persistMessage("assistant", assistantSoFar);
+        }
       }
     } catch (e: any) {
       const errMsg = `⚠️ ${e.message || "Erro inesperado. Tente novamente."}`;
