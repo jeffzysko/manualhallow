@@ -11,7 +11,7 @@ const RATE_LIMIT_WINDOW_MINUTES = 5;
 
 // Input validation
 const MAX_MESSAGE_LENGTH = 2000;
-const MAX_MESSAGES = 30;
+const MAX_MESSAGES = 60;
 
 function sanitizeText(text: string): string {
   return text
@@ -617,8 +617,18 @@ Deno.serve(async (req) => {
   try {
     const body = await req.json();
 
+    console.log("Received messages count:", Array.isArray(body.messages) ? body.messages.length : "not array");
+    if (Array.isArray(body.messages)) {
+      body.messages.forEach((m: any, i: number) => {
+        const contentType = Array.isArray(m.content) ? "array" : typeof m.content;
+        const contentLen = typeof m.content === "string" ? m.content.length : JSON.stringify(m.content)?.length;
+        console.log(`msg[${i}]: role=${m.role}, contentType=${contentType}, contentLen=${contentLen}`);
+      });
+    }
+
     const messages = validateMessages(body.messages);
     if (!messages) {
+      console.error("Validation FAILED for messages:", JSON.stringify(body.messages?.map((m: any) => ({ role: m.role, contentType: typeof m.content, contentLen: typeof m.content === "string" ? m.content.length : "array" }))));
       return new Response(
         JSON.stringify({ error: "Entrada inválida. Verifique suas mensagens." }),
         { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
