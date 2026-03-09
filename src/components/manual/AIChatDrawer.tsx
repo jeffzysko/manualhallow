@@ -174,16 +174,15 @@ const AIChatDrawer = ({ open, onClose }: { open: boolean; onClose: () => void })
     track("ai_chat", { event_data: { length: displayText.length, has_image: !!pendingImage } });
 
     let assistantSoFar = "";
-    // For API: send text-only history + current multimodal message (filter empty)
-    const apiMessages = [
-      ...messages
-        .map(m => ({
-          role: m.role,
-          content: typeof m.content === "string" ? m.content : getTextContent(m.content),
-        }))
-        .filter(m => typeof m.content === "string" ? m.content.trim().length > 0 : true),
-      { role: userMsg.role, content: userMsg.content },
-    ];
+    // For API: send text-only history + current multimodal message (filter empty, limit to last 50)
+    const historyMsgs = messages
+      .map(m => ({
+        role: m.role,
+        content: typeof m.content === "string" ? m.content : getTextContent(m.content),
+      }))
+      .filter(m => typeof m.content === "string" ? m.content.trim().length > 0 : true)
+      .slice(-50);
+    const apiMessages = [...historyMsgs, { role: userMsg.role, content: userMsg.content }];
 
     try {
       const resp = await fetch(CHAT_URL, {

@@ -11,7 +11,7 @@ const RATE_LIMIT_WINDOW_MINUTES = 5;
 
 // Input validation
 const MAX_MESSAGE_LENGTH = 2000;
-const MAX_MESSAGES = 30;
+const MAX_MESSAGES = 60;
 
 function sanitizeText(text: string): string {
   return text
