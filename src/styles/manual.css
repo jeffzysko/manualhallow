@@ -1019,7 +1019,7 @@ body { overflow-x: hidden; }
   .manual-page .chapter-tldr-title { font-size: 16px; }
 
   /* ── Search overlay ── */
-  .manual-page .search-overlay { padding-top: 12px; align-items: flex-start; }
+  .manual-page .search-overlay { padding-top: calc(12px + env(safe-area-inset-top, 0px)); align-items: flex-start; }
   .manual-page .search-box { padding: 0 8px; }
   .manual-page .search-input-wrap { padding: 14px 14px; border-radius: 12px; gap: 10px; }
   .manual-page .search-input { font-size: 16px; }
