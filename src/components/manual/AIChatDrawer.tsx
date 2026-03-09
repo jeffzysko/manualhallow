@@ -174,7 +174,7 @@ const AIChatDrawer = ({ open, onClose }: { open: boolean; onClose: () => void })
     if ((!sanitized && !pendingImage) || isLoading) return;
 
     let userContent: MsgContent;
-    let displayText = sanitized || "📸 Analise este print";
+    let displayText = sanitized || "📸 Enviando print para análise";
 
     if (pendingImage) {
       const parts: { type: string; text?: string; image_url?: { url: string } }[] = [];
