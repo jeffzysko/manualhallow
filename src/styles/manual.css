@@ -2648,22 +2648,22 @@ body { overflow-x: hidden; }
   width: 100%; text-align: center;
 }
 .pwa-install-header {
-  text-align: center; margin-bottom: 20px;
+  text-align: center; margin-bottom: 28px;
 }
 .pwa-install-title {
   font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
   font-size: 24px; font-weight: 800; color: var(--text);
-  margin: 0 0 8px; line-height: 1.25;
+  margin: 0 0 12px; line-height: 1.25;
   letter-spacing: -0.3px;
 }
 .pwa-install-subtitle {
   font-size: 14px; color: var(--muted); margin: 0 auto;
-  line-height: 1.5; max-width: 300px;
+  line-height: 1.5; max-width: 300px; text-align: center;
 }
 
 /* Benefits */
 .pwa-benefits {
-  display: flex; gap: 8px; justify-content: center; margin-bottom: 22px;
+  display: flex; gap: 10px; justify-content: center; margin-bottom: 28px;
 }
 .pwa-benefit {
   display: flex; flex-direction: column; align-items: center; gap: 5px;
@@ -2683,7 +2683,7 @@ body { overflow-x: hidden; }
 
 /* Platform tabs */
 .pwa-platform-tabs {
-  display: flex; gap: 8px; justify-content: center; margin-bottom: 18px;
+  display: flex; gap: 8px; justify-content: center; margin-bottom: 24px;
 }
 .pwa-platform-tab {
   padding: 9px 22px; border-radius: 10px; font-size: 13px;
@@ -2702,7 +2702,7 @@ body { overflow-x: hidden; }
 /* Timeline steps */
 .pwa-timeline {
   display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px;
-  position: relative; margin-bottom: 24px;
+  position: relative; margin-bottom: 32px;
   padding-top: 8px;
 }
 .pwa-timeline-line {
