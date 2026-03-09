@@ -40,6 +40,8 @@ const AdminPage = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [togglingId, setTogglingId] = useState<string | null>(null);
+  const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null);
 
   useEffect(() => {
     if (!user) { navigate("/auth"); return; }
@@ -68,6 +70,19 @@ const AdminPage = () => {
     await supabase.rpc("admin_toggle_user", { target_user_id: targetId, active });
     setUsers(prev => prev.map(u => u.id === targetId ? { ...u, is_active: active } : u));
     setTogglingId(null);
+  };
+
+  const deleteUser = async (targetId: string) => {
+    if (targetId === user?.id) return;
+    setDeletingId(targetId);
+    const { error: delError } = await supabase.rpc("admin_delete_user", { target_user_id: targetId });
+    if (delError) {
+      alert("Erro ao excluir usuário: " + delError.message);
+    } else {
+      setUsers(prev => prev.filter(u => u.id !== targetId));
+    }
+    setDeletingId(null);
+    setConfirmDeleteId(null);
   };
 
   if (loading) {
