@@ -22,24 +22,37 @@ function sanitizeText(text: string): string {
     .trim();
 }
 
-function validateMessages(messages: unknown): { role: string; content: string }[] | null {
+function validateMessages(messages: unknown): any[] | null {
   if (!Array.isArray(messages)) return null;
   if (messages.length > MAX_MESSAGES) return null;
 
-  const valid = messages.every(
-    (m: any) =>
-      m &&
-      typeof m.role === "string" &&
-      ["user", "assistant"].includes(m.role) &&
-      typeof m.content === "string" &&
-      m.content.length <= MAX_MESSAGE_LENGTH
-  );
-  if (!valid) return null;
+  const validated: any[] = [];
+  for (const m of messages) {
+    if (!m || typeof m.role !== "string" || !["user", "assistant"].includes(m.role)) return null;
 
-  return messages.map((m: any) => ({
-    role: m.role,
-    content: sanitizeText(m.content),
-  }));
+    // Support multimodal messages (text + image_url)
+    if (Array.isArray(m.content)) {
+      const parts: any[] = [];
+      for (const part of m.content) {
+        if (part.type === "text" && typeof part.text === "string" && part.text.length <= MAX_MESSAGE_LENGTH) {
+          parts.push({ type: "text", text: sanitizeText(part.text) });
+        } else if (part.type === "image_url" && part.image_url?.url && typeof part.image_url.url === "string") {
+          // Validate it's a proper URL (data: or https:)
+          if (part.image_url.url.startsWith("data:image/") || part.image_url.url.startsWith("https://")) {
+            parts.push({ type: "image_url", image_url: { url: part.image_url.url } });
+          }
+        }
+      }
+      if (parts.length === 0) return null;
+      validated.push({ role: m.role, content: parts });
+    } else if (typeof m.content === "string" && m.content.length <= MAX_MESSAGE_LENGTH) {
+      validated.push({ role: m.role, content: sanitizeText(m.content) });
+    } else {
+      return null;
+    }
+  }
+
+  return validated;
 }
 
 async function checkRateLimit(
