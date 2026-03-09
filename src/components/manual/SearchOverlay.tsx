@@ -176,13 +176,14 @@ const SearchOverlay = ({ open, onClose, onNavigate }: SearchOverlayProps) => {
   }, [results, activeIndex, onClose]);
 
   const handleNavigate = useCallback((sectionId: string) => {
+    // Close overlay first
+    onClose();
     // Expand the target chapter before navigating
     window.dispatchEvent(new CustomEvent("manual:expand-chapter", { detail: sectionId }));
-    // Small delay for the chapter to expand, then scroll
+    // Wait for chapter to expand + render, then scroll
     setTimeout(() => {
       onNavigate(sectionId);
-    }, 150);
-    onClose();
+    }, 350);
   }, [onNavigate, onClose]);
 
   // Scroll active result into view
@@ -194,12 +195,14 @@ const SearchOverlay = ({ open, onClose, onNavigate }: SearchOverlayProps) => {
 
   const search = useCallback((q: string) => {
     if (q.length < 2) { setResults([]); setActiveIndex(-1); return; }
-    const lower = q.toLowerCase();
-    const found = indexRef.current.filter(item => item.text.toLowerCase().includes(lower));
+    const queryWords = normalize(q).split(/\s+/).filter(w => w.length >= 2);
+    if (queryWords.length === 0) { setResults([]); setActiveIndex(-1); return; }
+
+    const found = indexRef.current.filter(item => fuzzyMatch(item.text, queryWords));
 
     const seen = new Set<string>();
     const unique = found.filter(item => {
-      const key = item.text.substring(0, 80).toLowerCase();
+      const key = normalize(item.text.substring(0, 80));
       if (seen.has(key)) return false;
       seen.add(key);
       return true;
