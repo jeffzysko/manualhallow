@@ -2768,3 +2768,46 @@ body { overflow-x: hidden; }
   .pwa-timeline-title { font-size: 10px; }
   .pwa-timeline-desc { font-size: 9px; }
 }
+
+/* ===== PULL TO REFRESH ===== */
+.manual-page .ptr-indicator {
+  position: fixed;
+  top: 0;
+  left: 50%;
+  translate: -50% -48px;
+  z-index: 9999;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--card2, #1a1a1a);
+  border: 1px solid var(--border, #333);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity .2s ease, translate .2s ease;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+  pointer-events: none;
+}
+.manual-page .ptr-indicator--visible {
+  opacity: 1;
+  transition: none;
+}
+.manual-page .ptr-spinner {
+  width: 20px;
+  height: 20px;
+  border: 2px solid var(--border, #444);
+  border-top-color: var(--gold, #C9A96A);
+  border-radius: 50%;
+  transition: transform .2s ease;
+}
+.manual-page .ptr-indicator--ready .ptr-spinner {
+  border-top-color: var(--gold, #C9A96A);
+  border-right-color: var(--gold, #C9A96A);
+}
+.manual-page .ptr-indicator--refreshing .ptr-spinner {
+  animation: ptr-spin .6s linear infinite;
+}
+@keyframes ptr-spin {
+  to { transform: rotate(360deg); }
+}

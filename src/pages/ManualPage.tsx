@@ -10,6 +10,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useFavorites } from "@/hooks/useFavorites";
 import { useReadingProgress } from "@/hooks/useReadingProgress";
 import { FavoritesContext } from "@/contexts/FavoritesContext";
+import { usePullToRefresh } from "@/hooks/usePullToRefresh";
 
 import ChapterSkeleton from "@/components/manual/ChapterSkeleton";
 
@@ -43,6 +44,7 @@ const ManualPage = () => {
   const { favorites, isFavorite, toggleFavorite } = useFavorites();
   const { progress, toggleChapter } = useReadingProgress();
   const routerNavigate = useRouterNavigate();
+  const { pulling, pullDistance, refreshing, threshold } = usePullToRefresh();
 
   const rafRef = useRef(0);
   useEffect(() => {
@@ -110,6 +112,14 @@ const ManualPage = () => {
       <div className={`manual-page${scriptsMode ? " scripts-mode" : ""}`}>
         <a href="#main-content" className="skip-to-content">Pular para o conteúdo</a>
         <div className="progress-bar" style={{ transform: `scaleX(${scrollProgress / 100})` }} />
+
+        {/* Pull-to-refresh indicator */}
+        <div
+          className={`ptr-indicator${pulling || refreshing ? " ptr-indicator--visible" : ""}${refreshing ? " ptr-indicator--refreshing" : ""}${pullDistance >= threshold ? " ptr-indicator--ready" : ""}`}
+          style={{ transform: `translateY(${pulling || refreshing ? Math.max(pullDistance - 20, 0) : 0}px)` }}
+        >
+          <div className="ptr-spinner" />
+        </div>
 
         <TopHeader onOpenSearch={() => setSearchOpen(true)} onOpenFavorites={handleOpenFavorites} onToggleScripts={() => setScriptsMode(!scriptsMode)} scriptsMode={scriptsMode} />
 
