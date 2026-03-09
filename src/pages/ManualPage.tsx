@@ -10,6 +10,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useFavorites } from "@/hooks/useFavorites";
 import { useReadingProgress } from "@/hooks/useReadingProgress";
 import { FavoritesContext } from "@/contexts/FavoritesContext";
+import { usePullToRefresh } from "@/hooks/usePullToRefresh";
 
 import ChapterSkeleton from "@/components/manual/ChapterSkeleton";
 
