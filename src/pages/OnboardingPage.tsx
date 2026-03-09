@@ -61,7 +61,7 @@ const OnboardingPage = () => {
   const canAdvance = step === 0 ? !!challenge : step === 1 ? !!objection : !!salesStage;
 
   return (
-    <div className="manual-page" style={{ minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center" }}>
+    <div className="manual-page" style={{ minHeight: "100dvh", display: "flex", alignItems: "center", justifyContent: "center", paddingTop: 20, paddingBottom: 20 }}>
       <div className="onboarding-container">
         {/* Progress dots */}
         <div className="onboarding-progress">
