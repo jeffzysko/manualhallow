@@ -2062,8 +2062,8 @@ body { overflow-x: hidden; }
   background: linear-gradient(135deg, var(--gold), var(--gold-light));
   color: #09090F;
   border: none;
-  border-radius: 14px;
-  padding: 10px;
+  border-radius: 12px;
+  padding: 8px;
   font-size: 13px;
   font-weight: 800;
   letter-spacing: 0.5px;
