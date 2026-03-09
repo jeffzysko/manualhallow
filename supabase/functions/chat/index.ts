@@ -45,8 +45,15 @@ function validateMessages(messages: unknown): any[] | null {
       }
       if (parts.length === 0) return null;
       validated.push({ role: m.role, content: parts });
-    } else if (typeof m.content === "string" && m.content.length <= MAX_MESSAGE_LENGTH) {
-      validated.push({ role: m.role, content: sanitizeText(m.content) });
+    } else if (typeof m.content === "string") {
+      const sanitized = sanitizeText(m.content);
+      // Allow empty strings (e.g. from split messages) - just skip them
+      if (sanitized.length === 0) continue;
+      if (sanitized.length > MAX_MESSAGE_LENGTH) return null;
+      validated.push({ role: m.role, content: sanitized });
+    } else if (m.content === null || m.content === undefined) {
+      // Skip null/undefined content gracefully
+      continue;
     } else {
       return null;
     }
