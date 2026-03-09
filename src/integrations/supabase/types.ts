@@ -277,6 +277,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      admin_delete_user: {
+        Args: { target_user_id: string }
+        Returns: undefined
+      }
       admin_list_users: { Args: never; Returns: Json }
       admin_toggle_user: {
         Args: { active: boolean; target_user_id: string }

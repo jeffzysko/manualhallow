@@ -40,6 +40,8 @@ const AdminPage = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [togglingId, setTogglingId] = useState<string | null>(null);
+  const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null);
 
   useEffect(() => {
     if (!user) { navigate("/auth"); return; }
@@ -68,6 +70,19 @@ const AdminPage = () => {
     await supabase.rpc("admin_toggle_user", { target_user_id: targetId, active });
     setUsers(prev => prev.map(u => u.id === targetId ? { ...u, is_active: active } : u));
     setTogglingId(null);
+  };
+
+  const deleteUser = async (targetId: string) => {
+    if (targetId === user?.id) return;
+    setDeletingId(targetId);
+    const { error: delError } = await supabase.rpc("admin_delete_user", { target_user_id: targetId });
+    if (delError) {
+      alert("Erro ao excluir usuário: " + delError.message);
+    } else {
+      setUsers(prev => prev.filter(u => u.id !== targetId));
+    }
+    setDeletingId(null);
+    setConfirmDeleteId(null);
   };
 
   if (loading) {
@@ -241,6 +256,36 @@ const AdminPage = () => {
                     >
                       {togglingId === u.id ? "…" : u.is_active ? "Desativar" : "Ativar"}
                     </button>
+                    {u.id !== user?.id && (
+                      confirmDeleteId === u.id ? (
+                        <div className="admin-confirm-delete">
+                          <span style={{ fontSize: 12, color: "#ef4444" }}>Excluir permanentemente?</span>
+                          <button
+                            className="admin-toggle-btn admin-toggle-btn--danger"
+                            onClick={() => deleteUser(u.id)}
+                            disabled={deletingId === u.id}
+                            style={{ fontSize: 11, padding: "2px 8px" }}
+                          >
+                            {deletingId === u.id ? "Excluindo…" : "Sim, excluir"}
+                          </button>
+                          <button
+                            className="admin-toggle-btn"
+                            onClick={() => setConfirmDeleteId(null)}
+                            style={{ fontSize: 11, padding: "2px 8px" }}
+                          >
+                            Cancelar
+                          </button>
+                        </div>
+                      ) : (
+                        <button
+                          className="admin-toggle-btn admin-toggle-btn--danger"
+                          onClick={() => setConfirmDeleteId(u.id)}
+                          style={{ fontSize: 11 }}
+                        >
+                          🗑 Excluir
+                        </button>
+                      )
+                    )}
                   </div>
                 </div>
               ))}
