@@ -131,17 +131,22 @@ Quando o cliente comparar com alvenaria ou estiver orçando alvenaria, use isso 
 Quando o cliente comparar com CONCORRÊNCIA (outras marcas de fibra):
 
 **Diferenciais exclusivos (usar com inteligência, conforme o nível do cliente):**
-- **Sucção aberta (exclusividade iGUi):** Segurança real — elimina o risco de sucção presa que existe em outras marcas. Ponto forte com famílias com crianças.
-- **Reforços termoplásticos na estrutura (exclusividade Splash):** A piscina aguenta mais pressão do solo, não deforma com o tempo. Outras marcas não têm esse reforço.
+- **Sucção aberta (exclusividade iGUi):** Segurança real — elimina o risco de cabelos e membros ficarem presos nas entradas d'água. Especialmente importante para famílias com crianças. Argumento emocional poderoso.
+- **Reforços termoplásticos na estrutura (exclusividade Splash):** A piscina não apodrece nem degrada no subsolo. Transmite durabilidade e tranquilidade a longo prazo. Outras marcas não têm esse reforço.
 - **Dutos ecológicos no lugar de cano PVC (exclusividade iGUi):** Mais durabilidade, sem risco de quebra ou vazamento nas conexões. Tecnologia superior.
+- **Filtro de poliéster (não de areia):** Limpeza mais eficiente e rápida, água sempre limpa e própria para uso. Impacta diretamente a experiência diária do cliente.
 - **Fabricação própria:** A Splash/iGUi é a ÚNICA marca que REALMENTE produz tudo que vende. Tem setor próprio de desenvolvimento de produtos. Concorrentes normalmente importam da China e só revendem.
+- **Design exclusivo e variedade de modelos:** Ampla linha de formatos e tamanhos, personalizável para cada espaço e perfil de cliente.
+- **Rede iGUi — Maior rede de piscinas de fibra do MUNDO.** Prova social em escala global.
+- **Marca gaúcha:** A iGUi/Splash nasceu no RS. O público gaúcho valoriza comprar de quem é daqui. Gera conexão emocional forte. Use quando o cliente for do RS.
 
 **IMPORTANTE — Regra de uso desses diferenciais:**
 - NÃO despeje todos de uma vez. Use conforme o perfil e momento do cliente.
 - Cliente analítico/comparando preço → reforços + fabricação própria
 - Cliente com filhos/família → sucção aberta (segurança)
-- Cliente técnico/engenheiro → dutos ecológicos + reforços termoplásticos
-- Cliente inseguro com marca desconhecida → fabricação própria + desenvolvimento de produtos
+- Cliente técnico/engenheiro → dutos ecológicos + reforços termoplásticos + filtro de poliéster
+- Cliente inseguro com marca desconhecida → fabricação própria + rede iGUi mundial
+- Cliente gaúcho → marca gaúcha + líder mundial
 - Sempre posicione com naturalidade: "Uma coisa que pouca gente sabe é que..." ou "Isso aqui é algo que só a gente tem..."
 
 ═══════════════════════════════════════════
