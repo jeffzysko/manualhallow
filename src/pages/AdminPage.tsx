@@ -256,6 +256,36 @@ const AdminPage = () => {
                     >
                       {togglingId === u.id ? "…" : u.is_active ? "Desativar" : "Ativar"}
                     </button>
+                    {u.id !== user?.id && (
+                      confirmDeleteId === u.id ? (
+                        <div className="admin-confirm-delete">
+                          <span style={{ fontSize: 12, color: "#ef4444" }}>Excluir permanentemente?</span>
+                          <button
+                            className="admin-toggle-btn admin-toggle-btn--danger"
+                            onClick={() => deleteUser(u.id)}
+                            disabled={deletingId === u.id}
+                            style={{ fontSize: 11, padding: "2px 8px" }}
+                          >
+                            {deletingId === u.id ? "Excluindo…" : "Sim, excluir"}
+                          </button>
+                          <button
+                            className="admin-toggle-btn"
+                            onClick={() => setConfirmDeleteId(null)}
+                            style={{ fontSize: 11, padding: "2px 8px" }}
+                          >
+                            Cancelar
+                          </button>
+                        </div>
+                      ) : (
+                        <button
+                          className="admin-toggle-btn admin-toggle-btn--danger"
+                          onClick={() => setConfirmDeleteId(u.id)}
+                          style={{ fontSize: 11 }}
+                        >
+                          🗑 Excluir
+                        </button>
+                      )
+                    )}
                   </div>
                 </div>
               ))}
