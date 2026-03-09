@@ -15,6 +15,9 @@ interface AdminStats {
   chapters_completed: number;
   popular_chapters: { chapter: string; total: number }[] | null;
   recent_users: { id: string; full_name: string | null; company: string | null; created_at: string; is_active: boolean; email: string }[] | null;
+  onboarding_challenges: { challenge: string; total: number }[] | null;
+  onboarding_objections: { objection: string; total: number }[] | null;
+  onboarding_levels: { level: string; total: number }[] | null;
 }
 
 interface UserRow {
