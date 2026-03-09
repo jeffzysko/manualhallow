@@ -2364,6 +2364,16 @@ body { overflow-x: hidden; }
 }
 .ai-chat-suggestion:hover { background: rgba(201,169,106,0.2); color: var(--white); }
 
+/* Dynamic follow-up suggestions after AI response */
+.ai-chat-dynamic-suggestions {
+  display: flex; flex-wrap: wrap; gap: 6px; padding: 4px 16px 12px;
+  animation: fadeInUp 0.3s ease;
+}
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
 /* Header actions */
 .ai-chat-header-right { display: flex; align-items: center; gap: 6px; }
 .ai-chat-clear {
