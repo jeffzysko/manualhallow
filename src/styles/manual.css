@@ -2074,7 +2074,7 @@ body { overflow-x: hidden; }
   display: flex;
   align-items: center;
   justify-content: center;
-  min-height: 52px;
+  min-height: 44px;
 }
 
 .auth-submit-v2::before {
