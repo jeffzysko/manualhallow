@@ -76,6 +76,17 @@ const fuzzyMatch = (text: string, queryWords: string[]): boolean => {
   });
 };
 
+const POPULAR_SEARCHES = [
+  { label: "Objeção de preço", query: "objeção preço" },
+  { label: "Fechamento", query: "fechamento" },
+  { label: "SPIN", query: "SPIN" },
+  { label: "Rapport", query: "rapport" },
+  { label: "WhatsApp", query: "whatsapp" },
+  { label: "Diagnóstico", query: "diagnóstico" },
+  { label: "Proposta", query: "proposta" },
+  { label: "Follow-up", query: "follow-up" },
+];
+
 const SearchOverlay = ({ open, onClose, onNavigate }: SearchOverlayProps) => {
   const [query, setQuery] = useState("");
   const [results, setResults] = useState<SearchableItem[]>([]);
