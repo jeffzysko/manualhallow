@@ -2547,39 +2547,143 @@ body { overflow-x: hidden; }
 }
 
 /* ===== PWA INSTALL PAGE ===== */
+.pwa-install-page {
+  min-height: 100vh; display: flex; align-items: center; justify-content: center;
+  position: relative; overflow: hidden;
+  padding: 20px;
+}
+.pwa-install-card {
+  width: 100%; max-width: 440px;
+  background: linear-gradient(145deg, rgba(19,21,31,0.92), rgba(15,16,24,0.96));
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 36px 28px 32px;
+  backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
+  box-shadow:
+    0 0 60px rgba(201,169,106,0.06),
+    0 20px 60px rgba(0,0,0,0.5),
+    inset 0 1px 0 rgba(201,169,106,0.1);
+  position: relative; z-index: 2;
+}
+.pwa-install-header {
+  text-align: center; margin-bottom: 24px;
+}
+.pwa-phone-icon {
+  position: relative; display: inline-flex; align-items: center; justify-content: center;
+  width: 80px; height: 80px; margin-bottom: 16px;
+  color: var(--gold);
+}
+.pwa-phone-glow {
+  position: absolute; inset: -10px; border-radius: 50%;
+  background: radial-gradient(circle, rgba(201,169,106,0.25), transparent 70%);
+  pointer-events: none;
+}
+.pwa-download-arrow {
+  position: absolute; bottom: 8px; right: 8px;
+  color: var(--gold); opacity: 0.9;
+}
+.pwa-install-title {
+  font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+  font-size: 22px; font-weight: 700; color: var(--text);
+  margin: 0 0 8px; line-height: 1.3;
+}
+.pwa-install-subtitle {
+  font-size: 14px; color: var(--muted); margin: 0;
+  line-height: 1.5; max-width: 320px; margin: 0 auto;
+}
+
+/* Benefits */
+.pwa-benefits {
+  display: flex; gap: 12px; justify-content: center; margin-bottom: 24px;
+}
+.pwa-benefit {
+  display: flex; flex-direction: column; align-items: center; gap: 6px;
+  background: rgba(201,169,106,0.06);
+  border: 1px solid rgba(201,169,106,0.12);
+  border-radius: 12px; padding: 12px 16px; flex: 1;
+}
+.pwa-benefit-icon { font-size: 20px; }
+.pwa-benefit-label {
+  font-size: 11px; color: var(--muted); font-weight: 600;
+  text-transform: uppercase; letter-spacing: 0.5px;
+  font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+}
+
+/* Platform tabs */
 .pwa-platform-tabs {
   display: flex; gap: 8px; justify-content: center; margin-bottom: 20px;
 }
 .pwa-platform-tab {
-  padding: 8px 20px; border-radius: 8px; font-size: 13px;
+  padding: 10px 24px; border-radius: 10px; font-size: 13px;
   font-weight: 600; cursor: pointer; border: 1px solid var(--border2);
   background: var(--card); color: var(--muted);
   font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
-  transition: all 0.2s ease;
+  transition: all 0.25s ease;
+  display: flex; align-items: center; gap: 6px;
 }
 .pwa-platform-tab:hover { border-color: var(--border); color: var(--text); }
 .pwa-platform-tab--active {
   border-color: var(--gold) !important; color: var(--gold) !important;
   background: rgba(201,169,106,0.08);
+  box-shadow: 0 0 12px rgba(201,169,106,0.1);
 }
-.pwa-install-steps { display: flex; flex-direction: column; gap: 16px; }
+
+/* Steps */
+.pwa-install-steps {
+  display: flex; flex-direction: column; gap: 14px; margin-bottom: 24px;
+}
 .pwa-step {
   display: flex; gap: 14px; align-items: flex-start;
+  background: rgba(255,255,255,0.02);
+  border: 1px solid var(--border2);
+  border-radius: 12px; padding: 14px 16px;
+  transition: border-color 0.2s ease;
 }
+.pwa-step:hover { border-color: rgba(201,169,106,0.2); }
 .pwa-step-num {
-  width: 28px; height: 28px; min-width: 28px; border-radius: 50%;
-  background: linear-gradient(135deg, var(--gold), #B8943F);
-  color: #09090F; font-size: 13px; font-weight: 700;
+  width: 32px; height: 32px; min-width: 32px; border-radius: 10px;
+  background: linear-gradient(135deg, rgba(201,169,106,0.15), rgba(201,169,106,0.05));
+  border: 1px solid rgba(201,169,106,0.2);
   display: flex; align-items: center; justify-content: center;
-  margin-top: 2px;
+  margin-top: 0;
 }
+.pwa-step-emoji { font-size: 16px; }
 .pwa-step-title {
   color: var(--text); font-size: 14px; font-weight: 600; margin: 0 0 2px;
   font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
 }
 .pwa-step-desc {
-  color: var(--muted); font-size: 13px; margin: 0; line-height: 1.5;
+  color: var(--muted); font-size: 12.5px; margin: 0; line-height: 1.5;
+}
+
+/* CTA */
+.pwa-install-cta { text-align: center; }
+.pwa-cta-btn {
+  width: 100%; padding: 14px 28px; border-radius: 12px;
+  background: linear-gradient(135deg, var(--gold), #B8943F);
+  color: #09090F; font-size: 15px; font-weight: 700;
+  border: none; cursor: pointer;
+  font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+  transition: all 0.25s ease;
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+  box-shadow: 0 4px 20px rgba(201,169,106,0.25);
+}
+.pwa-cta-btn:hover {
+  filter: brightness(1.1);
+  box-shadow: 0 6px 28px rgba(201,169,106,0.35);
+  transform: translateY(-1px);
+}
+.pwa-cta-icon { font-size: 16px; }
+.pwa-skip-text {
+  color: var(--muted); font-size: 12px; margin: 12px 0 0;
+  opacity: 0.7;
 }
 .pwa-install-success {
   text-align: center; padding: 24px 0;
+}
+
+@media (max-width: 400px) {
+  .pwa-install-card { padding: 28px 20px 24px; }
+  .pwa-benefits { gap: 8px; }
+  .pwa-benefit { padding: 10px 10px; }
 }
