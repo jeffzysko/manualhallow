@@ -75,7 +75,7 @@ const OnboardingPage = () => {
           <h1 className="onboarding-title">
             {step === 0 && "Qual sua maior dificuldade em vendas?"}
             {step === 1 && "Qual objeção você mais enfrenta?"}
-            {step === 2 && "Qual seu nível de experiência?"}
+            {step === 2 && "Em qual etapa você mais perde vendas?"}
           </h1>
           <p className="onboarding-subtitle">
             {step === 0 && "Isso nos ajuda a personalizar sua experiência no manual."}
