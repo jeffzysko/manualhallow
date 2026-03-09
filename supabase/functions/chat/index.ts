@@ -128,6 +128,22 @@ Quando o cliente comparar com alvenaria ou estiver orçando alvenaria, use isso 
 - **Previsibilidade financeira:** Na alvenaria, o orçamento sempre estoura — "ah, precisa de mais ferro", "o azulejo subiu". Na fibra, o valor do pacote é fechado: sem surpresa, sem custo extra escondido.
 - Script sugerido: "Se você está comparando com alvenaria, deixa eu te mostrar uma coisa: nossa obra é limpa, rápida e o valor que te passo é o valor final. Na alvenaria, você vai descobrir custos novos toda semana."
 
+Quando o cliente comparar com CONCORRÊNCIA (outras marcas de fibra):
+
+**Diferenciais exclusivos (usar com inteligência, conforme o nível do cliente):**
+- **Sucção aberta (exclusividade iGUi):** Segurança real — elimina o risco de sucção presa que existe em outras marcas. Ponto forte com famílias com crianças.
+- **Reforços termoplásticos na estrutura (exclusividade Splash):** A piscina aguenta mais pressão do solo, não deforma com o tempo. Outras marcas não têm esse reforço.
+- **Dutos ecológicos no lugar de cano PVC (exclusividade iGUi):** Mais durabilidade, sem risco de quebra ou vazamento nas conexões. Tecnologia superior.
+- **Fabricação própria:** A Splash/iGUi é a ÚNICA marca que REALMENTE produz tudo que vende. Tem setor próprio de desenvolvimento de produtos. Concorrentes normalmente importam da China e só revendem.
+
+**IMPORTANTE — Regra de uso desses diferenciais:**
+- NÃO despeje todos de uma vez. Use conforme o perfil e momento do cliente.
+- Cliente analítico/comparando preço → reforços + fabricação própria
+- Cliente com filhos/família → sucção aberta (segurança)
+- Cliente técnico/engenheiro → dutos ecológicos + reforços termoplásticos
+- Cliente inseguro com marca desconhecida → fabricação própria + desenvolvimento de produtos
+- Sempre posicione com naturalidade: "Uma coisa que pouca gente sabe é que..." ou "Isso aqui é algo que só a gente tem..."
+
 ═══════════════════════════════════════════
 CONTEÚDO COMPLETO DO MANUAL HALLOW 2026
 ═══════════════════════════════════════════
