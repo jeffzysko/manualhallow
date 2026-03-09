@@ -2068,7 +2068,7 @@ body { overflow-x: hidden; }
   font-weight: 800;
   letter-spacing: 0.5px;
   cursor: pointer;
-  margin-top: 4px;
+  margin-top: 2px;
   transition: opacity 0.2s;
   overflow: hidden;
   display: flex;
