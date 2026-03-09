@@ -90,7 +90,7 @@ const AuthInput = ({
         autoComplete={autoComplete}
         autoFocus={autoFocus}
         inputMode={type === "email" ? "email" : undefined}
-        minLength={type === "password" ? 6 : undefined}
+        minLength={type === "password" ? 8 : undefined}
         className="auth-input-v2"
       />
       <div className="auth-input-glow" />
