@@ -44,6 +44,7 @@ const ManualPage = () => {
   const { favorites, isFavorite, toggleFavorite } = useFavorites();
   const { progress, toggleChapter } = useReadingProgress();
   const routerNavigate = useRouterNavigate();
+  const { pulling, pullDistance, refreshing, threshold } = usePullToRefresh();
 
   const rafRef = useRef(0);
   useEffect(() => {
