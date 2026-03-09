@@ -113,6 +113,14 @@ const ManualPage = () => {
         <a href="#main-content" className="skip-to-content">Pular para o conteúdo</a>
         <div className="progress-bar" style={{ transform: `scaleX(${scrollProgress / 100})` }} />
 
+        {/* Pull-to-refresh indicator */}
+        <div
+          className={`ptr-indicator${pulling || refreshing ? " ptr-indicator--visible" : ""}${refreshing ? " ptr-indicator--refreshing" : ""}${pullDistance >= threshold ? " ptr-indicator--ready" : ""}`}
+          style={{ transform: `translateY(${pulling || refreshing ? Math.max(pullDistance - 20, 0) : 0}px)` }}
+        >
+          <div className="ptr-spinner" />
+        </div>
+
         <TopHeader onOpenSearch={() => setSearchOpen(true)} onOpenFavorites={handleOpenFavorites} onToggleScripts={() => setScriptsMode(!scriptsMode)} scriptsMode={scriptsMode} />
 
         <Suspense fallback={null}>
