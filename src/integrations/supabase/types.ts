@@ -227,6 +227,33 @@ export type Database = {
         }
         Relationships: []
       }
+      user_onboarding: {
+        Row: {
+          biggest_challenge: string
+          common_objection: string
+          confidence_level: string
+          created_at: string
+          id: string
+          user_id: string
+        }
+        Insert: {
+          biggest_challenge?: string
+          common_objection?: string
+          confidence_level?: string
+          created_at?: string
+          id?: string
+          user_id: string
+        }
+        Update: {
+          biggest_challenge?: string
+          common_objection?: string
+          confidence_level?: string
+          created_at?: string
+          id?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       user_roles: {
         Row: {
           id: string
