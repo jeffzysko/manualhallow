@@ -38,7 +38,7 @@ const Chapter1Content = () => (
         <div className="step-num">1</div>
         <div className="step-body">
           <h4>Relembrar o critério do cliente</h4>
-          <p>Antes de qualquer número, echo o "porquê" que ele te deu. Ele se sente entendido e a régua já muda.</p>
+          <p>Antes de qualquer número, repita o "porquê" que ele te deu. Ele se sente entendido e a régua já muda.</p>
         </div>
       </div>
       <div className="step" style={{"--step-color":"var(--blue-dim)","--step-border":"rgba(91,155,213,0.2)","--step-color-text":"var(--blue)"} as React.CSSProperties}>
