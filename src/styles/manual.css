@@ -2646,6 +2646,7 @@ body { overflow-x: hidden; }
 /* ── Content section ── */
 .pwa-content-section {
   width: 100%; text-align: center;
+  display: flex; flex-direction: column; align-items: center;
 }
 .pwa-install-header {
   text-align: center; margin-bottom: 28px;
