@@ -50,7 +50,7 @@ const OnboardingPage = () => {
         common_objection: objection,
         confidence_level: salesStage,
       });
-      navigate("/", { replace: true });
+      navigate("/pwa-install", { replace: true });
     } catch {
       alert("Erro ao salvar. Tente novamente.");
     } finally {

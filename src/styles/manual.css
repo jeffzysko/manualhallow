@@ -2545,3 +2545,41 @@ body { overflow-x: hidden; }
 .onboarding-btn--next:disabled {
   opacity: 0.4; cursor: not-allowed; filter: none;
 }
+
+/* ===== PWA INSTALL PAGE ===== */
+.pwa-platform-tabs {
+  display: flex; gap: 8px; justify-content: center; margin-bottom: 20px;
+}
+.pwa-platform-tab {
+  padding: 8px 20px; border-radius: 8px; font-size: 13px;
+  font-weight: 600; cursor: pointer; border: 1px solid var(--border2);
+  background: var(--card); color: var(--muted);
+  font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+  transition: all 0.2s ease;
+}
+.pwa-platform-tab:hover { border-color: var(--border); color: var(--text); }
+.pwa-platform-tab--active {
+  border-color: var(--gold) !important; color: var(--gold) !important;
+  background: rgba(201,169,106,0.08);
+}
+.pwa-install-steps { display: flex; flex-direction: column; gap: 16px; }
+.pwa-step {
+  display: flex; gap: 14px; align-items: flex-start;
+}
+.pwa-step-num {
+  width: 28px; height: 28px; min-width: 28px; border-radius: 50%;
+  background: linear-gradient(135deg, var(--gold), #B8943F);
+  color: #09090F; font-size: 13px; font-weight: 700;
+  display: flex; align-items: center; justify-content: center;
+  margin-top: 2px;
+}
+.pwa-step-title {
+  color: var(--text); font-size: 14px; font-weight: 600; margin: 0 0 2px;
+  font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+}
+.pwa-step-desc {
+  color: var(--muted); font-size: 13px; margin: 0; line-height: 1.5;
+}
+.pwa-install-success {
+  text-align: center; padding: 24px 0;
+}
