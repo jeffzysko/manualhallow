@@ -219,8 +219,14 @@ const SearchOverlay = ({ open, onClose, onNavigate }: SearchOverlayProps) => {
 
   const highlight = (text: string) => {
     if (!query || query.length < 2) return text;
-    const safe = query.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-    return text.replace(new RegExp(`(${safe})`, "gi"), "<mark>$1</mark>");
+    // Highlight each query word independently
+    const queryWords = query.split(/\s+/).filter(w => w.length >= 2);
+    let result = text;
+    queryWords.forEach(word => {
+      const safe = word.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+      result = result.replace(new RegExp(`(${safe})`, "gi"), "<mark>$1</mark>");
+    });
+    return result;
   };
 
   return (

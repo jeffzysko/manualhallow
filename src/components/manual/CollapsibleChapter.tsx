@@ -34,13 +34,15 @@ const CollapsibleChapter = ({
   const expandInfoRef = useRef<{ viewportTop: number } | null>(null);
 
   // Listen for search events: expand-all, collapse-all, expand-chapter
+  const collapsedRef = useRef(collapsed);
+  collapsedRef.current = collapsed;
+
   useEffect(() => {
     const handleExpandAll = () => {
-      userCollapsedRef.current = collapsed; // save current state
+      userCollapsedRef.current = collapsedRef.current; // save current state
       setCollapsed(false);
     };
     const handleCollapseAll = () => {
-      // Restore to state before expand-all
       setCollapsed(userCollapsedRef.current);
     };
     const handleExpandChapter = (e: Event) => {
@@ -59,7 +61,7 @@ const CollapsibleChapter = ({
       window.removeEventListener("manual:collapse-all", handleCollapseAll);
       window.removeEventListener("manual:expand-chapter", handleExpandChapter);
     };
-  }, [id, collapsed]);
+  }, [id]);
 
   // ResizeObserver: when section resizes after expand, correct scroll drift
   useEffect(() => {
