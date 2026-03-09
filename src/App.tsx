@@ -49,6 +49,7 @@ const App = () => (
           <Toaster />
           <Sonner />
           <OfflineBanner />
+          <PWAUpdatePrompt />
           <BrowserRouter>
             <Suspense fallback={<PageFallback />}>
               <Routes>
