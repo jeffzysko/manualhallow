@@ -2678,6 +2678,7 @@ body { overflow-x: hidden; }
   font-size: 10px; color: var(--muted); font-weight: 600;
   text-transform: uppercase; letter-spacing: 0.5px;
   font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+  text-align: center; line-height: 1.4;
 }
 
 /* Platform tabs */

@@ -175,7 +175,7 @@ const PWAInstallPage = () => {
                 transition={{ delay: 0.65 + i * 0.08 }}
               >
                 <span className="pwa-benefit-icon">{b.icon}</span>
-                <span className="pwa-benefit-label">{b.label}</span>
+                <span className="pwa-benefit-label">{b.line1}<br />{b.line2}</span>
               </motion.div>
             ))}
           </motion.div>
