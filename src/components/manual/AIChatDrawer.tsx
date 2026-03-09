@@ -190,8 +190,8 @@ const AIChatDrawer = ({ open, onClose }: { open: boolean; onClose: () => void })
     setPendingImage(null);
     setMessages(prev => [...prev, userMsg]);
     setIsLoading(true);
-    persistMessage("user", displayText);
-    track("ai_chat", { event_data: { length: displayText.length, has_image: !!pendingImage } });
+    const imageUrlToSave = pendingImage || undefined;
+    persistMessage("user", displayText, imageUrlToSave);
 
     let assistantSoFar = "";
     // For API: send text-only history + current multimodal message (filter empty, limit to last 50)
