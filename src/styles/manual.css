@@ -1891,10 +1891,10 @@ body { overflow-x: hidden; }
 
 .auth-subtitle-v2 {
   color: var(--gray);
-  font-size: 11px;
+  font-size: 10px;
   text-align: center;
-  letter-spacing: 3px;
-  margin: 6px 0 0;
+  letter-spacing: 2.5px;
+  margin: 4px 0 0;
   text-transform: uppercase;
 }
 
