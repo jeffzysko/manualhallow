@@ -15,7 +15,7 @@ const Chapter9Content = () => (
     <h3 className="display mb-24 mt-40" style={{fontSize:28, color:'var(--white)'}}>Calendário 2026 · Sazonalidade + Estratégia</h3>
     <div className="note-box reveal" style={{marginBottom:24}}>
       <div className="note-icon">📊</div>
-      <p><strong>Realidade do mercado Splash:</strong> O pico real de decisão e fechamento é <strong style={{color:'var(--gold)'}}>outubro a dezembro</strong>. Jan–Mar tende a ser baixa procura. Use os meses "frios" para nutrir e plantar semente — para colher no pico.</p>
+      <p><strong>Realidade do mercado Splash:</strong> O pico real de decisão e fechamento é <strong style={{color:'var(--gold)'}}>outubro a dezembro</strong>. Jan–Mar tende a ter baixa procura. Use os meses "frios" para nutrir e plantar semente, para colher no pico.</p>
     </div>
     <div className="season-grid reveal">
       <div className="season-card" style={{"--season-color":"#6A7080"} as React.CSSProperties}><span className="season-icon">🌧️</span><div className="season-period">Jan — Mar</div><h4>Baixa Demanda · Pós-verão</h4><div className="season-strategy"><strong style={{color:'var(--white)'}}>Foco:</strong> Reativar leads. Nutrir com conteúdo. Argumento: <em>"melhor instalar agora sem concorrer com todo mundo"</em>.</div></div>

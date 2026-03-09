@@ -23,7 +23,7 @@ const Chapter5Content = () => (
         <div className="step-num">4</div><div className="step-body"><h4>Comparação justa</h4><p>"Quer que eu detalhe o que está incluso pra você comparar justo?"</p></div>
       </div>
       <div className="step" style={{"--step-color":"var(--purple-dim)","--step-border":"rgba(160,123,224,0.2)","--step-color-text":"var(--purple)"} as React.CSSProperties}>
-        <div className="step-num">5</div><div className="step-body"><h4>Próximo passo</h4><p>Data/hora concreto para visita ou assinatura.</p></div>
+        <div className="step-num">5</div><div className="step-body"><h4>Próximo passo</h4><p>Data/hora concretos para visita ou assinatura.</p></div>
       </div>
     </div>
 
