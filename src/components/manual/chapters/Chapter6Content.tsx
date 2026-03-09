@@ -18,7 +18,7 @@ const Chapter6Content = () => (
         <div className="mind-card" style={{"--mind-color":"var(--green)"} as React.CSSProperties}>
           <span className="mind-card-tag" style={{color:'var(--green)'}}>Especificidade</span>
           <h4>Inclusos, etapas e cronograma</h4>
-          <p>Quanto mais específico o processo, maior a confiança. Vague claims são vendedor de preço.</p>
+          <p>Quanto mais específico o processo, maior a confiança. Promessas vagas são de vendedor de preço.</p>
         </div>
         <div className="mind-card" style={{"--mind-color":"var(--red)"} as React.CSSProperties}>
           <span className="mind-card-tag" style={{color:'var(--red)'}}>Escassez Real</span>

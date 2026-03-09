@@ -53,7 +53,7 @@ const Chapter2Content = () => (
           </div>
           <div className="script-line">
             <span className="script-who">Vendedor</span>
-            <div className="script-text">Claro. Só pra eu entender e te ajudar sem pressão: o que mais te preocupa hoje: instalação/bagunça, prazo, ou garantia pós-instalação?</div>
+            <div className="script-text">Claro. Só pra eu entender e te ajudar sem pressão: o que mais te preocupa hoje, instalação/bagunça, prazo ou garantia pós-instalação?</div>
           </div>
           <div className="script-line">
             <span className="script-who cliente">Cliente</span>
