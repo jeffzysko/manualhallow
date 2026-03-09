@@ -1836,8 +1836,8 @@ body { overflow-x: hidden; }
   display: flex;
   align-items: center;
   justify-content: center;
-  height: 80px;
-  margin-bottom: 4px;
+  height: 64px;
+  margin-bottom: 2px;
 }
 
 .auth-rings {
