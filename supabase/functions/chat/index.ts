@@ -469,6 +469,53 @@ A (velocidade/praticidade) | B (premium/conforto) | C (entretenimento/lazer comp
 - **Template de Proposta:** 6 blocos (capa, escopo, cronograma, investimento, garantias, próximo passo)
 
 ═══════════════════════════════════════════
+OBJEÇÕES REAIS MAIS FREQUENTES — GUIA DE RESPOSTA
+═══════════════════════════════════════════
+
+Quando o vendedor trouxer uma dessas objeções, oriente com o script adequado:
+
+**1. "Tá caro / no concorrente é mais barato"**
+→ Nunca desconte direto. Use o Protocolo Preço com Contexto (Cap 1).
+→ Script: "Entendo. Me diz uma coisa: o orçamento que você recebeu inclui instalação, hidráulica, filtro, frete e pós-venda? Porque o nosso inclui tudo. Vamos comparar item a item?"
+→ Se insistir: "Me mostra o que te passaram — vou comparar ponto a ponto pra você decidir com segurança."
+
+**2. "O juros do parcelamento está alto"**
+→ Valide a preocupação e redirecione para o valor total.
+→ Script: "Entendo, juros pesa sim. Mas olha: no à vista, o valor total fica X — sem juros nenhum. E se não der à vista, a gente pode ver a melhor forma de encaixar no seu orçamento. O mais importante é você não abrir mão da qualidade da instalação."
+
+**3. "Por que tenho que pagar frete? No concorrente é de graça"**
+→ Contextualize que frete "grátis" está embutido no preço.
+→ Script: "Boa pergunta. Quando o frete é 'grátis', ele está embutido no preço — você paga, só não vê. A gente prefere ser transparente: te mostra exatamente o que está pagando em cada item. Comparando o pacote completo, nosso valor é mais justo."
+
+**4. "Vou pensar / vou falar com minha esposa(o)"**
+→ Não pressione. Destrave o medo real.
+→ Script: "Claro, sem pressão nenhuma. Só pra eu te ajudar melhor: o que mais te preocupa — é o investimento, o tamanho, ou a instalação em si?"
+→ Se for casal: "Faz sentido sim. Quer que eu prepare um resumo visual pra vocês verem juntos? Assim fica mais fácil decidir."
+
+**5. "Estou em dúvida no tamanho, pode ocupar muito espaço"**
+→ Reforce que diagnóstico correto ANTES é essencial (fibra tem tamanho fixo!).
+→ Script: "Isso é super importante de acertar — na fibra, o tamanho é fixo. Por isso faço o diagnóstico antes. Me manda as medidas do espaço (ou fotos) que eu te mostro exatamente como fica. Sem surpresa."
+
+**6. "Não é para agora, estou só pesquisando"**
+→ Respeite o tempo, mas mantenha o relacionamento ativo.
+→ Script: "Perfeito, pesquisar antes é o mais inteligente. Posso te mandar um material completo pra você comparar com calma? E quando estiver mais perto de decidir, me chama que faço o diagnóstico do seu espaço sem compromisso."
+→ Marcar follow-up D+7 e D+14.
+
+**7. "Não tenho cartão/limite para parcelar"**
+→ Explore alternativas sem desvalorizar o cliente.
+→ Script: "Entendo. A gente tem outras formas de pagamento além de cartão — Pix, boleto, transferência. Me conta qual seria o melhor caminho pra você que a gente encontra uma solução."
+
+**8. "Não tenho valor alto para dar de entrada"**
+→ Flexibilize a entrada sem dar desconto.
+→ Script: "Posso ver com a nossa equipe uma condição com entrada menor. O importante é garantir o pacote completo — instalação, filtro, hidráulica e pós-venda. Me diz qual valor de entrada seria confortável pra você?"
+
+**REGRA GERAL DE OBJEÇÕES:**
+- Sempre VALIDE antes de contornar ("Entendo", "Faz sentido")
+- Nunca dê desconto sem contrapartida
+- Sempre redirecione para VALOR (pacote completo) e não para preço
+- Termine com próximo passo concreto
+
+═══════════════════════════════════════════
 FIM DO CONTEÚDO DO MANUAL
 ═══════════════════════════════════════════
 
