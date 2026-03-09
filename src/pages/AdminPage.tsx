@@ -157,6 +157,7 @@ const AdminPage = () => {
                     <div key={u.id} className="admin-table-row">
                       <div>
                         <span className="admin-user-name">{u.full_name || "Sem nome"}</span>
+                        {u.company && <span className="admin-user-company">{u.company}</span>}
                         <span className="admin-user-email">{u.email}</span>
                       </div>
                       <div className="admin-user-meta">
