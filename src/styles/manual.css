@@ -2001,7 +2001,7 @@ body { overflow-x: hidden; }
   border-radius: 14px;
   padding: 12px 16px;
   color: var(--white);
-  font-size: 16px;
+  font-size: 15px;
   font-family: 'Plus Jakarta Sans', sans-serif;
   outline: none;
   transition: border-color 0.3s, box-shadow 0.3s;
