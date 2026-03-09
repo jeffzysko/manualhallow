@@ -272,14 +272,24 @@ const AuthPage = () => {
             <form onSubmit={handleSubmit} className="auth-form-v2" noValidate>
               <AnimatePresence>
                 {mode === "signup" && (
-                  <AuthInput
-                    id="auth-fullname"
-                    label="Nome completo"
-                    placeholder="Seu nome completo"
-                    value={fullName}
-                    onChange={setFullName}
-                    autoComplete="name"
-                  />
+                  <>
+                    <AuthInput
+                      id="auth-company"
+                      label="Empresa"
+                      placeholder="Nome da sua empresa"
+                      value={company}
+                      onChange={setCompany}
+                      autoComplete="organization"
+                    />
+                    <AuthInput
+                      id="auth-fullname"
+                      label="Nome completo"
+                      placeholder="Seu nome completo"
+                      value={fullName}
+                      onChange={setFullName}
+                      autoComplete="name"
+                    />
+                  </>
                 )}
               </AnimatePresence>
 
