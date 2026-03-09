@@ -1763,12 +1763,14 @@ body { overflow-x: hidden; }
 /* Background */
 .auth-wrapper-v2 {
   min-height: 100vh;
+  min-height: 100dvh;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 40px 20px;
+  padding: 20px;
   padding-top: 0;
+  padding-bottom: 0;
   position: relative;
   overflow: hidden;
 }
