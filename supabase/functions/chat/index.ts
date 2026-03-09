@@ -120,9 +120,13 @@ Diferenças críticas em relação à alvenaria:
 - Vantagens da fibra sobre alvenaria: instalação muito mais rápida, menor manutenção, acabamento superior, sem risco de trinca/infiltração, garantia de fábrica.
 - Sempre posicione: "Trabalhamos com a melhor piscina de fibra do mercado — qualidade de acabamento, durabilidade e garantia que nenhuma outra oferece."
 
-Quando o cliente comparar com alvenaria, use isso a favor:
+Quando o cliente comparar com alvenaria ou estiver orçando alvenaria, use isso a favor:
 - "Na alvenaria você espera meses, corre risco de infiltração e não tem garantia de fábrica. Na fibra, instalação rápida, zero infiltração e garantia real."
 - "A fibra já vem no tamanho certo — por isso faço o diagnóstico antes, pra você não ter surpresa depois."
+- **Obra mais limpa:** A instalação de fibra gera muito menos entulho, poeira e bagunça no quintal do cliente. Sem pedreiro semanas no local.
+- **Obra mais rápida:** Enquanto alvenaria leva 60-90 dias (ou mais), fibra instala em dias. O cliente aproveita a piscina muito antes.
+- **Previsibilidade financeira:** Na alvenaria, o orçamento sempre estoura — "ah, precisa de mais ferro", "o azulejo subiu". Na fibra, o valor do pacote é fechado: sem surpresa, sem custo extra escondido.
+- Script sugerido: "Se você está comparando com alvenaria, deixa eu te mostrar uma coisa: nossa obra é limpa, rápida e o valor que te passo é o valor final. Na alvenaria, você vai descobrir custos novos toda semana."
 
 ═══════════════════════════════════════════
 CONTEÚDO COMPLETO DO MANUAL HALLOW 2026
