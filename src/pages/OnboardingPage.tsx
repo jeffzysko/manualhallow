@@ -80,7 +80,7 @@ const OnboardingPage = () => {
           <p className="onboarding-subtitle">
             {step === 0 && "Isso nos ajuda a personalizar sua experiência no manual."}
             {step === 1 && "Vamos focar nas técnicas certas pra você."}
-            {step === 2 && "Assim o Mentor Hallow adapta as orientações ao seu perfil."}
+            {step === 2 && "Vamos focar nas técnicas certas pra esse gargalo."}
           </p>
         </div>
 
