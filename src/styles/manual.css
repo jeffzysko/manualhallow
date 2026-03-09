@@ -2683,7 +2683,7 @@ body { overflow-x: hidden; }
 
 /* Platform tabs */
 .pwa-platform-tabs {
-  display: flex; gap: 8px; justify-content: center; margin-bottom: 18px;
+  display: flex; gap: 8px; justify-content: center; margin-bottom: 24px;
 }
 .pwa-platform-tab {
   padding: 9px 22px; border-radius: 10px; font-size: 13px;
