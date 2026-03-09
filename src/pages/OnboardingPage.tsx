@@ -105,14 +105,13 @@ const OnboardingPage = () => {
             </button>
           ))}
 
-          {step === 2 && CONFIDENCE.map(c => (
+          {step === 2 && SALES_STAGES.map(s => (
             <button
-              key={c.value}
-              className={`onboarding-option onboarding-option--wide ${confidence === c.value ? "onboarding-option--selected" : ""}`}
-              onClick={() => setConfidence(c.value)}
+              key={s}
+              className={`onboarding-option ${salesStage === s ? "onboarding-option--selected" : ""}`}
+              onClick={() => setSalesStage(s)}
             >
-              <strong>{c.label}</strong>
-              <span className="onboarding-option-desc">{c.desc}</span>
+              {s}
             </button>
           ))}
         </div>
