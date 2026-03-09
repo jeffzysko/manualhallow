@@ -1979,7 +1979,7 @@ body { overflow-x: hidden; }
 .auth-field-v2 {
   display: flex;
   flex-direction: column;
-  gap: 5px;
+  gap: 3px;
 }
 
 .auth-label-v2 {
