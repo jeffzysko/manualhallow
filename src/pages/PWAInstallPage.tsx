@@ -163,9 +163,9 @@ const PWAInstallPage = () => {
             transition={{ delay: 0.6 }}
           >
             {[
-              { icon: "⚡", label: "Acesso instantâneo" },
-              { icon: "📴", label: "Funciona offline" },
-              { icon: "🎯", label: "Tela cheia" },
+              { icon: "⚡", line1: "Acesso", line2: "instantâneo" },
+              { icon: "📴", line1: "Funciona", line2: "offline" },
+              { icon: "🎯", line1: "Tela", line2: "cheia" },
             ].map((b, i) => (
               <motion.div
                 key={i}
