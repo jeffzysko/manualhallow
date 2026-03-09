@@ -31,6 +31,7 @@ const AuthPage = () => {
       if (error) setError(translateAuthError(error.message));
       else navigate("/");
     } else if (mode === "signup") {
+      // Create user in Supabase Auth first
       const { error } = await supabase.auth.signUp({
         email,
         password,
@@ -39,14 +40,33 @@ const AuthPage = () => {
           emailRedirectTo: window.location.origin,
         },
       });
-      if (error) setError(translateAuthError(error.message));
-      else setMessage("Verifique seu e-mail para confirmar o cadastro.");
+      if (error) {
+        setError(translateAuthError(error.message));
+      } else {
+        // Send branded confirmation email via Resend
+        try {
+          await supabase.functions.invoke("send-auth-email", {
+            body: { type: "signup", email, redirectTo: window.location.origin },
+          });
+        } catch (e) {
+          console.error("Error sending branded email:", e);
+        }
+        setMessage("Verifique seu e-mail para confirmar o cadastro.");
+      }
     } else if (mode === "recovery") {
-      const { error } = await supabase.auth.resetPasswordForEmail(email, {
-        redirectTo: `${window.location.origin}/reset-password`,
-      });
-      if (error) setError(translateAuthError(error.message));
-      else setMessage("E-mail de recuperação enviado! Verifique sua caixa de entrada.");
+      // Send recovery email via Resend (bypasses default Supabase email)
+      try {
+        const { data, error: fnError } = await supabase.functions.invoke("send-auth-email", {
+          body: { type: "recovery", email, redirectTo: `${window.location.origin}/reset-password` },
+        });
+        if (fnError) {
+          setError("Erro ao enviar e-mail de recuperação. Tente novamente.");
+        } else {
+          setMessage("E-mail de recuperação enviado! Verifique sua caixa de entrada.");
+        }
+      } catch (e) {
+        setError("Erro ao enviar e-mail de recuperação. Tente novamente.");
+      }
     }
     setLoading(false);
   };
