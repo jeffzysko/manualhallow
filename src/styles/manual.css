@@ -66,11 +66,10 @@ body { overflow-x: hidden; }
   touch-action: manipulation;
 }
 
-/* Content-visibility: skip rendering of off-screen chapter sections */
-.manual-page > main > section {
-  content-visibility: auto;
-  contain-intrinsic-size: auto 800px;
-}
+/* Removed content-visibility: auto — it caused inaccurate scroll positions
+   on first interaction (TOC nav, expand, etc.) because the browser uses
+   estimated sizes for off-screen sections. Lazy-loaded chapter content
+   already provides the performance benefit. */
 
 .manual-page *, .manual-page *::before, .manual-page *::after { box-sizing: border-box; }
 .manual-page .display { font-family: 'Cormorant Garamond', serif; font-weight: 600; }
