@@ -269,11 +269,25 @@ const SearchOverlay = ({ open, onClose, onNavigate }: SearchOverlayProps) => {
         </div>
         <div className="search-results" ref={resultsRef} id="search-results-list" role="listbox">
           {query.length < 2 && (
-            <div className="search-hint">
-              {indexReady
-                ? `Digite para buscar em ${indexRef.current.length} itens do manual`
-                : "Indexando conteúdo…"
-              }
+            <div className="search-suggestions">
+              {!indexReady && <div className="search-hint">Indexando conteúdo…</div>}
+              {indexReady && (
+                <>
+                  <div className="search-hint">Buscas populares</div>
+                  <div className="search-chips">
+                    {POPULAR_SEARCHES.map(s => (
+                      <button
+                        key={s.label}
+                        className="search-chip"
+                        onClick={() => handleInput(s.query)}
+                        type="button"
+                      >
+                        {s.label}
+                      </button>
+                    ))}
+                  </div>
+                </>
+              )}
             </div>
           )}
           {query.length >= 2 && results.length === 0 && (
