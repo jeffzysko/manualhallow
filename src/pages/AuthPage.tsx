@@ -160,12 +160,12 @@ const AuthPage = () => {
 
   const cardVariants = {
     hidden: { opacity: 0, scale: 0.92, y: 30 },
-    visible: { opacity: 1, scale: 1, y: 0, transition: { duration: 0.6, ease: [0.22, 1, 0.36, 1] } },
+    visible: { opacity: 1, scale: 1, y: 0, transition: { duration: 0.6, ease: [0.22, 1, 0.36, 1] as [number, number, number, number] } },
   };
 
   const contentVariants = {
     hidden: { opacity: 0, x: mode === "recovery" ? -20 : 20 },
-    visible: { opacity: 1, x: 0, transition: { duration: 0.35, ease: "easeOut" } },
+    visible: { opacity: 1, x: 0, transition: { duration: 0.35, ease: "easeOut" as const } },
     exit: { opacity: 0, x: mode === "recovery" ? 20 : -20, transition: { duration: 0.2 } },
   };
 
