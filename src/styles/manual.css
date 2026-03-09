@@ -2133,6 +2133,10 @@ body { overflow-x: hidden; }
   letter-spacing: 1px;
 }
 
+/* Input match/mismatch states */
+.auth-input-v2--ok { border-color: var(--green) !important; }
+.auth-input-v2--err { border-color: var(--red) !important; }
+
 /* Password toggle */
 .auth-pw-wrap { position: relative; }
 .auth-input-v2--pw { padding-right: 48px; }
