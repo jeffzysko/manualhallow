@@ -12,6 +12,70 @@ interface SearchableItem {
   sectionId: string;
 }
 
+// Normalize: remove accents/diacritics
+const normalize = (s: string) =>
+  s.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+
+// Portuguese stemming (very basic): strip common suffixes for singular/plural & verb forms
+const stem = (word: string): string => {
+  if (word.length < 4) return word;
+  // ões → ão (e.g. objeções → objeção)
+  if (word.endsWith("oes")) return word.slice(0, -3) + "ao";
+  // ções → ção
+  if (word.endsWith("coes")) return word.slice(0, -4) + "cao";
+  // ais → al
+  if (word.endsWith("ais")) return word.slice(0, -2) + "l";
+  // éis → el
+  if (word.endsWith("eis")) return word.slice(0, -2) + "l";
+  // mente (adverbs)
+  if (word.endsWith("mente") && word.length > 7) return word.slice(0, -5);
+  // ando/endo/indo → ar/er/ir
+  if (word.endsWith("ando")) return word.slice(0, -4) + "ar";
+  if (word.endsWith("endo")) return word.slice(0, -4) + "er";
+  if (word.endsWith("indo")) return word.slice(0, -4) + "ir";
+  // trailing s (plural)
+  if (word.endsWith("s") && !word.endsWith("ss")) return word.slice(0, -1);
+  return word;
+};
+
+// Check if two words are similar (Levenshtein distance ≤ threshold)
+const levenshtein = (a: string, b: string): number => {
+  if (a.length === 0) return b.length;
+  if (b.length === 0) return a.length;
+  const matrix: number[][] = [];
+  for (let i = 0; i <= b.length; i++) matrix[i] = [i];
+  for (let j = 0; j <= a.length; j++) matrix[0][j] = j;
+  for (let i = 1; i <= b.length; i++) {
+    for (let j = 1; j <= a.length; j++) {
+      const cost = b[i - 1] === a[j - 1] ? 0 : 1;
+      matrix[i][j] = Math.min(
+        matrix[i - 1][j] + 1,
+        matrix[i][j - 1] + 1,
+        matrix[i - 1][j - 1] + cost
+      );
+    }
+  }
+  return matrix[b.length][a.length];
+};
+
+const fuzzyMatch = (text: string, queryWords: string[]): boolean => {
+  const normalizedText = normalize(text);
+  const textWords = normalizedText.split(/\s+/).filter(w => w.length > 2);
+  const textStems = textWords.map(stem);
+
+  return queryWords.every(qWord => {
+    const qStem = stem(qWord);
+    // 1. Direct substring match (normalized)
+    if (normalizedText.includes(qWord)) return true;
+    // 2. Stem match
+    if (textStems.some(ts => ts.includes(qStem) || qStem.includes(ts))) return true;
+    // 3. Typo tolerance: Levenshtein ≤ 2 for words ≥ 5 chars, ≤ 1 for shorter
+    const maxDist = qWord.length >= 5 ? 2 : 1;
+    if (textWords.some(tw => levenshtein(tw, qWord) <= maxDist)) return true;
+    return false;
+  });
+};
+
 const SearchOverlay = ({ open, onClose, onNavigate }: SearchOverlayProps) => {
   const [query, setQuery] = useState("");
   const [results, setResults] = useState<SearchableItem[]>([]);
