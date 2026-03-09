@@ -127,7 +127,7 @@ const AuthPage = () => {
     } else if (mode === "signup") {
       const { error } = await supabase.auth.signUp({
         email, password,
-        options: { data: { full_name: fullName }, emailRedirectTo: window.location.origin },
+        options: { data: { full_name: fullName, company }, emailRedirectTo: window.location.origin },
       });
       if (error) {
         setError(translateAuthError(error.message));
