@@ -51,7 +51,7 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
 
   if (!user || !isActive) return <Navigate to="/auth" replace />;
 
-  if (needsOnboarding && location.pathname !== "/onboarding") {
+  if (needsOnboarding && location.pathname !== "/onboarding" && location.pathname !== "/pwa-install") {
     return <Navigate to="/onboarding" replace />;
   }
 
