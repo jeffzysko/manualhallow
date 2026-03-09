@@ -98,12 +98,46 @@ const AuthInput = ({
   </motion.div>
 );
 
+/* ── Password requirements checker ── */
+const pwRules = [
+  { key: "len", label: "Mínimo 8 caracteres", test: (pw: string) => pw.length >= 8 },
+  { key: "lower", label: "Letra minúscula", test: (pw: string) => /[a-z]/.test(pw) },
+  { key: "upper", label: "Letra maiúscula", test: (pw: string) => /[A-Z]/.test(pw) },
+  { key: "num", label: "Número", test: (pw: string) => /[0-9]/.test(pw) },
+  { key: "special", label: "Caractere especial", test: (pw: string) => /[^A-Za-z0-9]/.test(pw) },
+] as const;
+
+const PasswordRequirements = ({ password }: { password: string }) => {
+  if (!password) return null;
+  return (
+    <motion.div
+      className="auth-pw-reqs"
+      initial={{ opacity: 0, height: 0 }}
+      animate={{ opacity: 1, height: "auto" }}
+      exit={{ opacity: 0, height: 0 }}
+    >
+      {pwRules.map((r) => {
+        const ok = r.test(password);
+        return (
+          <div key={r.key} className={`auth-pw-req ${ok ? "auth-pw-req--ok" : ""}`}>
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+              {ok ? <polyline points="20 6 9 17 4 12" /> : <line x1="18" y1="6" x2="6" y2="18" />}
+            </svg>
+            <span>{r.label}</span>
+          </div>
+        );
+      })}
+    </motion.div>
+  );
+};
+
 const AuthPage = () => {
   const [mode, setMode] = useState<"login" | "signup" | "recovery">("login");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [fullName, setFullName] = useState("");
   const [company, setCompany] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
