@@ -45,7 +45,7 @@ const Chapter1Content = () => (
         <div className="step-num">2</div>
         <div className="step-body">
           <h4>Definir a régua de comparação</h4>
-          <p>Deixar claro que a comparação justa é por pacote completo — não só "casca + tamanho".</p>
+          <p>Deixar claro que a comparação justa é por pacote completo, não só "casco + tamanho".</p>
         </div>
       </div>
       <div className="step" style={{"--step-color":"var(--green-dim)","--step-border":"rgba(92,184,138,0.2)","--step-color-text":"var(--green)"} as React.CSSProperties}>
