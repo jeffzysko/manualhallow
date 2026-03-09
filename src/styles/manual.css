@@ -1859,8 +1859,8 @@ body { overflow-x: hidden; }
 .auth-monogram {
   position: relative;
   z-index: 1;
-  width: 72px;
-  height: 72px;
+  width: 60px;
+  height: 60px;
   display: flex;
   align-items: center;
   justify-content: center;
