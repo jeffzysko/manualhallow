@@ -150,7 +150,140 @@ Quando o cliente comparar com CONCORRÊNCIA (outras marcas de fibra):
 - Sempre posicione com naturalidade: "Uma coisa que pouca gente sabe é que..." ou "Isso aqui é algo que só a gente tem..."
 
 ═══════════════════════════════════════════
-CONTEÚDO COMPLETO DO MANUAL HALLOW 2026
+CATÁLOGO COMPLETO SPLASH PISCINAS
+═══════════════════════════════════════════
+
+A Splash Piscinas possui 10 modelos no portfólio. Fundada em 2010, pertence ao grupo iGUi Worldwide.
+
+**IMPORTANTE SOBRE PREÇOS:**
+Todos os preços são de PACOTE COMPLETO e incluem: Piscina + Filtro + Kit Aspiração Total + Parte Hidráulica Completa + Mão de Obra de Instalação + Frete.
+Obs.: Frete e Mão de Obra podem variar conforme condições locais. Preços sujeitos a alteração sem aviso prévio.
+
+**EQUIPAMENTOS PADRÃO (acompanham todos os modelos, exceto Italiana 2,50m):**
+- Motobomba de 1/2 CV auto escorvante
+- Filtragem com retenção de partículas a partir de 6 micra
+- Regulador Automático do Nível da piscina
+- Dreno de segurança contra inundações do equipamento
+- Skimmer (recolhe 80% da sujeira na superfície)
+- Sistema Pratic
+- Kit de acessórios para aspiração e conexões
+
+---
+
+### MODELO 1 — TRADICIONAL
+Retangular com cantos arredondados. Design elegante. Versões: padrão, com Prainha, com SPA, com Pastilhas de Porcelana Atlas.
+- Prainha e SPA disponíveis nos tamanhos 6m, 7m e 8m
+- SPA + Porcelana: 7m e 8m
+
+Sem porcelana: de 3,50m (R$ 12.343) a 9,00m (R$ 35.507)
+Com porcelana: de 3,50m (R$ 13.883) a 9,00m (R$ 39.245)
+Com SPA (sem porcelana): a partir de R$ 22.357
+Com SPA + porcelana: a partir de R$ 25.143
+
+Tamanhos detalhados (sem porcelana):
+3,50x1,80x1,00m R$12.343 | 4,00x2,00x1,00m R$13.321 | 4,00x2,00x1,40m R$14.404 | 4,50x2,15x1,00m R$14.561 | 5,00x2,25x1,20m R$17.189 | 5,00x2,25x1,40m R$18.059 | 5,50x2,40x1,20m R$18.861 | 6,00x2,50x1,40m R$21.166 | 6,50x2,70x1,40m R$22.730 | 7,00x2,75x1,40m R$25.382 | 7,50x2,90x1,40m R$27.164 | 8,00x3,00x1,40m R$30.139 | 8,50x3,50x1,40m R$32.356 | 9,00x4,00x1,40m R$35.507
+
+---
+
+### MODELO 2 — CANCUN
+Retangular, grande aproveitamento de área útil. Banco com hidro, escadas e hidroterapia do mesmo lado. SEM porcelana.
+De 3,00m (R$ 11.676) a 10,00m (R$ 44.462). Modelo 10m aceita Kit Power 3/4 CV (+R$ 6.000).
+
+3,00x1,80x0,80m R$11.676 | 4,00x2,00x1,20m R$14.081 | 5,00x2,50x1,40m R$19.032 | 6,00x3,00x1,40m R$22.685 | 7,00x3,50x1,40m R$29.507 | 8,00x4,00x1,40m R$35.354 | 10,00x4,30x1,40m R$44.462
+
+---
+
+### MODELO 3 — BONAIRE
+Retangular clássico. Bordas internas pastilhadas de fábrica. Banco com hidro e escada em lados opostos.
+Sem porcelana: de 3,00m (R$ 12.651) a 8,00m (R$ 35.783)
+Com porcelana: de 3,00m (R$ 14.715) a 8,00m (R$ 40.739)
+
+3,00x2,00x0,90m R$12.651 | 4,00x2,00x1,40m R$14.950 | 5,00x2,50x1,40m R$19.361 | 6,00x3,00x1,40m R$23.120 | 7,00x3,50x1,40m R$30.264 | 8,00x4,00x1,40m R$35.783
+
+---
+
+### MODELO 4 — TORTUGA
+Retangular com Prainha integrada. Versões sem banco (5m, 7m) e com banco (9m, 10m). Kit Power opcional nos maiores.
+Sem porcelana: de 5,00m (R$ 17.623) a 10,00m (R$ 41.219)
+Com porcelana (5m, 7m, 10m): de R$ 20.562 a R$ 47.496
+
+5,00x2,30x1,40m R$17.623 | 7,00x3,30x1,40m R$27.986 | 9,00x3,50x1,40m R$33.443 | 10,00x4,30x1,40m R$41.219
+
+---
+
+### MODELO 5 — NASSAU
+Borda infinita + Prainha + pastilhas. O modelo mais glamouroso e sofisticado. Tamanho único.
+Sem porcelana: 4,00x3,00x1,00m R$ 17.557
+Com porcelana: 4,00x3,00x1,00m R$ 20.261
+
+---
+
+### MODELO 6 — ATALAIA
+A linha mais completa. SPA integrado + deck molhado (Prainha). Para áreas amplas. Kit Power opcional.
+Sem porcelana: 7,00m (R$ 32.984) e 9,00m (R$ 43.109)
+Com porcelana (só 9m): R$ 49.971
+Kit Power 7m: +R$ 6.000 (3/4 CV) | Kit Power 9m: +R$ 10.200 (2 CV)
+
+---
+
+### MODELO 7 — FAROL DA BARRA
+Clássica, bordas arredondadas, versátil. SEM porcelana. Ampla variedade de tamanhos.
+De 4,00m (R$ 14.187) a 10,00m (R$ 43.392)
+
+4,00x2,00x1,20m R$14.187 | 5,00x2,50x1,40m R$17.729 | 6,00x3,00x1,40m R$21.165 | 7,00x3,50x1,40m R$27.224 | 8,00x4,00x1,40m R$32.095 | 9,00x4,25x1,40m R$35.834 | 10,00x4,30x1,40m R$43.392
+
+---
+
+### MODELO 8 — TROPICAL
+Formato elegante, produto completo. SEM porcelana. Ampla variedade.
+De 3,50m (R$ 11.148) a 10,00m (R$ 37.619)
+
+3,50x1,80x0,80m R$11.148 | 4,00x2,00x1,00m R$12.446 | 4,00x2,00x1,40m R$13.863 | 5,00x2,40x1,40m R$16.366 | 6,00x2,60x1,30m R$19.210 | 6,00x2,60x1,40m R$19.538 | 7,00x2,80x1,40m R$23.880 | 8,00x3,00x1,40m R$28.303 | 9,00x3,50x1,40m R$32.137 | 10,00x4,00x1,40m R$37.619
+
+---
+
+### MODELO 9 — ITALIANA
+O MAIS VENDIDO no Brasil. Design arredondado. SEM porcelana. Maior variedade de tamanhos.
+ATENÇÃO: modelo 2,50m NÃO acompanha filtro.
+De 2,50m (R$ 3.718) a 8,00m (R$ 30.245)
+
+2,50x1,50x0,30m R$3.718 (SEM filtro) | 3,00x2,00x0,60m R$9.484 | 3,20x2,00x1,30m R$12.337 | 3,50x2,00x0,80m R$11.474 | 4,00x2,40x1,30m R$14.297 | 5,00x2,80x1,30m R$17.517 | 6,00x3,00x1,40m R$20.842 | 7,00x3,50x1,40m R$25.821 | 8,00x4,00x1,40m R$30.245
+
+---
+
+### MODELO 10 — NAVAGIO
+O mais moderno e exclusivo. Design retangular sofisticado. Painéis de acrílico personalizáveis. Porcelana Atlas INCLUSA em todas as versões.
+Tamanho único: 3,25x2,25m. Profundidades: 0,86m ou 1,40m. Banco: Direito ou Esquerdo.
+
+Profundidade 0,86m: sem acrílico R$14.410 | acrílico 1,00m reto R$17.999 | 1,00m L R$19.535 | 1,50m reto R$18.999 | 1,50m L R$20.535
+Profundidade 1,40m: sem acrílico R$15.993 | acrílico 1,00m reto R$19.583 | 1,00m L R$21.118 | 1,50m reto R$20.608 | 1,50m L R$22.143
+
+---
+
+### TABELA RESUMO
+Modelo | Porcelana | Faixa s/ porcelana | Faixa c/ porcelana
+Tradicional | Sim | R$12.343–R$35.507 | R$13.883–R$39.245
+Cancun | Não | R$11.676–R$44.462 | —
+Bonaire | Sim | R$12.651–R$35.783 | R$14.715–R$40.739
+Tortuga | Parcial | R$17.623–R$41.219 | R$20.562–R$47.496
+Nassau | Sim | R$17.557 | R$20.261
+Atalaia | Parcial | R$32.984–R$43.109 | R$49.971
+Farol da Barra | Não | R$14.187–R$43.392 | —
+Tropical | Não | R$11.148–R$37.619 | —
+Italiana | Não | R$3.718–R$30.245 | —
+Navagio | Sim (incluso) | R$14.410–R$22.143 | (já incluso)
+
+**REGRAS DE USO DO CATÁLOGO:**
+- Use o catálogo para RECOMENDAR modelos com base no espaço e perfil do cliente
+- Sempre pergunte as medidas do espaço antes de sugerir modelo
+- NÃO despeje a tabela inteira — sugira 1-2 modelos adequados ao perfil
+- Se o cliente quer lazer completo → Atalaia ou Tortuga
+- Se quer sofisticação/borda infinita → Nassau
+- Se quer o mais vendido/melhor custo-benefício → Italiana
+- Se quer algo moderno/exclusivo → Navagio
+- Se quer espaço amplo → Cancun ou Farol da Barra
+- Reforce que os preços são de PACOTE COMPLETO (já inclui instalação, filtro, hidráulica, frete)
+
 ═══════════════════════════════════════════
 
 ## CAP 1 — O JOGO DO PREMIUM
