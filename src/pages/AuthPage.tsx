@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useMemo } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
@@ -98,12 +98,46 @@ const AuthInput = ({
   </motion.div>
 );
 
+/* ── Password requirements checker ── */
+const pwRules = [
+  { key: "len", label: "Mínimo 8 caracteres", test: (pw: string) => pw.length >= 8 },
+  { key: "lower", label: "Letra minúscula", test: (pw: string) => /[a-z]/.test(pw) },
+  { key: "upper", label: "Letra maiúscula", test: (pw: string) => /[A-Z]/.test(pw) },
+  { key: "num", label: "Número", test: (pw: string) => /[0-9]/.test(pw) },
+  { key: "special", label: "Caractere especial", test: (pw: string) => /[^A-Za-z0-9]/.test(pw) },
+] as const;
+
+const PasswordRequirements = ({ password }: { password: string }) => {
+  if (!password) return null;
+  return (
+    <motion.div
+      className="auth-pw-reqs"
+      initial={{ opacity: 0, height: 0 }}
+      animate={{ opacity: 1, height: "auto" }}
+      exit={{ opacity: 0, height: 0 }}
+    >
+      {pwRules.map((r) => {
+        const ok = r.test(password);
+        return (
+          <div key={r.key} className={`auth-pw-req ${ok ? "auth-pw-req--ok" : ""}`}>
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+              {ok ? <polyline points="20 6 9 17 4 12" /> : <line x1="18" y1="6" x2="6" y2="18" />}
+            </svg>
+            <span>{r.label}</span>
+          </div>
+        );
+      })}
+    </motion.div>
+  );
+};
+
 const AuthPage = () => {
   const [mode, setMode] = useState<"login" | "signup" | "recovery">("login");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [fullName, setFullName] = useState("");
   const [company, setCompany] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
@@ -319,15 +353,44 @@ const AuthPage = () => {
               />
 
               {mode !== "recovery" && (
-                <AuthInput
-                  id="auth-password"
-                  label="Senha"
-                  type="password"
-                  placeholder="Mínimo 8 caracteres"
-                  value={password}
-                  onChange={setPassword}
-                  autoComplete={mode === "login" ? "current-password" : "new-password"}
-                />
+                <motion.div
+                  className="auth-field-v2"
+                  initial={{ opacity: 0, y: 12 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.1 }}
+                >
+                  <label htmlFor="auth-password" className="auth-label-v2">Senha</label>
+                  <div className="auth-input-wrap auth-pw-wrap">
+                    <input
+                      id="auth-password"
+                      type={showPassword ? "text" : "password"}
+                      placeholder="Mínimo 8 caracteres"
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      required
+                      minLength={8}
+                      autoComplete={mode === "login" ? "current-password" : "new-password"}
+                      className="auth-input-v2 auth-input-v2--pw"
+                    />
+                    <button
+                      type="button"
+                      className="auth-pw-toggle"
+                      onClick={() => setShowPassword(!showPassword)}
+                      tabIndex={-1}
+                      aria-label={showPassword ? "Ocultar senha" : "Mostrar senha"}
+                    >
+                      {showPassword ? (
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94"/><path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
+                      ) : (
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                      )}
+                    </button>
+                    <div className="auth-input-glow" />
+                  </div>
+                  <AnimatePresence>
+                    {mode === "signup" && <PasswordRequirements password={password} />}
+                  </AnimatePresence>
+                </motion.div>
               )}
 
               <AnimatePresence>

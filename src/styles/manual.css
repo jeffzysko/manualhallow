@@ -1763,12 +1763,14 @@ body { overflow-x: hidden; }
 /* Background */
 .auth-wrapper-v2 {
   min-height: 100vh;
+  min-height: 100dvh;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 40px 20px;
+  padding: 20px;
   padding-top: 0;
+  padding-bottom: 0;
   position: relative;
   overflow: hidden;
 }
@@ -2123,13 +2125,56 @@ body { overflow-x: hidden; }
 
 /* Branding */
 .auth-branding {
-  position: relative;
+  position: absolute;
+  bottom: 16px;
   z-index: 2;
-  margin-top: 32px;
   font-size: 11px;
   color: rgba(158,154,146,0.3);
   letter-spacing: 1px;
 }
+
+/* Password toggle */
+.auth-pw-wrap { position: relative; }
+.auth-input-v2--pw { padding-right: 48px; }
+.auth-pw-toggle {
+  position: absolute;
+  right: 1px;
+  top: 1px;
+  bottom: 1px;
+  width: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: none;
+  color: var(--gray);
+  cursor: pointer;
+  border-radius: 0 13px 13px 0;
+  transition: color 0.2s, background 0.2s;
+  z-index: 2;
+}
+.auth-pw-toggle:hover { color: var(--white); background: rgba(255,255,255,0.04); }
+
+/* Password requirements */
+.auth-pw-reqs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 12px;
+  margin-top: 6px;
+  overflow: hidden;
+}
+.auth-pw-req {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11px;
+  color: var(--gray);
+  opacity: 0.6;
+  transition: color 0.2s, opacity 0.2s;
+}
+.auth-pw-req svg { flex-shrink: 0; stroke: var(--red); transition: stroke 0.2s; }
+.auth-pw-req--ok { color: var(--green); opacity: 1; }
+.auth-pw-req--ok svg { stroke: var(--green); }
 
 /* RESET PASSWORD PAGE */
 .reset-state-icon { margin-bottom: 16px; }
