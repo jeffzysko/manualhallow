@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect, useCallback } from "react";
+import { useState, useRef, useEffect, useCallback, useMemo } from "react";
 import ReactMarkdown from "react-markdown";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
@@ -17,6 +17,25 @@ const SUGGESTIONS = [
   "Como apresentar o preço premium?",
   "Quais gatilhos mentais usar?",
 ];
+
+/** Parse dynamic suggestions from the AI response */
+function parseSuggestions(text: string): { clean: string; suggestions: string[] } {
+  const marker = "---SUGESTOES---";
+  const endMarker = "---FIM_SUGESTOES---";
+  const idx = text.indexOf(marker);
+  if (idx === -1) return { clean: text, suggestions: [] };
+
+  const clean = text.slice(0, idx).trim();
+  const endIdx = text.indexOf(endMarker);
+  const block = text.slice(idx + marker.length, endIdx === -1 ? undefined : endIdx).trim();
+  const suggestions = block
+    .split("\n")
+    .map(l => l.replace(/^\d+[\.\)]\s*/, "").trim())
+    .filter(Boolean)
+    .slice(0, 3);
+
+  return { clean, suggestions };
+}
 
 const AIChatDrawer = ({ open, onClose }: { open: boolean; onClose: () => void }) => {
   const { user } = useAuth();
@@ -130,7 +149,6 @@ const AIChatDrawer = ({ open, onClose }: { open: boolean; onClose: () => void })
         }
       }
 
-      // Persist final assistant message
       if (assistantSoFar) {
         persistMessage("assistant", assistantSoFar);
       }
@@ -155,6 +173,15 @@ const AIChatDrawer = ({ open, onClose }: { open: boolean; onClose: () => void })
     setMessages([]);
   }, [user]);
 
+  // Extract suggestions from the last assistant message
+  const lastAssistantSuggestions = useMemo(() => {
+    if (isLoading) return [];
+    const lastAssistant = [...messages].reverse().find(m => m.role === "assistant");
+    if (!lastAssistant) return [];
+    const { suggestions } = parseSuggestions(lastAssistant.content);
+    return suggestions;
+  }, [messages, isLoading]);
+
   if (!open) return null;
 
   return (
@@ -163,7 +190,7 @@ const AIChatDrawer = ({ open, onClose }: { open: boolean; onClose: () => void })
         <div className="ai-chat-header">
           <div className="ai-chat-header-left">
             <span className="ai-chat-icon">✦</span>
-            <span className="ai-chat-title">Assistente Hallow</span>
+            <span className="ai-chat-title">Mentor Hallow</span>
           </div>
           <div className="ai-chat-header-right">
             {messages.length > 0 && (
@@ -185,7 +212,7 @@ const AIChatDrawer = ({ open, onClose }: { open: boolean; onClose: () => void })
           {messages.length === 0 && (
             <div className="ai-chat-empty">
               <span className="ai-chat-empty-icon">✦</span>
-              <p>Olá! Sou o assistente do Manual Hallow.</p>
+              <p>Olá! Sou o Mentor Hallow.</p>
               <p>Pergunte sobre técnicas de venda, objeções, scripts ou qualquer tema do manual.</p>
               <div className="ai-chat-suggestions">
                 {SUGGESTIONS.map((s, i) => (
@@ -200,17 +227,39 @@ const AIChatDrawer = ({ open, onClose }: { open: boolean; onClose: () => void })
               </div>
             </div>
           )}
-          {messages.map((msg, i) => (
-            <div key={i} className={`ai-chat-msg ai-chat-msg--${msg.role}`}>
-              {msg.role === "assistant" ? (
-                <div className="ai-chat-md">
-                  <ReactMarkdown>{msg.content}</ReactMarkdown>
-                </div>
-              ) : (
-                <p>{msg.content}</p>
-              )}
+          {messages.map((msg, i) => {
+            const isLast = i === messages.length - 1;
+            const isAssistant = msg.role === "assistant";
+            const { clean } = isAssistant ? parseSuggestions(msg.content) : { clean: msg.content };
+
+            return (
+              <div key={i} className={`ai-chat-msg ai-chat-msg--${msg.role}`}>
+                {isAssistant ? (
+                  <div className="ai-chat-md">
+                    <ReactMarkdown>{clean}</ReactMarkdown>
+                  </div>
+                ) : (
+                  <p>{msg.content}</p>
+                )}
+              </div>
+            );
+          })}
+
+          {/* Dynamic follow-up suggestions */}
+          {!isLoading && lastAssistantSuggestions.length > 0 && (
+            <div className="ai-chat-dynamic-suggestions">
+              {lastAssistantSuggestions.map((s, i) => (
+                <button
+                  key={i}
+                  className="ai-chat-suggestion"
+                  onClick={() => sendMessage(s)}
+                >
+                  {s}
+                </button>
+              ))}
             </div>
-          ))}
+          )}
+
           {isLoading && messages[messages.length - 1]?.role !== "assistant" && (
             <div className="ai-chat-msg ai-chat-msg--assistant">
               <div className="ai-chat-typing">
