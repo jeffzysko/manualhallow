@@ -80,9 +80,9 @@ const Chapter3Content = () => (
           <div className="card-check-icon">🎭</div>
           <h4>Checklist de Tom — O que o cliente deve sentir</h4>
         </div>
-        <div className="check-item"><div className="check-box checked"></div><div className="check-text"><strong>Calma e segurança</strong> — sem pressa, sem ansiedade</div></div>
-        <div className="check-item"><div className="check-box checked"></div><div className="check-text"><strong>Clareza e direção</strong> — próximo passo sempre simples e claro</div></div>
-        <div className="check-item"><div className="check-box checked"></div><div className="check-text"><strong>Cuidado</strong> — diagnóstico sempre antes do preço</div></div>
+        <div className="check-item"><div className="check-box checked"></div><div className="check-text"><strong>Calma e segurança</strong>: sem pressa, sem ansiedade</div></div>
+        <div className="check-item"><div className="check-box checked"></div><div className="check-text"><strong>Clareza e direção</strong>: próximo passo sempre simples e claro</div></div>
+        <div className="check-item"><div className="check-box checked"></div><div className="check-text"><strong>Cuidado</strong>: diagnóstico sempre antes do preço</div></div>
       </div>
     </FavoritableCard>
   </>

@@ -164,9 +164,9 @@ const Chapter1Content = () => (
           <div className="card-check-icon">🔄</div>
           <h4>Trocas Saudáveis</h4>
         </div>
-        <div className="check-item"><div className="check-box checked"></div><div className="check-text">Preço <strong>por escopo</strong> — retirar item, não dar desconto</div></div>
-        <div className="check-item"><div className="check-box checked"></div><div className="check-text">Preço <strong>por forma de pagamento</strong> — à vista vs parcelado</div></div>
-        <div className="check-item"><div className="check-box checked"></div><div className="check-text">Preço <strong>por agenda</strong> — encaixe de instalação</div></div>
+        <div className="check-item"><div className="check-box checked"></div><div className="check-text">Preço <strong>por escopo</strong>: retirar item, não dar desconto</div></div>
+        <div className="check-item"><div className="check-box checked"></div><div className="check-text">Preço <strong>por forma de pagamento</strong>: à vista vs parcelado</div></div>
+        <div className="check-item"><div className="check-box checked"></div><div className="check-text">Preço <strong>por agenda</strong>: encaixe de instalação</div></div>
       </div>
       <FavoritableCard id="ch1-obj-desconto" label="Objeção: Desconto sem contrapartida" chapter="Capítulo 01">
         <div className="card-obj">

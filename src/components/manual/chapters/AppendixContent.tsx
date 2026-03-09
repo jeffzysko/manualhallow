@@ -161,7 +161,7 @@ const AppendixContent = () => (
           <div className="card-script-header"><div className="card-script-dots"><i></i><i></i><i></i></div><span style={{color:'var(--red)'}}>⚖️ Cenário Comparação · Concorrente 2× mais barato</span></div>
           <div className="card-script-body">
             <div className="script-line"><span className="script-who cliente">Cliente</span><div className="script-text cliente">A outra empresa me passou bem menos. Por que vocês são mais caros?</div></div>
-            <div className="script-line"><span className="script-who">Splash</span><div className="script-text">Entendo total — faz sentido comparar. Só pra comparar justo: qual o modelo/tamanho e o que está incluso no outro orçamento?</div></div>
+            <div className="script-line"><span className="script-who">Splash</span><div className="script-text">Entendo total, faz sentido comparar. Só pra comparar justo: qual o modelo/tamanho e o que está incluso no outro orçamento?</div></div>
             <div className="script-line"><span className="script-who cliente">Cliente</span><div className="script-text cliente">6m. Disseram que entregam e instalam.</div></div>
             <div className="script-line"><span className="script-who">Splash</span><div className="script-text">Perfeito. 'Entrega e instala' pode significar várias coisas. Me manda um print do orçamento e uma foto do teu espaço que eu te devolvo uma comparação clara e justa.</div></div>
           </div>

@@ -38,11 +38,11 @@ const Chapter9Content = () => (
     <FavoritableCard id="ch9-checklist-ritual" label="Checklist: Ritual Diário" chapter="Capítulo 09">
       <div className="card-check reveal">
         <div className="card-check-header"><div className="card-check-icon">☀️</div><h4>30–45 minutos por dia que mudam o resultado</h4></div>
-        <div className="check-item"><div className="check-box checked"></div><div className="check-text"><strong>Varredura do funil</strong> — quem está em orçamento / comparando / travado</div></div>
-        <div className="check-item"><div className="check-box checked"></div><div className="check-text"><strong>5 follow-ups obrigatórios</strong> — com valor, não "e aí?"</div></div>
+        <div className="check-item"><div className="check-box checked"></div><div className="check-text"><strong>Varredura do funil</strong>: quem está em orçamento / comparando / travado</div></div>
+        <div className="check-item"><div className="check-box checked"></div><div className="check-text"><strong>5 follow-ups obrigatórios</strong>: com valor, não "e aí?"</div></div>
         <div className="check-item"><div className="check-box checked"></div><div className="check-text"><strong>1 convite para visita</strong> para cada lead qualificado ativo</div></div>
-        <div className="check-item"><div className="check-box checked"></div><div className="check-text"><strong>1 prova social enviada</strong> — antes de falar preço quando fizer sentido</div></div>
-        <div className="check-item"><div className="check-box checked"></div><div className="check-text"><strong>Atualizar CRM/planilha</strong> — etapa + próxima ação + data</div></div>
+        <div className="check-item"><div className="check-box checked"></div><div className="check-text"><strong>1 prova social enviada</strong>: antes de falar preço quando fizer sentido</div></div>
+        <div className="check-item"><div className="check-box checked"></div><div className="check-text"><strong>Atualizar CRM/planilha</strong>: etapa + próxima ação + data</div></div>
       </div>
     </FavoritableCard>
 
