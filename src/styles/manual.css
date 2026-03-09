@@ -2159,8 +2159,8 @@ body { overflow-x: hidden; }
 .auth-pw-reqs {
   display: flex;
   flex-wrap: wrap;
-  gap: 6px 12px;
-  margin-top: 6px;
+  gap: 4px 10px;
+  margin-top: 4px;
   overflow: hidden;
 }
 .auth-pw-req {
