@@ -87,7 +87,23 @@ const AIChatDrawer = ({ open, onClose }: { open: boolean; onClose: () => void })
       .limit(50)
       .then(({ data }) => {
         if (data && data.length > 0) {
-          setMessages(data.map(d => ({ role: d.role as "user" | "assistant", content: d.content })));
+          setMessages(data.map(d => {
+            const role = d.role as "user" | "assistant";
+            // Try to reconstruct multimodal messages from stored JSON
+            if (d.content.startsWith("{")) {
+              try {
+                const parsed = JSON.parse(d.content);
+                if (parsed.image_url) {
+                  const parts: MsgContent = [
+                    { type: "text", text: parsed.text || "" },
+                    { type: "image_url", image_url: { url: parsed.image_url } },
+                  ];
+                  return { role, content: parts };
+                }
+              } catch { /* not JSON, treat as plain text */ }
+            }
+            return { role, content: d.content };
+          }));
         }
         setHistoryLoaded(true);
       });
@@ -101,9 +117,13 @@ const AIChatDrawer = ({ open, onClose }: { open: boolean; onClose: () => void })
     if (open) setTimeout(() => inputRef.current?.focus(), 300);
   }, [open]);
 
-  const persistMessage = useCallback(async (role: "user" | "assistant", content: string) => {
+  const persistMessage = useCallback(async (role: "user" | "assistant", content: string, imageUrl?: string) => {
     if (!user) return;
-    await supabase.from("chat_messages").insert({ user_id: user.id, role, content });
+    // If there's an image, store as JSON so we can reconstruct on load
+    const stored = imageUrl
+      ? JSON.stringify({ text: content, image_url: imageUrl })
+      : content;
+    await supabase.from("chat_messages").insert({ user_id: user.id, role, content: stored });
   }, [user]);
 
   const { track } = useAnalytics();
@@ -170,8 +190,8 @@ const AIChatDrawer = ({ open, onClose }: { open: boolean; onClose: () => void })
     setPendingImage(null);
     setMessages(prev => [...prev, userMsg]);
     setIsLoading(true);
-    persistMessage("user", displayText);
-    track("ai_chat", { event_data: { length: displayText.length, has_image: !!pendingImage } });
+    const imageUrlToSave = pendingImage || undefined;
+    persistMessage("user", displayText, imageUrlToSave);
 
     let assistantSoFar = "";
     // For API: send text-only history + current multimodal message (filter empty, limit to last 50)
