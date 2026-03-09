@@ -28,7 +28,7 @@ function validateMessages(messages: unknown): any[] | null {
 
   const validated: any[] = [];
   for (const m of messages) {
-    if (!m || typeof m.role !== "string" || !["user", "assistant"].includes(m.role)) return null;
+    if (!m || typeof m.role !== "string" || !["user", "assistant"].includes(m.role)) continue;
 
     // Support multimodal messages (text + image_url)
     if (Array.isArray(m.content)) {
@@ -37,29 +37,37 @@ function validateMessages(messages: unknown): any[] | null {
         if (part.type === "text" && typeof part.text === "string" && part.text.length <= MAX_MESSAGE_LENGTH) {
           parts.push({ type: "text", text: sanitizeText(part.text) });
         } else if (part.type === "image_url" && part.image_url?.url && typeof part.image_url.url === "string") {
-          // Validate it's a proper URL (data: or https:)
           if (part.image_url.url.startsWith("data:image/") || part.image_url.url.startsWith("https://")) {
             parts.push({ type: "image_url", image_url: { url: part.image_url.url } });
           }
         }
       }
-      if (parts.length === 0) return null;
+      if (parts.length === 0) continue;
       validated.push({ role: m.role, content: parts });
     } else if (typeof m.content === "string") {
       const sanitized = sanitizeText(m.content);
-      // Allow empty strings (e.g. from split messages) - just skip them
       if (sanitized.length === 0) continue;
-      if (sanitized.length > MAX_MESSAGE_LENGTH) return null;
+      if (sanitized.length > MAX_MESSAGE_LENGTH) continue;
       validated.push({ role: m.role, content: sanitized });
-    } else if (m.content === null || m.content === undefined) {
-      // Skip null/undefined content gracefully
-      continue;
     } else {
-      return null;
+      continue;
     }
   }
 
-  return validated;
+  if (validated.length === 0) return null;
+
+  // Merge consecutive same-role messages to prevent API errors
+  const merged: any[] = [];
+  for (const m of validated) {
+    const last = merged[merged.length - 1];
+    if (last && last.role === m.role && typeof last.content === "string" && typeof m.content === "string") {
+      last.content += "\n" + m.content;
+    } else {
+      merged.push({ ...m });
+    }
+  }
+
+  return merged;
 }
 
 async function checkRateLimit(
