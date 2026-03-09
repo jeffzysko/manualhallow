@@ -2702,7 +2702,7 @@ body { overflow-x: hidden; }
 /* Timeline steps */
 .pwa-timeline {
   display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px;
-  position: relative; margin-bottom: 24px;
+  position: relative; margin-bottom: 32px;
   padding-top: 8px;
 }
 .pwa-timeline-line {
