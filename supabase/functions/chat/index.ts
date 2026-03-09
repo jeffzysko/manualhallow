@@ -706,9 +706,9 @@ PERFIL DO VENDEDOR (coletado no onboarding)
 ═══════════════════════════════════════════
 - Maior dificuldade: ${onboarding.biggest_challenge}
 - Objeção mais frequente: ${onboarding.common_objection}
-- Nível de experiência: ${onboarding.confidence_level}
+- Etapa onde mais perde vendas: ${onboarding.confidence_level}
 
-Use essas informações para personalizar suas respostas. Adapte o nível de detalhe ao nível de experiência. Priorize técnicas que ajudem com a dificuldade e objeção específicas deste vendedor.`;
+Use essas informações para personalizar suas respostas. Foque em técnicas que ajudem com a dificuldade, objeção e etapa do funil específicas deste vendedor. Quando relevante, mencione que você sabe do gargalo dele e ofereça técnicas direcionadas.`;
       }
     }
 
