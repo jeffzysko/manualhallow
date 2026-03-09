@@ -196,7 +196,7 @@ const Chapter1Content = () => (
           <div className="phrase-item">"Promoção imperdível, última chance!"</div>
           <div className="phrase-item">"É caro mesmo, mas…"</div>
           <div className="phrase-item">"Vou te fazer 6 perguntas…"</div>
-          <div className="phrase-item">"Tô passando um prezinho especial pra você"</div>
+          <div className="phrase-item">"Tô passando um precinho especial pra você"</div>
         </div>
         <div className="phrases-col good">
           <div className="phrases-col-header">
