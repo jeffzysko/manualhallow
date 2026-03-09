@@ -48,7 +48,7 @@ const OnboardingPage = () => {
         user_id: user.id,
         biggest_challenge: challenge,
         common_objection: objection,
-        confidence_level: confidence,
+        confidence_level: salesStage,
       });
       navigate("/", { replace: true });
     } catch {
