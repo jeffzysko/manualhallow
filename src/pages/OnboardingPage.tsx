@@ -43,19 +43,22 @@ const OnboardingPage = () => {
   const handleFinish = async () => {
     if (!user || !challenge || !objection || !salesStage) return;
     setSaving(true);
-    try {
-      await supabase.from("user_onboarding").insert({
+    const { error } = await supabase.from("user_onboarding").upsert(
+      {
         user_id: user.id,
         biggest_challenge: challenge,
         common_objection: objection,
         confidence_level: salesStage,
-      });
-      navigate("/pwa-install", { replace: true });
-    } catch {
+      },
+      { onConflict: "user_id" }
+    );
+    if (error) {
+      console.error("Onboarding save error:", error);
       alert("Erro ao salvar. Tente novamente.");
-    } finally {
       setSaving(false);
+      return;
     }
+    navigate("/pwa-install", { replace: true });
   };
 
   const canAdvance = step === 0 ? !!challenge : step === 1 ? !!objection : !!salesStage;
