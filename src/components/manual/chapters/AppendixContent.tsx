@@ -14,7 +14,7 @@ const AppendixContent = () => (
         </div>
 
         <h3 className="display mb-16" style={{fontSize:28, color:'var(--white)'}}>Depoimentos de Clientes Reais</h3>
-        <div className="card reveal"><h4>⭐ "A melhor decisão que tomei"</h4><p className="prose">"Pesquisei em 4 empresas antes de fechar com a Splash. No começo achei mais caro, mas quando vi o que estava incluso — instalação completa, reforço de terreno, acabamento premium — entendi que era o único orçamento honesto. Hoje minha piscina tem 2 anos e está impecável." — <strong>Roberto M., São Paulo</strong></p></div>
+        <div className="card reveal"><h4>⭐ "A melhor decisão que tomei"</h4><p className="prose">"Pesquisei em 4 empresas antes de fechar com a Splash. No começo achei mais caro, mas <div className="card reveal"><h4>⭐ "A melhor decisão que tomei"</h4><p className="prose">"Pesquisei em 4 empresas antes de fechar com a Splash. No começo achei mais caro, mas quando vi o que estava incluso (instalação completa, reforço de terreno, acabamento premium), entendi que era o único orçamento honesto. Hoje minha piscina tem 2 anos e está impecável." — <strong>Roberto M., São Paulo</strong></p></div> que era o único orçamento honesto. Hoje minha piscina tem 2 anos e está impecável." — <strong>Roberto M., São Paulo</strong></p></div>
         <div className="card reveal"><h4>⭐ "Zero dor de cabeça"</h4><p className="prose">"O que me vendeu foi a transparência. Me mostraram exatamente o que ia acontecer, quanto tempo ia levar e o que estava incluso. Cumpriram tudo no prazo. Indiquei pra 3 vizinhos." — <strong>Carla S., Campinas</strong></p></div>
         <div className="card reveal"><h4>⭐ "Valeu cada centavo"</h4><p className="prose">"Minha esposa queria a mais barata. Eu insisti na Splash depois que vi a comparação lado a lado. Hoje ela agradece todo fim de semana quando a família toda está na piscina." — <strong>André L., Ribeirão Preto</strong></p></div>
 
@@ -83,11 +83,11 @@ const AppendixContent = () => (
         <h3 className="display mb-16" style={{fontSize:28, color:'var(--white)'}}>O que Pedir ao Cliente</h3>
         <div className="card-check reveal">
           <div className="card-check-header"><div className="card-check-icon">📸</div><h4>Checklist de Fotos Obrigatórias</h4></div>
-          <div className="check-item"><div className="check-box"></div><div className="check-text"><strong>Vista geral do espaço</strong> — foto aberta mostrando todo o terreno</div></div>
-          <div className="check-item"><div className="check-box"></div><div className="check-text"><strong>Acesso / portão</strong> — por onde a piscina vai entrar</div></div>
-          <div className="check-item"><div className="check-box"></div><div className="check-text"><strong>Nível do terreno</strong> — se há desnível, muro de arrimo ou inclinação</div></div>
-          <div className="check-item"><div className="check-box"></div><div className="check-text"><strong>Área da casa próxima</strong> — janelas, portas, varanda</div></div>
-          <div className="check-item"><div className="check-box"></div><div className="check-text"><strong>Tubulação/esgoto visível</strong> — se há canos, ralos ou fossas no caminho</div></div>
+          <div className="check-item"><div className="check-box"></div><div className="check-text"><strong>Vista geral do espaço</strong>: foto aberta mostrando todo o terreno</div></div>
+          <div className="check-item"><div className="check-box"></div><div className="check-text"><strong>Acesso / portão</strong>: por onde a piscina vai entrar</div></div>
+          <div className="check-item"><div className="check-box"></div><div className="check-text"><strong>Nível do terreno</strong>: se há desnível, muro de arrimo ou inclinação</div></div>
+          <div className="check-item"><div className="check-box"></div><div className="check-text"><strong>Área da casa próxima</strong>: janelas, portas, varanda</div></div>
+          <div className="check-item"><div className="check-box"></div><div className="check-text"><strong>Tubulação/esgoto visível</strong>: se há canos, ralos ou fossas no caminho</div></div>
         </div>
         <div className="card-script reveal"><div className="card-script-header"><div className="card-script-dots"><i></i><i></i><i></i></div><span style={{color:'var(--ch5)'}}>Script para pedir fotos</span></div><div className="card-script-body"><div className="script-line"><span className="script-who">Splash</span><div className="script-text">"Pra eu montar uma proposta certinha e sem surpresa, me manda 3 fotos: uma do espaço todo, uma do acesso (portão/passagem) e uma mostrando se o terreno é plano ou tem desnível."</div></div></div></div>
       </div>
@@ -161,7 +161,7 @@ const AppendixContent = () => (
           <div className="card-script-header"><div className="card-script-dots"><i></i><i></i><i></i></div><span style={{color:'var(--red)'}}>⚖️ Cenário Comparação · Concorrente 2× mais barato</span></div>
           <div className="card-script-body">
             <div className="script-line"><span className="script-who cliente">Cliente</span><div className="script-text cliente">A outra empresa me passou bem menos. Por que vocês são mais caros?</div></div>
-            <div className="script-line"><span className="script-who">Splash</span><div className="script-text">Entendo total — faz sentido comparar. Só pra comparar justo: qual o modelo/tamanho e o que está incluso no outro orçamento?</div></div>
+            <div className="script-line"><span className="script-who">Splash</span><div className="script-text">Entendo total, faz sentido comparar. Só pra comparar justo: qual o modelo/tamanho e o que está incluso no outro orçamento?</div></div>
             <div className="script-line"><span className="script-who cliente">Cliente</span><div className="script-text cliente">6m. Disseram que entregam e instalam.</div></div>
             <div className="script-line"><span className="script-who">Splash</span><div className="script-text">Perfeito. 'Entrega e instala' pode significar várias coisas. Me manda um print do orçamento e uma foto do teu espaço que eu te devolvo uma comparação clara e justa.</div></div>
           </div>

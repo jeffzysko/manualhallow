@@ -19,7 +19,7 @@ const ManualCover = () => (
         <div className="cover-subtitle">Hallow Comunicação · Splash Piscinas</div>
 
         <div className="cover-desc">
-          Guia prático para rotina comercial e atendimento premium. Do primeiro contato ao pós-venda: scripts, técnicas, checklists e o método para vender valor — não preço.
+          Guia prático para rotina comercial e atendimento premium. Do primeiro contato ao pós-venda: scripts, técnicas, checklists e o método para vender valor, não preço.
         </div>
 
         <div className="cover-stats">

@@ -45,7 +45,7 @@ const Chapter1Content = () => (
         <div className="step-num">2</div>
         <div className="step-body">
           <h4>Definir a régua de comparação</h4>
-          <p>Deixar claro que a comparação justa é por pacote completo — não só "casca + tamanho".</p>
+          <p>Deixar claro que a comparação justa é por pacote completo, não só "casco + tamanho".</p>
         </div>
       </div>
       <div className="step" style={{"--step-color":"var(--green-dim)","--step-border":"rgba(92,184,138,0.2)","--step-color-text":"var(--green)"} as React.CSSProperties}>
@@ -164,9 +164,9 @@ const Chapter1Content = () => (
           <div className="card-check-icon">🔄</div>
           <h4>Trocas Saudáveis</h4>
         </div>
-        <div className="check-item"><div className="check-box checked"></div><div className="check-text">Preço <strong>por escopo</strong> — retirar item, não dar desconto</div></div>
-        <div className="check-item"><div className="check-box checked"></div><div className="check-text">Preço <strong>por forma de pagamento</strong> — à vista vs parcelado</div></div>
-        <div className="check-item"><div className="check-box checked"></div><div className="check-text">Preço <strong>por agenda</strong> — encaixe de instalação</div></div>
+        <div className="check-item"><div className="check-box checked"></div><div className="check-text">Preço <strong>por escopo</strong>: retirar item, não dar desconto</div></div>
+        <div className="check-item"><div className="check-box checked"></div><div className="check-text">Preço <strong>por forma de pagamento</strong>: à vista vs parcelado</div></div>
+        <div className="check-item"><div className="check-box checked"></div><div className="check-text">Preço <strong>por agenda</strong>: encaixe de instalação</div></div>
       </div>
       <FavoritableCard id="ch1-obj-desconto" label="Objeção: Desconto sem contrapartida" chapter="Capítulo 01">
         <div className="card-obj">
