@@ -58,7 +58,7 @@ const OnboardingPage = () => {
     }
   };
 
-  const canAdvance = step === 0 ? !!challenge : step === 1 ? !!objection : !!confidence;
+  const canAdvance = step === 0 ? !!challenge : step === 1 ? !!objection : !!salesStage;
 
   return (
     <div className="manual-page" style={{ minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center" }}>
