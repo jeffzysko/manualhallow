@@ -5,7 +5,8 @@ import { useAuth } from "@/contexts/AuthContext";
 import { clampText } from "@/lib/sanitize";
 import { useAnalytics } from "@/hooks/useAnalytics";
 
-type Msg = { role: "user" | "assistant"; content: string };
+type MsgContent = string | { type: string; text?: string; image_url?: { url: string } }[];
+type Msg = { role: "user" | "assistant"; content: MsgContent };
 
 const CHAT_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/chat`;
 
@@ -17,6 +18,19 @@ const SUGGESTIONS = [
   "Como apresentar o preço premium?",
   "Quais gatilhos mentais usar?",
 ];
+
+/** Get display text from a message */
+function getTextContent(content: MsgContent): string {
+  if (typeof content === "string") return content;
+  return content.filter(p => p.type === "text").map(p => p.text || "").join("");
+}
+
+/** Get image URL from a multimodal message */
+function getImageUrl(content: MsgContent): string | null {
+  if (typeof content === "string") return null;
+  const img = content.find(p => p.type === "image_url");
+  return img?.image_url?.url || null;
+}
 
 /** Parse dynamic suggestions from the AI response */
 function parseSuggestions(text: string): { clean: string; suggestions: string[] } {
@@ -37,14 +51,19 @@ function parseSuggestions(text: string): { clean: string; suggestions: string[] 
   return { clean, suggestions };
 }
 
+const MAX_IMAGE_SIZE = 4 * 1024 * 1024; // 4MB
+
 const AIChatDrawer = ({ open, onClose }: { open: boolean; onClose: () => void }) => {
   const { user } = useAuth();
   const [messages, setMessages] = useState<Msg[]>([]);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [historyLoaded, setHistoryLoaded] = useState(false);
+  const [pendingImage, setPendingImage] = useState<string | null>(null);
+  const [isUploadingImage, setIsUploadingImage] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Load history from DB
   useEffect(() => {
@@ -78,19 +97,77 @@ const AIChatDrawer = ({ open, onClose }: { open: boolean; onClose: () => void })
 
   const { track } = useAnalytics();
 
+  const handleImageSelect = useCallback(async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (!file.type.startsWith("image/")) {
+      alert("Selecione apenas imagens (JPG, PNG, etc.)");
+      return;
+    }
+
+    if (file.size > MAX_IMAGE_SIZE) {
+      alert("Imagem muito grande. Máximo 4MB.");
+      return;
+    }
+
+    setIsUploadingImage(true);
+    try {
+      if (!user) throw new Error("Não autenticado");
+
+      const ext = file.name.split(".").pop() || "jpg";
+      const path = `${user.id}/${Date.now()}.${ext}`;
+
+      const { error } = await supabase.storage
+        .from("chat-images")
+        .upload(path, file, { contentType: file.type });
+
+      if (error) throw error;
+
+      const { data: urlData } = supabase.storage
+        .from("chat-images")
+        .getPublicUrl(path);
+
+      setPendingImage(urlData.publicUrl);
+    } catch (err: any) {
+      console.error("Upload error:", err);
+      alert("Erro ao enviar imagem. Tente novamente.");
+    } finally {
+      setIsUploadingImage(false);
+      if (fileInputRef.current) fileInputRef.current.value = "";
+    }
+  }, [user]);
+
   const sendMessage = useCallback(async (text: string) => {
     const sanitized = clampText(text, 2000);
-    if (!sanitized || isLoading) return;
+    if ((!sanitized && !pendingImage) || isLoading) return;
 
-    const userMsg: Msg = { role: "user", content: sanitized };
+    let userContent: MsgContent;
+    let displayText = sanitized || "📸 Analise este print";
+
+    if (pendingImage) {
+      const parts: { type: string; text?: string; image_url?: { url: string } }[] = [];
+      parts.push({ type: "text", text: displayText });
+      parts.push({ type: "image_url", image_url: { url: pendingImage } });
+      userContent = parts;
+    } else {
+      userContent = sanitized;
+    }
+
+    const userMsg: Msg = { role: "user", content: userContent };
     setInput("");
+    setPendingImage(null);
     setMessages(prev => [...prev, userMsg]);
     setIsLoading(true);
-    persistMessage("user", text.trim());
-    track("ai_chat", { event_data: { length: sanitized.length } });
+    persistMessage("user", displayText);
+    track("ai_chat", { event_data: { length: displayText.length, has_image: !!pendingImage } });
 
     let assistantSoFar = "";
-    const allMessages = [...messages, userMsg];
+    // For API: send text-only history + current multimodal message
+    const apiMessages = [...messages.map(m => ({
+      role: m.role,
+      content: typeof m.content === "string" ? m.content : getTextContent(m.content),
+    })), { role: userMsg.role, content: userMsg.content }];
 
     try {
       const resp = await fetch(CHAT_URL, {
@@ -99,7 +176,7 @@ const AIChatDrawer = ({ open, onClose }: { open: boolean; onClose: () => void })
           "Content-Type": "application/json",
           Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
         },
-        body: JSON.stringify({ messages: allMessages }),
+        body: JSON.stringify({ messages: apiMessages }),
       });
 
       if (!resp.ok || !resp.body) {
@@ -158,7 +235,7 @@ const AIChatDrawer = ({ open, onClose }: { open: boolean; onClose: () => void })
     } finally {
       setIsLoading(false);
     }
-  }, [input, isLoading, messages, persistMessage]);
+  }, [input, isLoading, messages, persistMessage, pendingImage]);
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === "Enter" && !e.shiftKey) {
@@ -178,7 +255,8 @@ const AIChatDrawer = ({ open, onClose }: { open: boolean; onClose: () => void })
     if (isLoading) return [];
     const lastAssistant = [...messages].reverse().find(m => m.role === "assistant");
     if (!lastAssistant) return [];
-    const { suggestions } = parseSuggestions(lastAssistant.content);
+    const text = getTextContent(lastAssistant.content);
+    const { suggestions } = parseSuggestions(text);
     return suggestions;
   }, [messages, isLoading]);
 
@@ -213,7 +291,7 @@ const AIChatDrawer = ({ open, onClose }: { open: boolean; onClose: () => void })
             <div className="ai-chat-empty">
               <span className="ai-chat-empty-icon">✦</span>
               <p>Olá! Sou o Mentor Hallow.</p>
-              <p>Pergunte sobre técnicas de venda, objeções, scripts ou qualquer tema do manual.</p>
+              <p>Pergunte sobre técnicas de venda, objeções, scripts ou envie um <strong>print do WhatsApp</strong> para análise.</p>
               <div className="ai-chat-suggestions">
                 {SUGGESTIONS.map((s, i) => (
                   <button
@@ -228,18 +306,33 @@ const AIChatDrawer = ({ open, onClose }: { open: boolean; onClose: () => void })
             </div>
           )}
           {messages.map((msg, i) => {
-            const isLast = i === messages.length - 1;
             const isAssistant = msg.role === "assistant";
-            const { clean } = isAssistant ? parseSuggestions(msg.content) : { clean: msg.content };
+            const text = getTextContent(msg.content);
+            const imageUrl = getImageUrl(msg.content);
+            const { clean } = isAssistant ? parseSuggestions(text) : { clean: text };
 
             return (
               <div key={i} className={`ai-chat-msg ai-chat-msg--${msg.role}`}>
+                {imageUrl && (
+                  <img
+                    src={imageUrl}
+                    alt="Print enviado"
+                    className="ai-chat-image"
+                    style={{
+                      maxWidth: "100%",
+                      maxHeight: "240px",
+                      borderRadius: "8px",
+                      marginBottom: "6px",
+                      objectFit: "contain",
+                    }}
+                  />
+                )}
                 {isAssistant ? (
                   <div className="ai-chat-md">
                     <ReactMarkdown>{clean}</ReactMarkdown>
                   </div>
                 ) : (
-                  <p>{msg.content}</p>
+                  clean && <p>{clean}</p>
                 )}
               </div>
             );
@@ -270,18 +363,89 @@ const AIChatDrawer = ({ open, onClose }: { open: boolean; onClose: () => void })
           <div ref={messagesEndRef} />
         </div>
 
+        {/* Pending image preview */}
+        {pendingImage && (
+          <div style={{
+            padding: "8px 16px",
+            background: "hsl(var(--muted))",
+            display: "flex",
+            alignItems: "center",
+            gap: "8px",
+            borderTop: "1px solid hsl(var(--border))",
+          }}>
+            <img
+              src={pendingImage}
+              alt="Preview"
+              style={{ height: "48px", borderRadius: "6px", objectFit: "cover" }}
+            />
+            <span style={{ fontSize: "12px", color: "hsl(var(--muted-foreground))", flex: 1 }}>
+              Imagem pronta para envio
+            </span>
+            <button
+              onClick={() => setPendingImage(null)}
+              style={{
+                background: "none",
+                border: "none",
+                cursor: "pointer",
+                color: "hsl(var(--muted-foreground))",
+                fontSize: "18px",
+                padding: "4px",
+              }}
+              aria-label="Remover imagem"
+            >
+              ✕
+            </button>
+          </div>
+        )}
+
         <div className="ai-chat-input-area">
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept="image/*"
+            style={{ display: "none" }}
+            onChange={handleImageSelect}
+          />
+          <button
+            className="ai-chat-upload-btn"
+            onClick={() => fileInputRef.current?.click()}
+            disabled={isLoading || isUploadingImage}
+            title="Enviar print do WhatsApp"
+            style={{
+              background: "none",
+              border: "none",
+              cursor: isLoading ? "not-allowed" : "pointer",
+              padding: "6px",
+              color: pendingImage ? "hsl(var(--primary))" : "hsl(var(--muted-foreground))",
+              display: "flex",
+              alignItems: "center",
+              opacity: isLoading ? 0.5 : 1,
+              flexShrink: 0,
+            }}
+          >
+            {isUploadingImage ? (
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="animate-spin">
+                <circle cx="12" cy="12" r="10" strokeDasharray="32" strokeDashoffset="12" />
+              </svg>
+            ) : (
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
+                <circle cx="8.5" cy="8.5" r="1.5" />
+                <polyline points="21 15 16 10 5 21" />
+              </svg>
+            )}
+          </button>
           <textarea
             ref={inputRef}
             className="ai-chat-input"
             value={input}
             onChange={e => setInput(e.target.value)}
             onKeyDown={handleKeyDown}
-            placeholder="Faça sua pergunta..."
+            placeholder={pendingImage ? "Descreva o contexto do print..." : "Faça sua pergunta..."}
             rows={1}
             disabled={isLoading}
           />
-          <button className="ai-chat-send" onClick={() => sendMessage(input)} disabled={isLoading || !input.trim()}>
+          <button className="ai-chat-send" onClick={() => sendMessage(input)} disabled={isLoading || (!input.trim() && !pendingImage)}>
             <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <line x1="22" y1="2" x2="11" y2="13" />
               <polygon points="22 2 15 22 11 13 2 9 22 2" />

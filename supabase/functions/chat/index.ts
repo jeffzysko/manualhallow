@@ -22,24 +22,37 @@ function sanitizeText(text: string): string {
     .trim();
 }
 
-function validateMessages(messages: unknown): { role: string; content: string }[] | null {
+function validateMessages(messages: unknown): any[] | null {
   if (!Array.isArray(messages)) return null;
   if (messages.length > MAX_MESSAGES) return null;
 
-  const valid = messages.every(
-    (m: any) =>
-      m &&
-      typeof m.role === "string" &&
-      ["user", "assistant"].includes(m.role) &&
-      typeof m.content === "string" &&
-      m.content.length <= MAX_MESSAGE_LENGTH
-  );
-  if (!valid) return null;
+  const validated: any[] = [];
+  for (const m of messages) {
+    if (!m || typeof m.role !== "string" || !["user", "assistant"].includes(m.role)) return null;
 
-  return messages.map((m: any) => ({
-    role: m.role,
-    content: sanitizeText(m.content),
-  }));
+    // Support multimodal messages (text + image_url)
+    if (Array.isArray(m.content)) {
+      const parts: any[] = [];
+      for (const part of m.content) {
+        if (part.type === "text" && typeof part.text === "string" && part.text.length <= MAX_MESSAGE_LENGTH) {
+          parts.push({ type: "text", text: sanitizeText(part.text) });
+        } else if (part.type === "image_url" && part.image_url?.url && typeof part.image_url.url === "string") {
+          // Validate it's a proper URL (data: or https:)
+          if (part.image_url.url.startsWith("data:image/") || part.image_url.url.startsWith("https://")) {
+            parts.push({ type: "image_url", image_url: { url: part.image_url.url } });
+          }
+        }
+      }
+      if (parts.length === 0) return null;
+      validated.push({ role: m.role, content: parts });
+    } else if (typeof m.content === "string" && m.content.length <= MAX_MESSAGE_LENGTH) {
+      validated.push({ role: m.role, content: sanitizeText(m.content) });
+    } else {
+      return null;
+    }
+  }
+
+  return validated;
 }
 
 async function checkRateLimit(
@@ -568,6 +581,13 @@ FIM DO CONTEÚDO DO MANUAL
 10. **Emojis moderados** — Máx 1-2 por resposta
 
 **IMPORTANTE:** Sempre responda em português brasileiro. Se a pergunta não tem relação com vendas de piscinas, redirecione educadamente.
+
+**ANÁLISE DE PRINTS DE WHATSAPP:** Quando o vendedor enviar uma imagem (print de conversa do WhatsApp), analise a conversa detalhadamente:
+1. Identifique o perfil do cliente (quente, comparando, travado)
+2. Aponte o que o vendedor fez CERTO (valide primeiro)
+3. Identifique erros ou oportunidades perdidas
+4. Dê o próximo passo exato com script pronto
+5. Se detectar um dos 9 erros frequentes, alerte com tom construtivo
 
 **SUGESTÕES DE FOLLOW-UP:** Ao final de TODA resposta, adicione um bloco separado com exatamente 3 sugestões de perguntas que o vendedor poderia fazer em seguida, no formato:
 ---SUGESTOES---
