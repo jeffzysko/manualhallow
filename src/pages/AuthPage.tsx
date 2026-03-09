@@ -103,6 +103,7 @@ const AuthPage = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [fullName, setFullName] = useState("");
+  const [company, setCompany] = useState("");
   const [error, setError] = useState("");
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
@@ -126,7 +127,7 @@ const AuthPage = () => {
     } else if (mode === "signup") {
       const { error } = await supabase.auth.signUp({
         email, password,
-        options: { data: { full_name: fullName }, emailRedirectTo: window.location.origin },
+        options: { data: { full_name: fullName, company }, emailRedirectTo: window.location.origin },
       });
       if (error) {
         setError(translateAuthError(error.message));
@@ -271,14 +272,24 @@ const AuthPage = () => {
             <form onSubmit={handleSubmit} className="auth-form-v2" noValidate>
               <AnimatePresence>
                 {mode === "signup" && (
-                  <AuthInput
-                    id="auth-fullname"
-                    label="Nome completo"
-                    placeholder="Seu nome completo"
-                    value={fullName}
-                    onChange={setFullName}
-                    autoComplete="name"
-                  />
+                  <>
+                    <AuthInput
+                      id="auth-company"
+                      label="Empresa"
+                      placeholder="Nome da sua empresa"
+                      value={company}
+                      onChange={setCompany}
+                      autoComplete="organization"
+                    />
+                    <AuthInput
+                      id="auth-fullname"
+                      label="Nome completo"
+                      placeholder="Seu nome completo"
+                      value={fullName}
+                      onChange={setFullName}
+                      autoComplete="name"
+                    />
+                  </>
                 )}
               </AnimatePresence>
 
