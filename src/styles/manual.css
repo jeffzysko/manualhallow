@@ -461,7 +461,15 @@ body { overflow-x: hidden; }
 .manual-page .search-result-text { font-size: 14px; color: var(--white); line-height: 1.5; }
 .manual-page .search-result-text mark { background: rgba(201,169,106,0.3); color: var(--gold-light); border-radius: 3px; padding: 1px 3px; }
 .manual-page .search-empty { text-align: center; padding: 48px 24px; color: var(--gray); font-size: 15px; }
-.manual-page .search-hint { text-align: center; padding: 16px; color: var(--gray2); font-size: 12px; }
+.manual-page .search-hint { text-align: center; padding: 16px 16px 8px; color: var(--gray2); font-size: 12px; text-transform: uppercase; letter-spacing: 0.08em; }
+.manual-page .search-suggestions { padding: 8px 0; }
+.manual-page .search-chips { display: flex; flex-wrap: wrap; gap: 8px; padding: 4px 16px 16px; }
+.manual-page .search-chip {
+  background: var(--card2); border: 1px solid var(--border); color: var(--white);
+  font-size: 13px; padding: 6px 14px; border-radius: 20px; cursor: pointer;
+  transition: background 0.2s, border-color 0.2s;
+}
+.manual-page .search-chip:hover { background: var(--gold-dim); border-color: var(--gold); color: var(--gold-light); }
 
 /* FAVORITES OVERLAY */
 .manual-page .fav-overlay-box { max-width: 540px; }
