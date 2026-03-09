@@ -175,14 +175,26 @@ const AIChatDrawer = ({ open, onClose }: { open: boolean; onClose: () => void })
 
     let assistantSoFar = "";
     // For API: send text-only history + current multimodal message (filter empty, limit to last 50)
-    const historyMsgs = messages
-      .map(m => ({
+    const rawMsgs = [
+      ...messages.map(m => ({
         role: m.role,
         content: typeof m.content === "string" ? m.content : getTextContent(m.content),
-      }))
-      .filter(m => typeof m.content === "string" ? m.content.trim().length > 0 : true)
+      })),
+      { role: userMsg.role, content: typeof userMsg.content === "string" ? userMsg.content : displayText },
+    ]
+      .filter(m => typeof m.content === "string" && m.content.trim().length > 0)
       .slice(-50);
-    const apiMessages = [...historyMsgs, { role: userMsg.role, content: userMsg.content }];
+
+    // Merge consecutive same-role messages to avoid API rejection
+    const apiMessages: { role: string; content: string }[] = [];
+    for (const m of rawMsgs) {
+      const last = apiMessages[apiMessages.length - 1];
+      if (last && last.role === m.role) {
+        last.content += "\n" + m.content;
+      } else {
+        apiMessages.push({ ...m });
+      }
+    }
 
     try {
       const resp = await fetch(CHAT_URL, {
