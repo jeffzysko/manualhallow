@@ -7,6 +7,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "@/contexts/AuthContext";
 import ProtectedRoute from "./components/ProtectedRoute";
 import OfflineBanner from "./components/OfflineBanner";
+import PWAUpdatePrompt from "./components/PWAUpdatePrompt";
 import { useOfflineSync } from "./hooks/useOfflineSync";
 
 // Lazy-load all route pages for smaller initial bundle
@@ -48,6 +49,7 @@ const App = () => (
           <Toaster />
           <Sonner />
           <OfflineBanner />
+          <PWAUpdatePrompt />
           <BrowserRouter>
             <Suspense fallback={<PageFallback />}>
               <Routes>
