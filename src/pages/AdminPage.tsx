@@ -14,7 +14,7 @@ interface AdminStats {
   total_notes: number;
   chapters_completed: number;
   popular_chapters: { chapter: string; total: number }[] | null;
-  recent_users: { id: string; full_name: string | null; created_at: string; is_active: boolean; email: string }[] | null;
+  recent_users: { id: string; full_name: string | null; company: string | null; created_at: string; is_active: boolean; email: string }[] | null;
 }
 
 interface UserRow {
