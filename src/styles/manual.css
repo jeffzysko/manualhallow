@@ -1087,14 +1087,14 @@ body { overflow-x: hidden; }
   .auth-form { gap: 12px; }
 
   /* ── Auth pages V2 ── */
-  .auth-wrapper-v2 { padding: 12px; }
-  .auth-card-v2 { padding: 28px 20px 24px; border-radius: 20px; }
-  .auth-title-v2 { font-size: 22px; letter-spacing: 3px; }
-  .auth-monogram { width: 44px; height: 44px; font-size: 22px; border-radius: 14px; }
-  .auth-logo-area { height: 56px; }
-  .auth-input-v2 { font-size: 16px; padding: 12px 14px; min-height: 44px; }
-  .auth-submit-v2 { padding: 13px; font-size: 14px; min-height: 44px; }
-  .auth-link-v2 { font-size: 13px; padding: 6px 0; min-height: 40px; }
+  .auth-wrapper-v2 { padding: 8px; }
+  .auth-card-v2 { padding: 20px 16px 16px; border-radius: 18px; }
+  .auth-title-v2 { font-size: 18px; letter-spacing: 3px; }
+  .auth-monogram { width: 36px; height: 36px; font-size: 18px; border-radius: 12px; }
+  .auth-logo-area { height: 42px; }
+  .auth-input-v2 { font-size: 16px; padding: 9px 12px; min-height: 38px; }
+  .auth-submit-v2 { padding: 10px; font-size: 13px; min-height: 38px; }
+  .auth-link-v2 { font-size: 12px; padding: 4px 0; min-height: 36px; }
   .auth-tab-v2 { min-height: 38px; font-size: 11px; }
 
   /* ── Reset password ── */
