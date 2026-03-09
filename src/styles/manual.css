@@ -1915,7 +1915,7 @@ body { overflow-x: hidden; }
 
 .auth-tab-v2 {
   flex: 1;
-  padding: 14px 0;
+  padding: 10px 0;
   font-size: 12px;
   font-weight: 700;
   letter-spacing: 1.5px;
