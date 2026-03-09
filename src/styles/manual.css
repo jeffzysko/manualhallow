@@ -1867,7 +1867,7 @@ body { overflow-x: hidden; }
   align-items: center;
   justify-content: center;
   font-family: 'Cormorant Garamond', serif;
-  font-size: 26px;
+  font-size: 22px;
   font-weight: 600;
   color: var(--gold);
   background: linear-gradient(135deg, rgba(201,169,106,0.12), rgba(201,169,106,0.04));
