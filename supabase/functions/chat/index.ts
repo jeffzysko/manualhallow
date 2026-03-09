@@ -691,6 +691,27 @@ Deno.serve(async (req) => {
       last_message_length: messages[messages.length - 1]?.content.length || 0,
     }, ip);
 
+    // Fetch user onboarding data to personalize AI responses
+    let userContext = "";
+    if (userId) {
+      const { data: onboarding } = await serviceClient
+        .from("user_onboarding")
+        .select("biggest_challenge, common_objection, confidence_level")
+        .eq("user_id", userId)
+        .maybeSingle();
+
+      if (onboarding) {
+        userContext = `\n\n═══════════════════════════════════════════
+PERFIL DO VENDEDOR (coletado no onboarding)
+═══════════════════════════════════════════
+- Maior dificuldade: ${onboarding.biggest_challenge}
+- Objeção mais frequente: ${onboarding.common_objection}
+- Nível de experiência: ${onboarding.confidence_level}
+
+Use essas informações para personalizar suas respostas. Adapte o nível de detalhe ao nível de experiência. Priorize técnicas que ajudem com a dificuldade e objeção específicas deste vendedor.`;
+      }
+    }
+
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     if (!LOVABLE_API_KEY) throw new Error("LOVABLE_API_KEY is not configured");
 
@@ -703,7 +724,7 @@ Deno.serve(async (req) => {
       body: JSON.stringify({
         model: "google/gemini-2.5-pro",
         messages: [
-          { role: "system", content: SYSTEM_PROMPT },
+          { role: "system", content: SYSTEM_PROMPT + userContext },
           ...messages,
         ],
         stream: true,
