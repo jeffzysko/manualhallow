@@ -323,7 +323,7 @@ const AuthPage = () => {
                   id="auth-password"
                   label="Senha"
                   type="password"
-                  placeholder="Mínimo 6 caracteres"
+                  placeholder="Mínimo 8 caracteres"
                   value={password}
                   onChange={setPassword}
                   autoComplete={mode === "login" ? "current-password" : "new-password"}
