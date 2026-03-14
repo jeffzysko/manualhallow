@@ -30,7 +30,7 @@ function validateMessages(messages: unknown): any[] | null {
   for (const m of messages) {
     if (!m || typeof m.role !== "string" || !["user", "assistant"].includes(m.role)) continue;
 
-    // Support multimodal messages (text + image_url)
+    // Support multimodal messages (text + image_url + input_audio + file_url)
     if (Array.isArray(m.content)) {
       const parts: any[] = [];
       for (const part of m.content) {
@@ -39,6 +39,16 @@ function validateMessages(messages: unknown): any[] | null {
         } else if (part.type === "image_url" && part.image_url?.url && typeof part.image_url.url === "string") {
           if (part.image_url.url.startsWith("data:image/") || part.image_url.url.startsWith("https://")) {
             parts.push({ type: "image_url", image_url: { url: part.image_url.url } });
+          }
+        } else if (part.type === "input_audio" && part.input_audio?.data && typeof part.input_audio.data === "string") {
+          // Validate audio format
+          const validFormats = ["mp3", "wav", "ogg", "m4a", "mp4", "webm"];
+          const format = validFormats.includes(part.input_audio.format) ? part.input_audio.format : "mp3";
+          parts.push({ type: "input_audio", input_audio: { data: part.input_audio.data, format } });
+        } else if (part.type === "file_url" && part.file_url?.url && typeof part.file_url.url === "string") {
+          // For documents (PDF, etc.) - fetch and convert to base64 for the AI
+          if (part.file_url.url.startsWith("https://")) {
+            parts.push({ type: "file_url", file_url: { url: part.file_url.url, mime_type: part.file_url.mime_type || "application/octet-stream", name: part.file_url.name || "document" } });
           }
         }
       }
@@ -68,6 +78,50 @@ function validateMessages(messages: unknown): any[] | null {
   }
 
   return merged;
+}
+
+/** Fetch a file from URL and return as base64 data URI */
+async function fetchFileAsBase64(url: string, mimeType: string): Promise<string> {
+  const resp = await fetch(url);
+  if (!resp.ok) throw new Error(`Failed to fetch file: ${resp.status}`);
+  const buffer = await resp.arrayBuffer();
+  const bytes = new Uint8Array(buffer);
+  let binary = "";
+  for (let i = 0; i < bytes.length; i++) {
+    binary += String.fromCharCode(bytes[i]);
+  }
+  const base64 = btoa(binary);
+  return `data:${mimeType};base64,${base64}`;
+}
+
+/** Convert file_url parts to image_url with base64 for the AI gateway */
+async function resolveFileParts(messages: any[]): Promise<any[]> {
+  const resolved = [];
+  for (const m of messages) {
+    if (Array.isArray(m.content)) {
+      const newParts = [];
+      for (const part of m.content) {
+        if (part.type === "file_url") {
+          try {
+            // Fetch and convert to base64 image_url for AI processing
+            const dataUri = await fetchFileAsBase64(part.file_url.url, part.file_url.mime_type);
+            newParts.push({ type: "image_url", image_url: { url: dataUri } });
+            // Also add context about the file
+            newParts.push({ type: "text", text: `[Documento anexado: ${part.file_url.name} (${part.file_url.mime_type})]` });
+          } catch (e) {
+            console.error("Failed to fetch file:", e);
+            newParts.push({ type: "text", text: `[Erro ao processar documento: ${part.file_url.name}]` });
+          }
+        } else {
+          newParts.push(part);
+        }
+      }
+      resolved.push({ ...m, content: newParts });
+    } else {
+      resolved.push(m);
+    }
+  }
+  return resolved;
 }
 
 async function checkRateLimit(
@@ -715,6 +769,9 @@ Use essas informações para personalizar suas respostas. Foque em técnicas que
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     if (!LOVABLE_API_KEY) throw new Error("LOVABLE_API_KEY is not configured");
 
+    // Resolve file_url parts (fetch documents and convert to base64 for AI)
+    const resolvedMessages = await resolveFileParts(messages);
+
     const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",
       headers: {
@@ -725,7 +782,7 @@ Use essas informações para personalizar suas respostas. Foque em técnicas que
         model: "google/gemini-2.5-pro",
         messages: [
           { role: "system", content: SYSTEM_PROMPT + userContext },
-          ...messages,
+          ...resolvedMessages,
         ],
         stream: true,
       }),
