@@ -352,6 +352,102 @@ const AIChatDrawer = ({ open, onClose }: { open: boolean; onClose: () => void })
     }
   }, [user, pendingFiles]);
 
+  // ── Audio Recording ──
+  const startRecording = useCallback(async () => {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      const mimeType = MediaRecorder.isTypeSupported("audio/webm;codecs=opus")
+        ? "audio/webm;codecs=opus"
+        : "audio/webm";
+      const recorder = new MediaRecorder(stream, { mimeType });
+      audioChunksRef.current = [];
+
+      recorder.ondataavailable = (e) => {
+        if (e.data.size > 0) audioChunksRef.current.push(e.data);
+      };
+
+      recorder.onstop = async () => {
+        stream.getTracks().forEach(t => t.stop());
+        if (recordingTimerRef.current) clearInterval(recordingTimerRef.current);
+        setRecordingDuration(0);
+
+        const blob = new Blob(audioChunksRef.current, { type: mimeType });
+        if (blob.size < 1000) return; // too short
+
+        setIsUploadingFile(true);
+        try {
+          if (!user) throw new Error("Não autenticado");
+          const ext = mimeType.includes("webm") ? "webm" : "ogg";
+          const path = `${user.id}/${Date.now()}-voice.${ext}`;
+          const file = new File([blob], `gravacao.${ext}`, { type: mimeType });
+
+          const { error } = await supabase.storage
+            .from("chat-images")
+            .upload(path, file, { contentType: mimeType });
+          if (error) throw error;
+
+          const { data: urlData } = supabase.storage
+            .from("chat-images")
+            .getPublicUrl(path);
+
+          const base64 = await fileToBase64(file);
+
+          const pending: PendingFile = {
+            url: urlData.publicUrl,
+            type: "audio",
+            name: `Gravação de voz`,
+            mimeType,
+            base64,
+          };
+          setPendingFiles([pending]);
+          // Auto-send the voice message
+          setTimeout(() => {
+            const voiceText = "🎤 Áudio gravado para análise";
+            // We'll trigger send via a ref-based approach
+            sendMessageRef.current?.(voiceText);
+          }, 100);
+        } catch (err) {
+          console.error("Upload error:", err);
+          toast.error("Erro ao enviar gravação. Tente novamente.");
+        } finally {
+          setIsUploadingFile(false);
+        }
+      };
+
+      recorder.start(250);
+      mediaRecorderRef.current = recorder;
+      setIsRecording(true);
+      setRecordingDuration(0);
+      recordingTimerRef.current = setInterval(() => {
+        setRecordingDuration(d => d + 1);
+      }, 1000);
+    } catch (err) {
+      console.error("Mic access error:", err);
+      toast.error("Não foi possível acessar o microfone. Verifique as permissões.");
+    }
+  }, [user]);
+
+  const stopRecording = useCallback(() => {
+    if (mediaRecorderRef.current && mediaRecorderRef.current.state !== "inactive") {
+      mediaRecorderRef.current.stop();
+    }
+    setIsRecording(false);
+  }, []);
+
+  const cancelRecording = useCallback(() => {
+    if (mediaRecorderRef.current && mediaRecorderRef.current.state !== "inactive") {
+      mediaRecorderRef.current.stream.getTracks().forEach(t => t.stop());
+      mediaRecorderRef.current.stop();
+      audioChunksRef.current = []; // clear so onstop does nothing useful
+    }
+    if (recordingTimerRef.current) clearInterval(recordingTimerRef.current);
+    setIsRecording(false);
+    setRecordingDuration(0);
+  }, []);
+
+  // Ref to allow onstop callback to call sendMessage
+  const sendMessageRef = useRef<((text: string) => void) | null>(null);
+
   const sendMessage = useCallback(async (text: string) => {
     const hasPendingFiles = pendingFiles.length > 0;
     const sanitized = clampText(text, 2000);
