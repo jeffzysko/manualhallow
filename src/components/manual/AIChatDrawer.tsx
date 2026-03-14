@@ -868,7 +868,7 @@ const AIChatDrawer = ({ open, onClose }: { open: boolean; onClose: () => void })
                 border: "none",
                 cursor: isLoading ? "not-allowed" : "pointer",
                 padding: "6px",
-                color: attachMenuOpen || pendingFile ? "hsl(var(--primary))" : "hsl(var(--muted-foreground))",
+                color: attachMenuOpen || pendingFiles.length > 0 ? "hsl(var(--primary))" : "hsl(var(--muted-foreground))",
                 display: "flex",
                 alignItems: "center",
                 opacity: isLoading ? 0.5 : 1,
