@@ -67,21 +67,21 @@ function getTextContent(content: MsgContent): string {
   return content.filter(p => p.type === "text").map(p => (p as any).text || "").join("");
 }
 
-/** Get image URL from a multimodal message */
-function getImageUrl(content: MsgContent): string | null {
-  if (typeof content === "string") return null;
-  const img = content.find(p => p.type === "image_url");
-  return (img as any)?.image_url?.url || null;
+/** Get all image URLs from a multimodal message */
+function getImageUrls(content: MsgContent): string[] {
+  if (typeof content === "string") return [];
+  return content.filter(p => p.type === "image_url").map(p => (p as any)?.image_url?.url).filter(Boolean);
 }
 
-/** Get attached file info from a message */
-function getAttachedFile(content: MsgContent): { type: string; name: string; url?: string } | null {
-  if (typeof content === "string") return null;
-  const audio = content.find(p => p.type === "input_audio");
-  if (audio) return { type: "audio", name: "Áudio" };
-  const file = content.find(p => p.type === "file_url");
-  if (file) return { type: "document", name: (file as any).file_url?.name || "Documento", url: (file as any).file_url?.url };
-  return null;
+/** Get all attached files info from a message */
+function getAttachedFiles(content: MsgContent): { type: string; name: string; url?: string }[] {
+  if (typeof content === "string") return [];
+  const results: { type: string; name: string; url?: string }[] = [];
+  for (const p of content) {
+    if (p.type === "input_audio") results.push({ type: "audio", name: "Áudio" });
+    if (p.type === "file_url") results.push({ type: "document", name: (p as any).file_url?.name || "Documento", url: (p as any).file_url?.url });
+  }
+  return results;
 }
 
 /** Parse dynamic suggestions from the AI response */
@@ -150,7 +150,7 @@ const AIChatDrawer = ({ open, onClose }: { open: boolean; onClose: () => void })
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [historyLoaded, setHistoryLoaded] = useState(false);
-  const [pendingFile, setPendingFile] = useState<PendingFile | null>(null);
+  const [pendingFiles, setPendingFiles] = useState<PendingFile[]>([]);
   const [isUploadingFile, setIsUploadingFile] = useState(false);
   const [attachMenuOpen, setAttachMenuOpen] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -245,18 +245,26 @@ const AIChatDrawer = ({ open, onClose }: { open: boolean; onClose: () => void })
   const { track } = useAnalytics();
 
   const handleFileSelect = useCallback(async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
+    const files = e.target.files;
+    if (!files || files.length === 0) return;
 
-    const fileType = getFileTypeCategory(file.type);
+    const filesToProcess = Array.from(files);
     
-    if (!ACCEPTED_TYPES[file.type]) {
-      alert("Formato não suportado. Envie imagens, áudios, PDFs ou documentos de texto.");
-      return;
+    // Validate all files first
+    for (const file of filesToProcess) {
+      if (!ACCEPTED_TYPES[file.type]) {
+        alert(`Formato não suportado: ${file.name}. Envie imagens, áudios, PDFs ou documentos de texto.`);
+        return;
+      }
+      if (file.size > MAX_FILE_SIZE) {
+        alert(`Arquivo muito grande: ${file.name}. Máximo 10MB por arquivo.`);
+        return;
+      }
     }
 
-    if (file.size > MAX_FILE_SIZE) {
-      alert("Arquivo muito grande. Máximo 10MB.");
+    // Limit total pending files to 10
+    if (pendingFiles.length + filesToProcess.length > 10) {
+      alert("Máximo de 10 arquivos por mensagem.");
       return;
     }
 
@@ -264,61 +272,77 @@ const AIChatDrawer = ({ open, onClose }: { open: boolean; onClose: () => void })
     try {
       if (!user) throw new Error("Não autenticado");
 
-      const ext = file.name.split(".").pop() || "bin";
-      const path = `${user.id}/${Date.now()}.${ext}`;
+      const newFiles: PendingFile[] = [];
 
-      const { error } = await supabase.storage
-        .from("chat-images")
-        .upload(path, file, { contentType: file.type });
+      for (const file of filesToProcess) {
+        const fileType = getFileTypeCategory(file.type);
+        const ext = file.name.split(".").pop() || "bin";
+        const path = `${user.id}/${Date.now()}-${Math.random().toString(36).slice(2, 6)}.${ext}`;
 
-      if (error) throw error;
+        const { error } = await supabase.storage
+          .from("chat-images")
+          .upload(path, file, { contentType: file.type });
 
-      const { data: urlData } = supabase.storage
-        .from("chat-images")
-        .getPublicUrl(path);
+        if (error) throw error;
 
-      const pending: PendingFile = {
-        url: urlData.publicUrl,
-        type: fileType,
-        name: file.name,
-        mimeType: file.type,
-      };
+        const { data: urlData } = supabase.storage
+          .from("chat-images")
+          .getPublicUrl(path);
 
-      // For audio, also store base64 for API
-      if (fileType === "audio") {
-        pending.base64 = await fileToBase64(file);
+        const pending: PendingFile = {
+          url: urlData.publicUrl,
+          type: fileType,
+          name: file.name,
+          mimeType: file.type,
+        };
+
+        if (fileType === "audio") {
+          pending.base64 = await fileToBase64(file);
+        }
+
+        newFiles.push(pending);
       }
 
-      setPendingFile(pending);
+      setPendingFiles(prev => [...prev, ...newFiles]);
     } catch (err: any) {
       console.error("Upload error:", err);
       alert("Erro ao enviar arquivo. Tente novamente.");
     } finally {
       setIsUploadingFile(false);
-      if (fileInputRef.current) fileInputRef.current.value = "";
+      // Reset all file inputs
+      if (imageInputRef.current) imageInputRef.current.value = "";
+      if (audioInputRef.current) audioInputRef.current.value = "";
+      if (docInputRef.current) docInputRef.current.value = "";
     }
-  }, [user]);
+  }, [user, pendingFiles]);
 
   const sendMessage = useCallback(async (text: string) => {
+    const hasPendingFiles = pendingFiles.length > 0;
     const sanitized = clampText(text, 2000);
-    if ((!sanitized && !pendingFile) || isLoading) return;
+    if ((!sanitized && !hasPendingFiles) || isLoading) return;
 
-    const fileEmoji = pendingFile?.type === "image" ? "📸" : pendingFile?.type === "audio" ? "🎤" : "📄";
-    const fileLabel = pendingFile?.type === "image" ? "print" : pendingFile?.type === "audio" ? "áudio" : "documento";
+    const fileCount = pendingFiles.length;
+    const fileTypes = [...new Set(pendingFiles.map(f => f.type))];
+    const fileEmoji = fileTypes.includes("image") ? "📸" : fileTypes.includes("audio") ? "🎤" : "📄";
+    const fileLabel = fileCount === 1
+      ? (pendingFiles[0].type === "image" ? "print" : pendingFiles[0].type === "audio" ? "áudio" : "documento")
+      : `${fileCount} arquivos`;
     let displayText = sanitized || `${fileEmoji} Enviando ${fileLabel} para análise`;
 
     let userContent: MsgContent;
 
-    if (pendingFile) {
+    if (hasPendingFiles) {
       const parts: ContentPart[] = [];
       parts.push({ type: "text", text: displayText });
 
-      if (pendingFile.type === "image") {
-        parts.push({ type: "image_url", image_url: { url: pendingFile.url } });
-      } else if (pendingFile.type === "audio" && pendingFile.base64) {
-        parts.push({ type: "input_audio", input_audio: { data: pendingFile.base64, format: getAudioFormat(pendingFile.mimeType) } });
-      } else if (pendingFile.type === "document") {
-        parts.push({ type: "file_url", file_url: { url: pendingFile.url, mime_type: pendingFile.mimeType, name: pendingFile.name } });
+      for (const pf of pendingFiles) {
+        if (pf.type === "image") {
+          parts.push({ type: "image_url", image_url: { url: pf.url } });
+        } else if (pf.type === "audio" && pf.base64) {
+          parts.push({ type: "input_audio", input_audio: { data: pf.base64, format: getAudioFormat(pf.mimeType) } });
+        } else if (pf.type === "document") {
+          parts.push({ type: "file_url", file_url: { url: pf.url, mime_type: pf.mimeType, name: pf.name } });
+        }
       }
 
       userContent = parts;
@@ -328,16 +352,18 @@ const AIChatDrawer = ({ open, onClose }: { open: boolean; onClose: () => void })
 
     const userMsg: Msg = { role: "user", content: userContent };
     setInput("");
-    const currentPendingFile = pendingFile;
-    setPendingFile(null);
+    const currentPendingFiles = [...pendingFiles];
+    setPendingFiles([]);
     setMessages(prev => [...prev, userMsg]);
     setIsLoading(true);
 
-    persistMessage("user", displayText, currentPendingFile ? {
-      type: currentPendingFile.type,
-      url: currentPendingFile.url,
-      name: currentPendingFile.name,
-      mimeType: currentPendingFile.mimeType,
+    // Persist with first file info for backwards compat
+    const firstFile = currentPendingFiles[0];
+    persistMessage("user", displayText, firstFile ? {
+      type: firstFile.type,
+      url: firstFile.url,
+      name: firstFile.name,
+      mimeType: firstFile.mimeType,
     } : undefined);
 
     let assistantSoFar = "";
@@ -451,7 +477,7 @@ const AIChatDrawer = ({ open, onClose }: { open: boolean; onClose: () => void })
     } finally {
       setIsLoading(false);
     }
-  }, [input, isLoading, messages, persistMessage, pendingFile]);
+  }, [input, isLoading, messages, persistMessage, pendingFiles]);
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === "Enter" && !e.shiftKey) {
@@ -479,9 +505,9 @@ const AIChatDrawer = ({ open, onClose }: { open: boolean; onClose: () => void })
   if (!open) return null;
 
   const getPlaceholder = () => {
-    if (pendingFile?.type === "image") return "Descreva o contexto do print...";
-    if (pendingFile?.type === "audio") return "Adicione contexto sobre o áudio...";
-    if (pendingFile?.type === "document") return "Pergunte algo sobre o documento...";
+    if (pendingFiles.some(f => f.type === "image")) return "Descreva o contexto dos prints...";
+    if (pendingFiles.some(f => f.type === "audio")) return "Adicione contexto sobre os áudios...";
+    if (pendingFiles.length > 0) return "Pergunte algo sobre os documentos...";
     return "Faça sua pergunta...";
   };
 
@@ -558,28 +584,32 @@ const AIChatDrawer = ({ open, onClose }: { open: boolean; onClose: () => void })
           {messages.map((msg, i) => {
             const isAssistant = msg.role === "assistant";
             const text = getTextContent(msg.content);
-            const imageUrl = getImageUrl(msg.content);
-            const attachedFile = getAttachedFile(msg.content);
+            const imageUrls = getImageUrls(msg.content);
+            const attachedFiles = getAttachedFiles(msg.content);
             const { clean } = isAssistant ? parseSuggestions(text) : { clean: text };
 
             return (
               <div key={i} className={`ai-chat-msg ai-chat-msg--${msg.role}`}>
-                {imageUrl && (
-                  <img
-                    src={imageUrl}
-                    alt="Print enviado"
-                    className="ai-chat-image"
-                    style={{
-                      maxWidth: "100%",
-                      maxHeight: "240px",
-                      borderRadius: "8px",
-                      marginBottom: "6px",
-                      objectFit: "contain",
-                    }}
-                  />
+                {imageUrls.length > 0 && (
+                  <div style={{ display: "flex", flexWrap: "wrap", gap: "4px", marginBottom: "6px" }}>
+                    {imageUrls.map((url, idx) => (
+                      <img
+                        key={idx}
+                        src={url}
+                        alt="Print enviado"
+                        className="ai-chat-image"
+                        style={{
+                          maxWidth: imageUrls.length > 1 ? "48%" : "100%",
+                          maxHeight: "240px",
+                          borderRadius: "8px",
+                          objectFit: "contain",
+                        }}
+                      />
+                    ))}
+                  </div>
                 )}
-                {attachedFile && (
-                  <div style={{
+                {attachedFiles.map((af, idx) => (
+                  <div key={idx} style={{
                     display: "flex",
                     alignItems: "center",
                     gap: "8px",
@@ -589,17 +619,17 @@ const AIChatDrawer = ({ open, onClose }: { open: boolean; onClose: () => void })
                     marginBottom: "6px",
                     fontSize: "13px",
                   }}>
-                    {getFileIcon(attachedFile.type)}
+                    {getFileIcon(af.type)}
                     <span style={{ flex: 1, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
-                      {attachedFile.name}
+                      {af.name}
                     </span>
-                    {attachedFile.url && (
-                      <a href={attachedFile.url} target="_blank" rel="noopener noreferrer" style={{ color: "hsl(var(--primary))", fontSize: "12px", flexShrink: 0 }}>
+                    {af.url && (
+                      <a href={af.url} target="_blank" rel="noopener noreferrer" style={{ color: "hsl(var(--primary))", fontSize: "12px", flexShrink: 0 }}>
                         Abrir
                       </a>
                     )}
                   </div>
-                )}
+                ))}
                 {isAssistant ? (
                   <div className="ai-chat-md">
                     <ReactMarkdown>{clean}</ReactMarkdown>
@@ -636,67 +666,84 @@ const AIChatDrawer = ({ open, onClose }: { open: boolean; onClose: () => void })
           <div ref={messagesEndRef} />
         </div>
 
-        {/* Pending file preview */}
-        {pendingFile && (
+        {/* Pending files preview */}
+        {pendingFiles.length > 0 && (
           <div style={{
             padding: "8px 16px",
             background: "hsl(var(--muted))",
             display: "flex",
-            alignItems: "center",
+            flexWrap: "wrap",
             gap: "8px",
             borderTop: "1px solid hsl(var(--border))",
+            maxHeight: "140px",
+            overflowY: "auto",
           }}>
-            {pendingFile.type === "image" ? (
-              <img
-                src={pendingFile.url}
-                alt="Preview"
-                style={{ height: "48px", borderRadius: "6px", objectFit: "cover" }}
-              />
-            ) : (
-              <div style={{
-                height: "48px",
-                width: "48px",
-                borderRadius: "6px",
-                background: "hsl(var(--primary) / 0.1)",
+            {pendingFiles.map((pf, idx) => (
+              <div key={idx} style={{
                 display: "flex",
                 alignItems: "center",
-                justifyContent: "center",
-                color: "hsl(var(--primary))",
-                flexShrink: 0,
+                gap: "6px",
+                padding: "4px 8px",
+                borderRadius: "8px",
+                background: "hsl(var(--background))",
+                border: "1px solid hsl(var(--border))",
+                maxWidth: "200px",
               }}>
-                {getFileIcon(pendingFile.type)}
+                {pf.type === "image" ? (
+                  <img
+                    src={pf.url}
+                    alt="Preview"
+                    style={{ height: "36px", width: "36px", borderRadius: "4px", objectFit: "cover", flexShrink: 0 }}
+                  />
+                ) : (
+                  <div style={{
+                    height: "36px",
+                    width: "36px",
+                    borderRadius: "4px",
+                    background: "hsl(var(--primary) / 0.1)",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    color: "hsl(var(--primary))",
+                    flexShrink: 0,
+                  }}>
+                    {getFileIcon(pf.type)}
+                  </div>
+                )}
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <div style={{ fontSize: "11px", fontWeight: 600, color: "hsl(var(--foreground))", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                    {pf.name}
+                  </div>
+                  <div style={{ fontSize: "10px", color: "hsl(var(--muted-foreground))" }}>
+                    {pf.type === "image" ? "Imagem" : pf.type === "audio" ? "Áudio" : "Documento"}
+                  </div>
+                </div>
+                <button
+                  onClick={() => setPendingFiles(prev => prev.filter((_, i) => i !== idx))}
+                  style={{
+                    background: "none",
+                    border: "none",
+                    cursor: "pointer",
+                    color: "hsl(var(--muted-foreground))",
+                    fontSize: "14px",
+                    padding: "2px",
+                    lineHeight: 1,
+                    flexShrink: 0,
+                  }}
+                  aria-label="Remover arquivo"
+                >
+                  ✕
+                </button>
               </div>
-            )}
-            <div style={{ flex: 1, minWidth: 0 }}>
-              <div style={{ fontSize: "12px", fontWeight: 600, color: "hsl(var(--foreground))", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
-                {pendingFile.name}
-              </div>
-              <div style={{ fontSize: "11px", color: "hsl(var(--muted-foreground))" }}>
-                {pendingFile.type === "image" ? "Imagem" : pendingFile.type === "audio" ? "Áudio" : "Documento"} pronto para envio
-              </div>
-            </div>
-            <button
-              onClick={() => setPendingFile(null)}
-              style={{
-                background: "none",
-                border: "none",
-                cursor: "pointer",
-                color: "hsl(var(--muted-foreground))",
-                fontSize: "18px",
-                padding: "4px",
-              }}
-              aria-label="Remover arquivo"
-            >
-              ✕
-            </button>
+            ))}
           </div>
         )}
 
         <div className="ai-chat-input-area">
           {/* Hidden file inputs for each type */}
-          <input ref={imageInputRef} type="file" accept="image/jpeg,image/png,image/webp,image/gif" style={{ display: "none" }} onChange={handleFileSelect} />
-          <input ref={audioInputRef} type="file" accept="audio/mpeg,audio/mp3,audio/wav,audio/ogg,audio/m4a,audio/x-m4a,audio/mp4,audio/webm" style={{ display: "none" }} onChange={handleFileSelect} />
-          <input ref={docInputRef} type="file" accept="application/pdf,text/plain,text/csv,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" style={{ display: "none" }} onChange={handleFileSelect} />
+          <input ref={imageInputRef} type="file" accept="image/jpeg,image/png,image/webp,image/gif" multiple style={{ display: "none" }} onChange={handleFileSelect} />
+          <input ref={audioInputRef} type="file" accept="audio/mpeg,audio/mp3,audio/wav,audio/ogg,audio/m4a,audio/x-m4a,audio/mp4,audio/webm" multiple style={{ display: "none" }} onChange={handleFileSelect} />
+          <input ref={docInputRef} type="file" accept="application/pdf,text/plain,text/csv,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" multiple style={{ display: "none" }} onChange={handleFileSelect} />
 
           {/* WhatsApp-style attach menu v2 */}
           <div style={{ position: "relative", flexShrink: 0 }} ref={attachMenuRef}>
@@ -825,7 +872,7 @@ const AIChatDrawer = ({ open, onClose }: { open: boolean; onClose: () => void })
                 border: "none",
                 cursor: isLoading ? "not-allowed" : "pointer",
                 padding: "6px",
-                color: attachMenuOpen || pendingFile ? "hsl(var(--primary))" : "hsl(var(--muted-foreground))",
+                color: attachMenuOpen || pendingFiles.length > 0 ? "hsl(var(--primary))" : "hsl(var(--muted-foreground))",
                 display: "flex",
                 alignItems: "center",
                 opacity: isLoading ? 0.5 : 1,
@@ -857,7 +904,7 @@ const AIChatDrawer = ({ open, onClose }: { open: boolean; onClose: () => void })
             rows={1}
             disabled={isLoading}
           />
-          <button className="ai-chat-send" onClick={() => sendMessage(input)} disabled={isLoading || (!input.trim() && !pendingFile)}>
+          <button className="ai-chat-send" onClick={() => sendMessage(input)} disabled={isLoading || (!input.trim() && pendingFiles.length === 0)}>
             <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <line x1="22" y1="2" x2="11" y2="13" />
               <polygon points="22 2 15 22 11 13 2 9 22 2" />
