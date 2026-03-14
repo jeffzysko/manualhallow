@@ -1089,22 +1089,97 @@ const AIChatDrawer = ({ open, onClose }: { open: boolean; onClose: () => void })
             </button>
           </div>
 
-          <textarea
-            ref={inputRef}
-            className="ai-chat-input"
-            value={input}
-            onChange={e => setInput(e.target.value)}
-            onKeyDown={handleKeyDown}
-            placeholder={getPlaceholder()}
-            rows={1}
-            disabled={isLoading}
-          />
-          <button className="ai-chat-send" onClick={() => sendMessage(input)} disabled={isLoading || (!input.trim() && pendingFiles.length === 0)}>
-            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <line x1="22" y1="2" x2="11" y2="13" />
-              <polygon points="22 2 15 22 11 13 2 9 22 2" />
-            </svg>
-          </button>
+          {/* Recording UI */}
+          {isRecording ? (
+            <div style={{
+              flex: 1, display: "flex", alignItems: "center", gap: "10px",
+              padding: "0 8px",
+            }}>
+              <button
+                onClick={cancelRecording}
+                style={{
+                  background: "none", border: "none", cursor: "pointer",
+                  color: "hsl(var(--destructive))", fontSize: "20px", padding: "4px",
+                  flexShrink: 0,
+                }}
+                title="Cancelar gravação"
+              >✕</button>
+              <div style={{
+                flex: 1, display: "flex", alignItems: "center", gap: "8px",
+              }}>
+                <span style={{
+                  width: "10px", height: "10px", borderRadius: "50%",
+                  background: "hsl(var(--destructive))",
+                  animation: "pulse 1.2s infinite",
+                  flexShrink: 0,
+                }} />
+                <span style={{
+                  fontSize: "14px", color: "hsl(var(--foreground))",
+                  fontVariantNumeric: "tabular-nums",
+                }}>
+                  {Math.floor(recordingDuration / 60).toString().padStart(2, "0")}:{(recordingDuration % 60).toString().padStart(2, "0")}
+                </span>
+                <span style={{ fontSize: "13px", color: "hsl(var(--muted-foreground))" }}>
+                  Gravando...
+                </span>
+              </div>
+              <button
+                onClick={stopRecording}
+                style={{
+                  background: "linear-gradient(135deg, #A47B3B, #D4A853)",
+                  border: "none", borderRadius: "50%",
+                  width: "38px", height: "38px",
+                  display: "flex", alignItems: "center", justifyContent: "center",
+                  cursor: "pointer",
+                  boxShadow: "0 4px 12px rgba(164,123,59,0.4)",
+                  flexShrink: 0,
+                }}
+                title="Enviar gravação"
+              >
+                <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                  <line x1="22" y1="2" x2="11" y2="13" />
+                  <polygon points="22 2 15 22 11 13 2 9 22 2" />
+                </svg>
+              </button>
+            </div>
+          ) : (
+            <>
+              <textarea
+                ref={inputRef}
+                className="ai-chat-input"
+                value={input}
+                onChange={e => setInput(e.target.value)}
+                onKeyDown={handleKeyDown}
+                placeholder={getPlaceholder()}
+                rows={1}
+                disabled={isLoading}
+              />
+              {/* Show send button when there's text/files, mic button when empty */}
+              {(input.trim() || pendingFiles.length > 0) ? (
+                <button className="ai-chat-send" onClick={() => sendMessage(input)} disabled={isLoading}>
+                  <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <line x1="22" y1="2" x2="11" y2="13" />
+                    <polygon points="22 2 15 22 11 13 2 9 22 2" />
+                  </svg>
+                </button>
+              ) : (
+                <button
+                  className="ai-chat-send"
+                  onClick={startRecording}
+                  disabled={isLoading || isUploadingFile}
+                  title="Gravar áudio"
+                  style={{ color: "hsl(var(--primary))" }}
+                >
+                  <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z" />
+                    <path d="M19 10v2a7 7 0 0 1-14 0v-2" />
+                    <line x1="12" y1="19" x2="12" y2="23" />
+                    <line x1="8" y1="23" x2="16" y2="23" />
+                  </svg>
+                </button>
+              )}
+            </>
+          )}
         </div>
       </div>
     </div>
