@@ -703,39 +703,39 @@ const AIChatDrawer = ({ open, onClose }: { open: boolean; onClose: () => void })
             {attachMenuOpen && (
               <div style={{
                 position: "absolute",
-                bottom: "calc(100% + 12px)",
+                bottom: "calc(100% + 14px)",
                 left: 0,
-                background: "hsl(220 20% 10% / 0.97)",
-                backdropFilter: "blur(20px)",
-                WebkitBackdropFilter: "blur(20px)",
-                borderRadius: "16px",
-                boxShadow: "0 12px 40px rgba(0,0,0,0.5), 0 0 0 1px hsl(var(--primary) / 0.15)",
-                padding: "10px",
+                background: "linear-gradient(160deg, rgba(20, 18, 14, 0.98), rgba(12, 11, 9, 0.99))",
+                backdropFilter: "blur(24px)",
+                WebkitBackdropFilter: "blur(24px)",
+                borderRadius: "18px",
+                boxShadow: "0 16px 48px rgba(0,0,0,0.6), 0 0 0 1px rgba(191,163,107,0.2), inset 0 1px 0 rgba(191,163,107,0.08)",
+                padding: "12px",
                 display: "flex",
                 flexDirection: "column",
                 gap: "4px",
-                minWidth: "200px",
+                minWidth: "210px",
                 zIndex: 100,
-                border: "1px solid hsl(var(--primary) / 0.2)",
-                animation: "attachMenuIn 0.18s ease-out",
+                animation: "attachMenuIn 0.2s cubic-bezier(0.34,1.56,0.64,1)",
               }}>
+                {/* Foto */}
                 <button
                   onClick={() => { imageInputRef.current?.click(); setAttachMenuOpen(false); }}
                   style={{
-                    display: "flex", alignItems: "center", gap: "12px",
-                    padding: "10px 14px", border: "none", background: "none",
-                    cursor: "pointer", borderRadius: "10px", fontSize: "14px",
-                    color: "hsl(var(--foreground))", width: "100%", textAlign: "left",
-                    transition: "background 0.15s",
+                    display: "flex", alignItems: "center", gap: "14px",
+                    padding: "11px 14px", border: "none", background: "transparent",
+                    cursor: "pointer", borderRadius: "12px", fontSize: "14px",
+                    color: "#f0e6d2", width: "100%", textAlign: "left",
+                    transition: "background 0.2s, transform 0.15s",
                   }}
-                  onMouseEnter={e => (e.currentTarget.style.background = "hsl(var(--muted))")}
-                  onMouseLeave={e => (e.currentTarget.style.background = "none")}
+                  onMouseEnter={e => { e.currentTarget.style.background = "rgba(191,163,107,0.1)"; e.currentTarget.style.transform = "translateX(4px)"; }}
+                  onMouseLeave={e => { e.currentTarget.style.background = "transparent"; e.currentTarget.style.transform = "none"; }}
                 >
                   <span style={{
-                    width: "36px", height: "36px", borderRadius: "50%",
-                    background: "linear-gradient(135deg, #7C3AED, #A855F7)",
+                    width: "38px", height: "38px", borderRadius: "50%",
+                    background: "linear-gradient(135deg, #A47B3B, #D4A853)",
                     display: "flex", alignItems: "center", justifyContent: "center",
-                    flexShrink: 0,
+                    flexShrink: 0, boxShadow: "0 4px 12px rgba(164,123,59,0.35)",
                   }}>
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                       <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
@@ -743,52 +743,64 @@ const AIChatDrawer = ({ open, onClose }: { open: boolean; onClose: () => void })
                       <polyline points="21 15 16 10 5 21" />
                     </svg>
                   </span>
-                  <span style={{ fontWeight: 500 }}>Foto / Imagem</span>
+                  <div>
+                    <span style={{ fontWeight: 600, display: "block", letterSpacing: "0.01em" }}>Foto / Imagem</span>
+                    <span style={{ fontSize: "11px", color: "rgba(240,230,210,0.5)", marginTop: "1px", display: "block" }}>JPG, PNG, WebP, GIF</span>
+                  </div>
                 </button>
 
+                <div style={{ height: "1px", background: "rgba(191,163,107,0.1)", margin: "2px 14px" }} />
+
+                {/* Documento */}
                 <button
                   onClick={() => { docInputRef.current?.click(); setAttachMenuOpen(false); }}
                   style={{
-                    display: "flex", alignItems: "center", gap: "12px",
-                    padding: "10px 14px", border: "none", background: "none",
-                    cursor: "pointer", borderRadius: "10px", fontSize: "14px",
-                    color: "hsl(var(--foreground))", width: "100%", textAlign: "left",
-                    transition: "background 0.15s",
+                    display: "flex", alignItems: "center", gap: "14px",
+                    padding: "11px 14px", border: "none", background: "transparent",
+                    cursor: "pointer", borderRadius: "12px", fontSize: "14px",
+                    color: "#f0e6d2", width: "100%", textAlign: "left",
+                    transition: "background 0.2s, transform 0.15s",
                   }}
-                  onMouseEnter={e => (e.currentTarget.style.background = "hsl(var(--muted))")}
-                  onMouseLeave={e => (e.currentTarget.style.background = "none")}
+                  onMouseEnter={e => { e.currentTarget.style.background = "rgba(191,163,107,0.1)"; e.currentTarget.style.transform = "translateX(4px)"; }}
+                  onMouseLeave={e => { e.currentTarget.style.background = "transparent"; e.currentTarget.style.transform = "none"; }}
                 >
                   <span style={{
-                    width: "36px", height: "36px", borderRadius: "50%",
-                    background: "linear-gradient(135deg, #2563EB, #3B82F6)",
+                    width: "38px", height: "38px", borderRadius: "50%",
+                    background: "linear-gradient(135deg, #8B7355, #BFA36B)",
                     display: "flex", alignItems: "center", justifyContent: "center",
-                    flexShrink: 0,
+                    flexShrink: 0, boxShadow: "0 4px 12px rgba(139,115,85,0.35)",
                   }}>
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                       <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
                       <polyline points="14 2 14 8 20 8" />
                     </svg>
                   </span>
-                  <span style={{ fontWeight: 500 }}>Documento</span>
+                  <div>
+                    <span style={{ fontWeight: 600, display: "block", letterSpacing: "0.01em" }}>Documento</span>
+                    <span style={{ fontSize: "11px", color: "rgba(240,230,210,0.5)", marginTop: "1px", display: "block" }}>PDF, DOCX, TXT, CSV</span>
+                  </div>
                 </button>
 
+                <div style={{ height: "1px", background: "rgba(191,163,107,0.1)", margin: "2px 14px" }} />
+
+                {/* Áudio */}
                 <button
                   onClick={() => { audioInputRef.current?.click(); setAttachMenuOpen(false); }}
                   style={{
-                    display: "flex", alignItems: "center", gap: "12px",
-                    padding: "10px 14px", border: "none", background: "none",
-                    cursor: "pointer", borderRadius: "10px", fontSize: "14px",
-                    color: "hsl(var(--foreground))", width: "100%", textAlign: "left",
-                    transition: "background 0.15s",
+                    display: "flex", alignItems: "center", gap: "14px",
+                    padding: "11px 14px", border: "none", background: "transparent",
+                    cursor: "pointer", borderRadius: "12px", fontSize: "14px",
+                    color: "#f0e6d2", width: "100%", textAlign: "left",
+                    transition: "background 0.2s, transform 0.15s",
                   }}
-                  onMouseEnter={e => (e.currentTarget.style.background = "hsl(var(--muted))")}
-                  onMouseLeave={e => (e.currentTarget.style.background = "none")}
+                  onMouseEnter={e => { e.currentTarget.style.background = "rgba(191,163,107,0.1)"; e.currentTarget.style.transform = "translateX(4px)"; }}
+                  onMouseLeave={e => { e.currentTarget.style.background = "transparent"; e.currentTarget.style.transform = "none"; }}
                 >
                   <span style={{
-                    width: "36px", height: "36px", borderRadius: "50%",
-                    background: "linear-gradient(135deg, #059669, #10B981)",
+                    width: "38px", height: "38px", borderRadius: "50%",
+                    background: "linear-gradient(135deg, #6B5D3E, #A4893B)",
                     display: "flex", alignItems: "center", justifyContent: "center",
-                    flexShrink: 0,
+                    flexShrink: 0, boxShadow: "0 4px 12px rgba(107,93,62,0.35)",
                   }}>
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                       <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z" />
@@ -796,7 +808,10 @@ const AIChatDrawer = ({ open, onClose }: { open: boolean; onClose: () => void })
                       <line x1="12" y1="19" x2="12" y2="23" />
                     </svg>
                   </span>
-                  <span style={{ fontWeight: 500 }}>Áudio</span>
+                  <div>
+                    <span style={{ fontWeight: 600, display: "block", letterSpacing: "0.01em" }}>Áudio</span>
+                    <span style={{ fontSize: "11px", color: "rgba(240,230,210,0.5)", marginTop: "1px", display: "block" }}>MP3, WAV, M4A, OGG</span>
+                  </div>
                 </button>
               </div>
             )}
