@@ -584,28 +584,32 @@ const AIChatDrawer = ({ open, onClose }: { open: boolean; onClose: () => void })
           {messages.map((msg, i) => {
             const isAssistant = msg.role === "assistant";
             const text = getTextContent(msg.content);
-            const imageUrl = getImageUrl(msg.content);
-            const attachedFile = getAttachedFile(msg.content);
+            const imageUrls = getImageUrls(msg.content);
+            const attachedFiles = getAttachedFiles(msg.content);
             const { clean } = isAssistant ? parseSuggestions(text) : { clean: text };
 
             return (
               <div key={i} className={`ai-chat-msg ai-chat-msg--${msg.role}`}>
-                {imageUrl && (
-                  <img
-                    src={imageUrl}
-                    alt="Print enviado"
-                    className="ai-chat-image"
-                    style={{
-                      maxWidth: "100%",
-                      maxHeight: "240px",
-                      borderRadius: "8px",
-                      marginBottom: "6px",
-                      objectFit: "contain",
-                    }}
-                  />
+                {imageUrls.length > 0 && (
+                  <div style={{ display: "flex", flexWrap: "wrap", gap: "4px", marginBottom: "6px" }}>
+                    {imageUrls.map((url, idx) => (
+                      <img
+                        key={idx}
+                        src={url}
+                        alt="Print enviado"
+                        className="ai-chat-image"
+                        style={{
+                          maxWidth: imageUrls.length > 1 ? "48%" : "100%",
+                          maxHeight: "240px",
+                          borderRadius: "8px",
+                          objectFit: "contain",
+                        }}
+                      />
+                    ))}
+                  </div>
                 )}
-                {attachedFile && (
-                  <div style={{
+                {attachedFiles.map((af, idx) => (
+                  <div key={idx} style={{
                     display: "flex",
                     alignItems: "center",
                     gap: "8px",
@@ -615,17 +619,17 @@ const AIChatDrawer = ({ open, onClose }: { open: boolean; onClose: () => void })
                     marginBottom: "6px",
                     fontSize: "13px",
                   }}>
-                    {getFileIcon(attachedFile.type)}
+                    {getFileIcon(af.type)}
                     <span style={{ flex: 1, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
-                      {attachedFile.name}
+                      {af.name}
                     </span>
-                    {attachedFile.url && (
-                      <a href={attachedFile.url} target="_blank" rel="noopener noreferrer" style={{ color: "hsl(var(--primary))", fontSize: "12px", flexShrink: 0 }}>
+                    {af.url && (
+                      <a href={af.url} target="_blank" rel="noopener noreferrer" style={{ color: "hsl(var(--primary))", fontSize: "12px", flexShrink: 0 }}>
                         Abrir
                       </a>
                     )}
                   </div>
-                )}
+                ))}
                 {isAssistant ? (
                   <div className="ai-chat-md">
                     <ReactMarkdown>{clean}</ReactMarkdown>
