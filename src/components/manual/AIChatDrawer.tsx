@@ -523,6 +523,57 @@ const AIChatDrawer = ({ open, onClose }: { open: boolean; onClose: () => void })
     setMessages([]);
   }, [user]);
 
+  /** Handle feedback (👍/👎) on an assistant message */
+  const handleFeedback = useCallback(async (msgIndex: number, rating: number) => {
+    if (!user) return;
+    const msg = messages[msgIndex];
+    if (!msg || msg.role !== "assistant") return;
+
+    // Find the user question that preceded this answer
+    let question = "";
+    for (let i = msgIndex - 1; i >= 0; i--) {
+      if (messages[i].role === "user") {
+        question = getTextContent(messages[i].content);
+        break;
+      }
+    }
+
+    const answer = getTextContent(msg.content);
+    const { clean } = parseSuggestions(answer);
+
+    // Toggle: if same rating, remove it
+    const newRating = msg.rating === rating ? 0 : rating;
+
+    // Update local state
+    setMessages(prev => prev.map((m, i) => i === msgIndex ? { ...m, rating: newRating } : m));
+
+    try {
+      if (newRating === 0) {
+        // Remove insight if rating cleared
+        if (msg.id) {
+          await supabase.from("chat_insights").delete().eq("id", msg.id);
+        }
+      } else if (msg.id) {
+        // Update existing
+        await supabase.from("chat_insights").update({ rating: newRating }).eq("id", msg.id);
+      } else {
+        // Insert new
+        const { data } = await supabase.from("chat_insights").insert({
+          user_id: user.id,
+          question: question.slice(0, 500),
+          answer: clean.slice(0, 1000),
+          rating: newRating,
+        }).select("id").single();
+        if (data) {
+          setMessages(prev => prev.map((m, i) => i === msgIndex ? { ...m, id: data.id } : m));
+        }
+      }
+      toast.success(newRating === 1 ? "Feedback salvo ✓" : newRating === -1 ? "Feedback salvo ✓" : "Feedback removido");
+    } catch {
+      toast.error("Erro ao salvar feedback");
+    }
+  }, [user, messages]);
+
   // Extract suggestions from the last assistant message
   const lastAssistantSuggestions = useMemo(() => {
     if (isLoading) return [];
