@@ -67,21 +67,21 @@ function getTextContent(content: MsgContent): string {
   return content.filter(p => p.type === "text").map(p => (p as any).text || "").join("");
 }
 
-/** Get image URL from a multimodal message */
-function getImageUrl(content: MsgContent): string | null {
-  if (typeof content === "string") return null;
-  const img = content.find(p => p.type === "image_url");
-  return (img as any)?.image_url?.url || null;
+/** Get all image URLs from a multimodal message */
+function getImageUrls(content: MsgContent): string[] {
+  if (typeof content === "string") return [];
+  return content.filter(p => p.type === "image_url").map(p => (p as any)?.image_url?.url).filter(Boolean);
 }
 
-/** Get attached file info from a message */
-function getAttachedFile(content: MsgContent): { type: string; name: string; url?: string } | null {
-  if (typeof content === "string") return null;
-  const audio = content.find(p => p.type === "input_audio");
-  if (audio) return { type: "audio", name: "Áudio" };
-  const file = content.find(p => p.type === "file_url");
-  if (file) return { type: "document", name: (file as any).file_url?.name || "Documento", url: (file as any).file_url?.url };
-  return null;
+/** Get all attached files info from a message */
+function getAttachedFiles(content: MsgContent): { type: string; name: string; url?: string }[] {
+  if (typeof content === "string") return [];
+  const results: { type: string; name: string; url?: string }[] = [];
+  for (const p of content) {
+    if (p.type === "input_audio") results.push({ type: "audio", name: "Áudio" });
+    if (p.type === "file_url") results.push({ type: "document", name: (p as any).file_url?.name || "Documento", url: (p as any).file_url?.url });
+  }
+  return results;
 }
 
 /** Parse dynamic suggestions from the AI response */
