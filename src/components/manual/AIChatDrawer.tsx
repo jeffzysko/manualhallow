@@ -357,11 +357,13 @@ const AIChatDrawer = ({ open, onClose }: { open: boolean; onClose: () => void })
     setMessages(prev => [...prev, userMsg]);
     setIsLoading(true);
 
-    persistMessage("user", displayText, currentPendingFile ? {
-      type: currentPendingFile.type,
-      url: currentPendingFile.url,
-      name: currentPendingFile.name,
-      mimeType: currentPendingFile.mimeType,
+    // Persist with first file info for backwards compat
+    const firstFile = currentPendingFiles[0];
+    persistMessage("user", displayText, firstFile ? {
+      type: firstFile.type,
+      url: firstFile.url,
+      name: firstFile.name,
+      mimeType: firstFile.mimeType,
     } : undefined);
 
     let assistantSoFar = "";
