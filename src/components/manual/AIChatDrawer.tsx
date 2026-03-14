@@ -317,25 +317,32 @@ const AIChatDrawer = ({ open, onClose }: { open: boolean; onClose: () => void })
   }, [user, pendingFiles]);
 
   const sendMessage = useCallback(async (text: string) => {
+    const hasPendingFiles = pendingFiles.length > 0;
     const sanitized = clampText(text, 2000);
-    if ((!sanitized && !pendingFile) || isLoading) return;
+    if ((!sanitized && !hasPendingFiles) || isLoading) return;
 
-    const fileEmoji = pendingFile?.type === "image" ? "📸" : pendingFile?.type === "audio" ? "🎤" : "📄";
-    const fileLabel = pendingFile?.type === "image" ? "print" : pendingFile?.type === "audio" ? "áudio" : "documento";
+    const fileCount = pendingFiles.length;
+    const fileTypes = [...new Set(pendingFiles.map(f => f.type))];
+    const fileEmoji = fileTypes.includes("image") ? "📸" : fileTypes.includes("audio") ? "🎤" : "📄";
+    const fileLabel = fileCount === 1
+      ? (pendingFiles[0].type === "image" ? "print" : pendingFiles[0].type === "audio" ? "áudio" : "documento")
+      : `${fileCount} arquivos`;
     let displayText = sanitized || `${fileEmoji} Enviando ${fileLabel} para análise`;
 
     let userContent: MsgContent;
 
-    if (pendingFile) {
+    if (hasPendingFiles) {
       const parts: ContentPart[] = [];
       parts.push({ type: "text", text: displayText });
 
-      if (pendingFile.type === "image") {
-        parts.push({ type: "image_url", image_url: { url: pendingFile.url } });
-      } else if (pendingFile.type === "audio" && pendingFile.base64) {
-        parts.push({ type: "input_audio", input_audio: { data: pendingFile.base64, format: getAudioFormat(pendingFile.mimeType) } });
-      } else if (pendingFile.type === "document") {
-        parts.push({ type: "file_url", file_url: { url: pendingFile.url, mime_type: pendingFile.mimeType, name: pendingFile.name } });
+      for (const pf of pendingFiles) {
+        if (pf.type === "image") {
+          parts.push({ type: "image_url", image_url: { url: pf.url } });
+        } else if (pf.type === "audio" && pf.base64) {
+          parts.push({ type: "input_audio", input_audio: { data: pf.base64, format: getAudioFormat(pf.mimeType) } });
+        } else if (pf.type === "document") {
+          parts.push({ type: "file_url", file_url: { url: pf.url, mime_type: pf.mimeType, name: pf.name } });
+        }
       }
 
       userContent = parts;
@@ -345,8 +352,8 @@ const AIChatDrawer = ({ open, onClose }: { open: boolean; onClose: () => void })
 
     const userMsg: Msg = { role: "user", content: userContent };
     setInput("");
-    const currentPendingFile = pendingFile;
-    setPendingFile(null);
+    const currentPendingFiles = [...pendingFiles];
+    setPendingFiles([]);
     setMessages(prev => [...prev, userMsg]);
     setIsLoading(true);
 
