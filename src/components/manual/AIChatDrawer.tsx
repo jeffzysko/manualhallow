@@ -662,59 +662,76 @@ const AIChatDrawer = ({ open, onClose }: { open: boolean; onClose: () => void })
           <div ref={messagesEndRef} />
         </div>
 
-        {/* Pending file preview */}
-        {pendingFile && (
+        {/* Pending files preview */}
+        {pendingFiles.length > 0 && (
           <div style={{
             padding: "8px 16px",
             background: "hsl(var(--muted))",
             display: "flex",
-            alignItems: "center",
+            flexWrap: "wrap",
             gap: "8px",
             borderTop: "1px solid hsl(var(--border))",
+            maxHeight: "140px",
+            overflowY: "auto",
           }}>
-            {pendingFile.type === "image" ? (
-              <img
-                src={pendingFile.url}
-                alt="Preview"
-                style={{ height: "48px", borderRadius: "6px", objectFit: "cover" }}
-              />
-            ) : (
-              <div style={{
-                height: "48px",
-                width: "48px",
-                borderRadius: "6px",
-                background: "hsl(var(--primary) / 0.1)",
+            {pendingFiles.map((pf, idx) => (
+              <div key={idx} style={{
                 display: "flex",
                 alignItems: "center",
-                justifyContent: "center",
-                color: "hsl(var(--primary))",
-                flexShrink: 0,
+                gap: "6px",
+                padding: "4px 8px",
+                borderRadius: "8px",
+                background: "hsl(var(--background))",
+                border: "1px solid hsl(var(--border))",
+                maxWidth: "200px",
               }}>
-                {getFileIcon(pendingFile.type)}
+                {pf.type === "image" ? (
+                  <img
+                    src={pf.url}
+                    alt="Preview"
+                    style={{ height: "36px", width: "36px", borderRadius: "4px", objectFit: "cover", flexShrink: 0 }}
+                  />
+                ) : (
+                  <div style={{
+                    height: "36px",
+                    width: "36px",
+                    borderRadius: "4px",
+                    background: "hsl(var(--primary) / 0.1)",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    color: "hsl(var(--primary))",
+                    flexShrink: 0,
+                  }}>
+                    {getFileIcon(pf.type)}
+                  </div>
+                )}
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <div style={{ fontSize: "11px", fontWeight: 600, color: "hsl(var(--foreground))", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                    {pf.name}
+                  </div>
+                  <div style={{ fontSize: "10px", color: "hsl(var(--muted-foreground))" }}>
+                    {pf.type === "image" ? "Imagem" : pf.type === "audio" ? "Áudio" : "Documento"}
+                  </div>
+                </div>
+                <button
+                  onClick={() => setPendingFiles(prev => prev.filter((_, i) => i !== idx))}
+                  style={{
+                    background: "none",
+                    border: "none",
+                    cursor: "pointer",
+                    color: "hsl(var(--muted-foreground))",
+                    fontSize: "14px",
+                    padding: "2px",
+                    lineHeight: 1,
+                    flexShrink: 0,
+                  }}
+                  aria-label="Remover arquivo"
+                >
+                  ✕
+                </button>
               </div>
-            )}
-            <div style={{ flex: 1, minWidth: 0 }}>
-              <div style={{ fontSize: "12px", fontWeight: 600, color: "hsl(var(--foreground))", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
-                {pendingFile.name}
-              </div>
-              <div style={{ fontSize: "11px", color: "hsl(var(--muted-foreground))" }}>
-                {pendingFile.type === "image" ? "Imagem" : pendingFile.type === "audio" ? "Áudio" : "Documento"} pronto para envio
-              </div>
-            </div>
-            <button
-              onClick={() => setPendingFile(null)}
-              style={{
-                background: "none",
-                border: "none",
-                cursor: "pointer",
-                color: "hsl(var(--muted-foreground))",
-                fontSize: "18px",
-                padding: "4px",
-              }}
-              aria-label="Remover arquivo"
-            >
-              ✕
-            </button>
+            ))}
           </div>
         )}
 
