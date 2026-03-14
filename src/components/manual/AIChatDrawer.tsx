@@ -505,9 +505,9 @@ const AIChatDrawer = ({ open, onClose }: { open: boolean; onClose: () => void })
   if (!open) return null;
 
   const getPlaceholder = () => {
-    if (pendingFile?.type === "image") return "Descreva o contexto do print...";
-    if (pendingFile?.type === "audio") return "Adicione contexto sobre o áudio...";
-    if (pendingFile?.type === "document") return "Pergunte algo sobre o documento...";
+    if (pendingFiles.some(f => f.type === "image")) return "Descreva o contexto dos prints...";
+    if (pendingFiles.some(f => f.type === "audio")) return "Adicione contexto sobre os áudios...";
+    if (pendingFiles.length > 0) return "Pergunte algo sobre os documentos...";
     return "Faça sua pergunta...";
   };
 
