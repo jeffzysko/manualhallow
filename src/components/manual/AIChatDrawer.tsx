@@ -245,18 +245,26 @@ const AIChatDrawer = ({ open, onClose }: { open: boolean; onClose: () => void })
   const { track } = useAnalytics();
 
   const handleFileSelect = useCallback(async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
+    const files = e.target.files;
+    if (!files || files.length === 0) return;
 
-    const fileType = getFileTypeCategory(file.type);
+    const filesToProcess = Array.from(files);
     
-    if (!ACCEPTED_TYPES[file.type]) {
-      alert("Formato não suportado. Envie imagens, áudios, PDFs ou documentos de texto.");
-      return;
+    // Validate all files first
+    for (const file of filesToProcess) {
+      if (!ACCEPTED_TYPES[file.type]) {
+        alert(`Formato não suportado: ${file.name}. Envie imagens, áudios, PDFs ou documentos de texto.`);
+        return;
+      }
+      if (file.size > MAX_FILE_SIZE) {
+        alert(`Arquivo muito grande: ${file.name}. Máximo 10MB por arquivo.`);
+        return;
+      }
     }
 
-    if (file.size > MAX_FILE_SIZE) {
-      alert("Arquivo muito grande. Máximo 10MB.");
+    // Limit total pending files to 10
+    if (pendingFiles.length + filesToProcess.length > 10) {
+      alert("Máximo de 10 arquivos por mensagem.");
       return;
     }
 
@@ -264,40 +272,49 @@ const AIChatDrawer = ({ open, onClose }: { open: boolean; onClose: () => void })
     try {
       if (!user) throw new Error("Não autenticado");
 
-      const ext = file.name.split(".").pop() || "bin";
-      const path = `${user.id}/${Date.now()}.${ext}`;
+      const newFiles: PendingFile[] = [];
 
-      const { error } = await supabase.storage
-        .from("chat-images")
-        .upload(path, file, { contentType: file.type });
+      for (const file of filesToProcess) {
+        const fileType = getFileTypeCategory(file.type);
+        const ext = file.name.split(".").pop() || "bin";
+        const path = `${user.id}/${Date.now()}-${Math.random().toString(36).slice(2, 6)}.${ext}`;
 
-      if (error) throw error;
+        const { error } = await supabase.storage
+          .from("chat-images")
+          .upload(path, file, { contentType: file.type });
 
-      const { data: urlData } = supabase.storage
-        .from("chat-images")
-        .getPublicUrl(path);
+        if (error) throw error;
 
-      const pending: PendingFile = {
-        url: urlData.publicUrl,
-        type: fileType,
-        name: file.name,
-        mimeType: file.type,
-      };
+        const { data: urlData } = supabase.storage
+          .from("chat-images")
+          .getPublicUrl(path);
 
-      // For audio, also store base64 for API
-      if (fileType === "audio") {
-        pending.base64 = await fileToBase64(file);
+        const pending: PendingFile = {
+          url: urlData.publicUrl,
+          type: fileType,
+          name: file.name,
+          mimeType: file.type,
+        };
+
+        if (fileType === "audio") {
+          pending.base64 = await fileToBase64(file);
+        }
+
+        newFiles.push(pending);
       }
 
-      setPendingFile(pending);
+      setPendingFiles(prev => [...prev, ...newFiles]);
     } catch (err: any) {
       console.error("Upload error:", err);
       alert("Erro ao enviar arquivo. Tente novamente.");
     } finally {
       setIsUploadingFile(false);
-      if (fileInputRef.current) fileInputRef.current.value = "";
+      // Reset all file inputs
+      if (imageInputRef.current) imageInputRef.current.value = "";
+      if (audioInputRef.current) audioInputRef.current.value = "";
+      if (docInputRef.current) docInputRef.current.value = "";
     }
-  }, [user]);
+  }, [user, pendingFiles]);
 
   const sendMessage = useCallback(async (text: string) => {
     const sanitized = clampText(text, 2000);
