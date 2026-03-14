@@ -703,18 +703,20 @@ const AIChatDrawer = ({ open, onClose }: { open: boolean; onClose: () => void })
             {attachMenuOpen && (
               <div style={{
                 position: "absolute",
-                bottom: "calc(100% + 8px)",
+                bottom: "calc(100% + 12px)",
                 left: 0,
-                background: "hsl(var(--card))",
-                borderRadius: "14px",
-                boxShadow: "0 8px 30px hsl(var(--foreground) / 0.12)",
-                padding: "8px",
+                background: "hsl(220 20% 10% / 0.97)",
+                backdropFilter: "blur(20px)",
+                WebkitBackdropFilter: "blur(20px)",
+                borderRadius: "16px",
+                boxShadow: "0 12px 40px rgba(0,0,0,0.5), 0 0 0 1px hsl(var(--primary) / 0.15)",
+                padding: "10px",
                 display: "flex",
                 flexDirection: "column",
-                gap: "2px",
-                minWidth: "180px",
+                gap: "4px",
+                minWidth: "200px",
                 zIndex: 100,
-                border: "1px solid hsl(var(--border))",
+                border: "1px solid hsl(var(--primary) / 0.2)",
                 animation: "attachMenuIn 0.18s ease-out",
               }}>
                 <button
