@@ -769,6 +769,9 @@ Use essas informações para personalizar suas respostas. Foque em técnicas que
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     if (!LOVABLE_API_KEY) throw new Error("LOVABLE_API_KEY is not configured");
 
+    // Resolve file_url parts (fetch documents and convert to base64 for AI)
+    const resolvedMessages = await resolveFileParts(messages);
+
     const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",
       headers: {
@@ -779,7 +782,7 @@ Use essas informações para personalizar suas respostas. Foque em técnicas que
         model: "google/gemini-2.5-pro",
         messages: [
           { role: "system", content: SYSTEM_PROMPT + userContext },
-          ...messages,
+          ...resolvedMessages,
         ],
         stream: true,
       }),
