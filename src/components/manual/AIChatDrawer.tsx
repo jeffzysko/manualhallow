@@ -5,8 +5,22 @@ import { useAuth } from "@/contexts/AuthContext";
 import { clampText } from "@/lib/sanitize";
 import { useAnalytics } from "@/hooks/useAnalytics";
 
-type MsgContent = string | { type: string; text?: string; image_url?: { url: string } }[];
+type ContentPart = 
+  | { type: "text"; text?: string }
+  | { type: "image_url"; image_url: { url: string } }
+  | { type: "input_audio"; input_audio: { data: string; format: string } }
+  | { type: "file_url"; file_url: { url: string; mime_type: string; name: string } };
+
+type MsgContent = string | ContentPart[];
 type Msg = { role: "user" | "assistant"; content: MsgContent };
+
+type PendingFile = {
+  url: string;
+  type: "image" | "audio" | "document";
+  name: string;
+  mimeType: string;
+  base64?: string; // for audio
+};
 
 const CHAT_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/chat`;
 
@@ -19,17 +33,55 @@ const SUGGESTIONS = [
   "Quais gatilhos mentais usar?",
 ];
 
+const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
+
+const ACCEPTED_TYPES: Record<string, "image" | "audio" | "document"> = {
+  "image/jpeg": "image",
+  "image/png": "image",
+  "image/webp": "image",
+  "image/gif": "image",
+  "audio/mpeg": "audio",
+  "audio/mp3": "audio",
+  "audio/wav": "audio",
+  "audio/ogg": "audio",
+  "audio/m4a": "audio",
+  "audio/x-m4a": "audio",
+  "audio/mp4": "audio",
+  "audio/webm": "audio",
+  "application/pdf": "document",
+  "text/plain": "document",
+  "text/csv": "document",
+  "application/vnd.openxmlformats-officedocument.wordprocessingml.document": "document",
+  "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet": "document",
+};
+
+const ACCEPT_STRING = Object.keys(ACCEPTED_TYPES).join(",");
+
+function getFileTypeCategory(mimeType: string): "image" | "audio" | "document" {
+  return ACCEPTED_TYPES[mimeType] || "document";
+}
+
 /** Get display text from a message */
 function getTextContent(content: MsgContent): string {
   if (typeof content === "string") return content;
-  return content.filter(p => p.type === "text").map(p => p.text || "").join("");
+  return content.filter(p => p.type === "text").map(p => (p as any).text || "").join("");
 }
 
 /** Get image URL from a multimodal message */
 function getImageUrl(content: MsgContent): string | null {
   if (typeof content === "string") return null;
   const img = content.find(p => p.type === "image_url");
-  return img?.image_url?.url || null;
+  return (img as any)?.image_url?.url || null;
+}
+
+/** Get attached file info from a message */
+function getAttachedFile(content: MsgContent): { type: string; name: string; url?: string } | null {
+  if (typeof content === "string") return null;
+  const audio = content.find(p => p.type === "input_audio");
+  if (audio) return { type: "audio", name: "Áudio" };
+  const file = content.find(p => p.type === "file_url");
+  if (file) return { type: "document", name: (file as any).file_url?.name || "Documento", url: (file as any).file_url?.url };
+  return null;
 }
 
 /** Parse dynamic suggestions from the AI response */
@@ -62,7 +114,35 @@ function splitParts(text: string): string[] {
   return [part1, part2];
 }
 
-const MAX_IMAGE_SIZE = 4 * 1024 * 1024; // 4MB
+/** Convert file to base64 */
+function fileToBase64(file: File): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => {
+      const result = reader.result as string;
+      // Remove data URL prefix to get pure base64
+      const base64 = result.split(",")[1];
+      resolve(base64);
+    };
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
+}
+
+/** Get file extension from mime type */
+function getAudioFormat(mimeType: string): string {
+  const map: Record<string, string> = {
+    "audio/mpeg": "mp3",
+    "audio/mp3": "mp3",
+    "audio/wav": "wav",
+    "audio/ogg": "ogg",
+    "audio/m4a": "m4a",
+    "audio/x-m4a": "m4a",
+    "audio/mp4": "mp4",
+    "audio/webm": "webm",
+  };
+  return map[mimeType] || "mp3";
+}
 
 const AIChatDrawer = ({ open, onClose }: { open: boolean; onClose: () => void }) => {
   const { user } = useAuth();
@@ -70,8 +150,8 @@ const AIChatDrawer = ({ open, onClose }: { open: boolean; onClose: () => void })
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [historyLoaded, setHistoryLoaded] = useState(false);
-  const [pendingImage, setPendingImage] = useState<string | null>(null);
-  const [isUploadingImage, setIsUploadingImage] = useState(false);
+  const [pendingFile, setPendingFile] = useState<PendingFile | null>(null);
+  const [isUploadingFile, setIsUploadingFile] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -89,7 +169,6 @@ const AIChatDrawer = ({ open, onClose }: { open: boolean; onClose: () => void })
         if (data && data.length > 0) {
           setMessages(data.map(d => {
             const role = d.role as "user" | "assistant";
-            // Try to reconstruct multimodal messages from stored JSON
             if (d.content.startsWith("{")) {
               try {
                 const parsed = JSON.parse(d.content);
@@ -100,7 +179,21 @@ const AIChatDrawer = ({ open, onClose }: { open: boolean; onClose: () => void })
                   ];
                   return { role, content: parts };
                 }
-              } catch { /* not JSON, treat as plain text */ }
+                if (parsed.audio) {
+                  const parts: MsgContent = [
+                    { type: "text", text: parsed.text || "" },
+                    { type: "input_audio", input_audio: { data: "", format: "mp3" } },
+                  ];
+                  return { role, content: parts };
+                }
+                if (parsed.file_url) {
+                  const parts: MsgContent = [
+                    { type: "text", text: parsed.text || "" },
+                    { type: "file_url", file_url: { url: parsed.file_url, mime_type: parsed.mime_type || "", name: parsed.file_name || "Documento" } },
+                  ];
+                  return { role, content: parts };
+                }
+              } catch { /* not JSON */ }
             }
             return { role, content: d.content };
           }));
@@ -117,36 +210,44 @@ const AIChatDrawer = ({ open, onClose }: { open: boolean; onClose: () => void })
     if (open) setTimeout(() => inputRef.current?.focus(), 300);
   }, [open]);
 
-  const persistMessage = useCallback(async (role: "user" | "assistant", content: string, imageUrl?: string) => {
+  const persistMessage = useCallback(async (role: "user" | "assistant", content: string, fileInfo?: { type: string; url?: string; name?: string; mimeType?: string }) => {
     if (!user) return;
-    // If there's an image, store as JSON so we can reconstruct on load
-    const stored = imageUrl
-      ? JSON.stringify({ text: content, image_url: imageUrl })
-      : content;
+    let stored = content;
+    if (fileInfo) {
+      if (fileInfo.type === "image") {
+        stored = JSON.stringify({ text: content, image_url: fileInfo.url });
+      } else if (fileInfo.type === "audio") {
+        stored = JSON.stringify({ text: content, audio: true, audio_url: fileInfo.url });
+      } else if (fileInfo.type === "document") {
+        stored = JSON.stringify({ text: content, file_url: fileInfo.url, mime_type: fileInfo.mimeType, file_name: fileInfo.name });
+      }
+    }
     await supabase.from("chat_messages").insert({ user_id: user.id, role, content: stored });
   }, [user]);
 
   const { track } = useAnalytics();
 
-  const handleImageSelect = useCallback(async (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileSelect = useCallback(async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    if (!file.type.startsWith("image/")) {
-      alert("Selecione apenas imagens (JPG, PNG, etc.)");
+    const fileType = getFileTypeCategory(file.type);
+    
+    if (!ACCEPTED_TYPES[file.type]) {
+      alert("Formato não suportado. Envie imagens, áudios, PDFs ou documentos de texto.");
       return;
     }
 
-    if (file.size > MAX_IMAGE_SIZE) {
-      alert("Imagem muito grande. Máximo 4MB.");
+    if (file.size > MAX_FILE_SIZE) {
+      alert("Arquivo muito grande. Máximo 10MB.");
       return;
     }
 
-    setIsUploadingImage(true);
+    setIsUploadingFile(true);
     try {
       if (!user) throw new Error("Não autenticado");
 
-      const ext = file.name.split(".").pop() || "jpg";
+      const ext = file.name.split(".").pop() || "bin";
       const path = `${user.id}/${Date.now()}.${ext}`;
 
       const { error } = await supabase.storage
@@ -159,27 +260,50 @@ const AIChatDrawer = ({ open, onClose }: { open: boolean; onClose: () => void })
         .from("chat-images")
         .getPublicUrl(path);
 
-      setPendingImage(urlData.publicUrl);
+      const pending: PendingFile = {
+        url: urlData.publicUrl,
+        type: fileType,
+        name: file.name,
+        mimeType: file.type,
+      };
+
+      // For audio, also store base64 for API
+      if (fileType === "audio") {
+        pending.base64 = await fileToBase64(file);
+      }
+
+      setPendingFile(pending);
     } catch (err: any) {
       console.error("Upload error:", err);
-      alert("Erro ao enviar imagem. Tente novamente.");
+      alert("Erro ao enviar arquivo. Tente novamente.");
     } finally {
-      setIsUploadingImage(false);
+      setIsUploadingFile(false);
       if (fileInputRef.current) fileInputRef.current.value = "";
     }
   }, [user]);
 
   const sendMessage = useCallback(async (text: string) => {
     const sanitized = clampText(text, 2000);
-    if ((!sanitized && !pendingImage) || isLoading) return;
+    if ((!sanitized && !pendingFile) || isLoading) return;
+
+    const fileEmoji = pendingFile?.type === "image" ? "📸" : pendingFile?.type === "audio" ? "🎤" : "📄";
+    const fileLabel = pendingFile?.type === "image" ? "print" : pendingFile?.type === "audio" ? "áudio" : "documento";
+    let displayText = sanitized || `${fileEmoji} Enviando ${fileLabel} para análise`;
 
     let userContent: MsgContent;
-    let displayText = sanitized || "📸 Enviando print para análise";
 
-    if (pendingImage) {
-      const parts: { type: string; text?: string; image_url?: { url: string } }[] = [];
+    if (pendingFile) {
+      const parts: ContentPart[] = [];
       parts.push({ type: "text", text: displayText });
-      parts.push({ type: "image_url", image_url: { url: pendingImage } });
+
+      if (pendingFile.type === "image") {
+        parts.push({ type: "image_url", image_url: { url: pendingFile.url } });
+      } else if (pendingFile.type === "audio" && pendingFile.base64) {
+        parts.push({ type: "input_audio", input_audio: { data: pendingFile.base64, format: getAudioFormat(pendingFile.mimeType) } });
+      } else if (pendingFile.type === "document") {
+        parts.push({ type: "file_url", file_url: { url: pendingFile.url, mime_type: pendingFile.mimeType, name: pendingFile.name } });
+      }
+
       userContent = parts;
     } else {
       userContent = sanitized;
@@ -187,29 +311,41 @@ const AIChatDrawer = ({ open, onClose }: { open: boolean; onClose: () => void })
 
     const userMsg: Msg = { role: "user", content: userContent };
     setInput("");
-    setPendingImage(null);
+    const currentPendingFile = pendingFile;
+    setPendingFile(null);
     setMessages(prev => [...prev, userMsg]);
     setIsLoading(true);
-    const imageUrlToSave = pendingImage || undefined;
-    persistMessage("user", displayText, imageUrlToSave);
+
+    persistMessage("user", displayText, currentPendingFile ? {
+      type: currentPendingFile.type,
+      url: currentPendingFile.url,
+      name: currentPendingFile.name,
+      mimeType: currentPendingFile.mimeType,
+    } : undefined);
 
     let assistantSoFar = "";
-    // For API: send text-only history + current multimodal message (filter empty, limit to last 50)
-    const rawMsgs = [
-      ...messages.map(m => ({
-        role: m.role,
-        content: typeof m.content === "string" ? m.content : getTextContent(m.content),
-      })),
-      { role: userMsg.role, content: typeof userMsg.content === "string" ? userMsg.content : displayText },
-    ]
-      .filter(m => typeof m.content === "string" && m.content.trim().length > 0)
-      .slice(-50);
 
-    // Merge consecutive same-role messages to avoid API rejection
-    const apiMessages: { role: string; content: string }[] = [];
+    // Build API messages: send multimodal content for current message, text-only for history
+    const historyMsgs = messages.map(m => ({
+      role: m.role,
+      content: typeof m.content === "string" ? m.content : getTextContent(m.content),
+    })).filter(m => typeof m.content === "string" && m.content.trim().length > 0);
+
+    // For the current message, send the full multimodal content
+    const currentApiContent = typeof userMsg.content === "string"
+      ? userMsg.content
+      : userMsg.content;
+
+    const rawMsgs = [
+      ...historyMsgs,
+      { role: userMsg.role, content: currentApiContent },
+    ].slice(-50);
+
+    // Merge consecutive same-role text messages
+    const apiMessages: { role: string; content: any }[] = [];
     for (const m of rawMsgs) {
       const last = apiMessages[apiMessages.length - 1];
-      if (last && last.role === m.role) {
+      if (last && last.role === m.role && typeof last.content === "string" && typeof m.content === "string") {
         last.content += "\n" + m.content;
       } else {
         apiMessages.push({ ...m });
@@ -274,10 +410,8 @@ const AIChatDrawer = ({ open, onClose }: { open: boolean; onClose: () => void })
       }
 
       if (assistantSoFar) {
-        // Split into two messages if ---PARTE2--- is present
         const parts = splitParts(assistantSoFar);
         if (parts.length === 2) {
-          // Replace the streamed message with just part 1
           setMessages(prev => {
             const updated = [...prev];
             const lastIdx = updated.length - 1;
@@ -287,7 +421,6 @@ const AIChatDrawer = ({ open, onClose }: { open: boolean; onClose: () => void })
             return updated;
           });
           persistMessage("assistant", parts[0]);
-          // Add part 2 after a brief delay for natural feel
           await new Promise(r => setTimeout(r, 800));
           setMessages(prev => [...prev, { role: "assistant", content: parts[1] }]);
           persistMessage("assistant", parts[1]);
@@ -301,7 +434,7 @@ const AIChatDrawer = ({ open, onClose }: { open: boolean; onClose: () => void })
     } finally {
       setIsLoading(false);
     }
-  }, [input, isLoading, messages, persistMessage, pendingImage]);
+  }, [input, isLoading, messages, persistMessage, pendingFile]);
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === "Enter" && !e.shiftKey) {
@@ -327,6 +460,40 @@ const AIChatDrawer = ({ open, onClose }: { open: boolean; onClose: () => void })
   }, [messages, isLoading]);
 
   if (!open) return null;
+
+  const getPlaceholder = () => {
+    if (pendingFile?.type === "image") return "Descreva o contexto do print...";
+    if (pendingFile?.type === "audio") return "Adicione contexto sobre o áudio...";
+    if (pendingFile?.type === "document") return "Pergunte algo sobre o documento...";
+    return "Faça sua pergunta...";
+  };
+
+  const getFileIcon = (type: string) => {
+    if (type === "image") return (
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
+        <circle cx="8.5" cy="8.5" r="1.5" />
+        <polyline points="21 15 16 10 5 21" />
+      </svg>
+    );
+    if (type === "audio") return (
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z" />
+        <path d="M19 10v2a7 7 0 0 1-14 0v-2" />
+        <line x1="12" y1="19" x2="12" y2="23" />
+        <line x1="8" y1="23" x2="16" y2="23" />
+      </svg>
+    );
+    return (
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+        <polyline points="14 2 14 8 20 8" />
+        <line x1="16" y1="13" x2="8" y2="13" />
+        <line x1="16" y1="17" x2="8" y2="17" />
+        <polyline points="10 9 9 9 8 9" />
+      </svg>
+    );
+  };
 
   return (
     <div className="ai-chat-overlay" onClick={onClose}>
@@ -357,7 +524,7 @@ const AIChatDrawer = ({ open, onClose }: { open: boolean; onClose: () => void })
             <div className="ai-chat-empty">
               <span className="ai-chat-empty-icon">✦</span>
               <p>Olá! Sou o Mentor Hallow.</p>
-              <p>Pergunte sobre técnicas de venda, objeções, scripts ou envie um <strong>print do WhatsApp</strong> para análise.</p>
+              <p>Pergunte sobre técnicas de venda, objeções, scripts ou envie <strong>prints, áudios, PDFs e documentos</strong> para análise.</p>
               <div className="ai-chat-suggestions">
                 {SUGGESTIONS.map((s, i) => (
                   <button
@@ -375,6 +542,7 @@ const AIChatDrawer = ({ open, onClose }: { open: boolean; onClose: () => void })
             const isAssistant = msg.role === "assistant";
             const text = getTextContent(msg.content);
             const imageUrl = getImageUrl(msg.content);
+            const attachedFile = getAttachedFile(msg.content);
             const { clean } = isAssistant ? parseSuggestions(text) : { clean: text };
 
             return (
@@ -392,6 +560,28 @@ const AIChatDrawer = ({ open, onClose }: { open: boolean; onClose: () => void })
                       objectFit: "contain",
                     }}
                   />
+                )}
+                {attachedFile && (
+                  <div style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "8px",
+                    padding: "8px 12px",
+                    borderRadius: "8px",
+                    background: isAssistant ? "hsl(var(--muted) / 0.5)" : "hsl(var(--primary) / 0.15)",
+                    marginBottom: "6px",
+                    fontSize: "13px",
+                  }}>
+                    {getFileIcon(attachedFile.type)}
+                    <span style={{ flex: 1, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                      {attachedFile.name}
+                    </span>
+                    {attachedFile.url && (
+                      <a href={attachedFile.url} target="_blank" rel="noopener noreferrer" style={{ color: "hsl(var(--primary))", fontSize: "12px", flexShrink: 0 }}>
+                        Abrir
+                      </a>
+                    )}
+                  </div>
                 )}
                 {isAssistant ? (
                   <div className="ai-chat-md">
@@ -429,8 +619,8 @@ const AIChatDrawer = ({ open, onClose }: { open: boolean; onClose: () => void })
           <div ref={messagesEndRef} />
         </div>
 
-        {/* Pending image preview */}
-        {pendingImage && (
+        {/* Pending file preview */}
+        {pendingFile && (
           <div style={{
             padding: "8px 16px",
             background: "hsl(var(--muted))",
@@ -439,16 +629,37 @@ const AIChatDrawer = ({ open, onClose }: { open: boolean; onClose: () => void })
             gap: "8px",
             borderTop: "1px solid hsl(var(--border))",
           }}>
-            <img
-              src={pendingImage}
-              alt="Preview"
-              style={{ height: "48px", borderRadius: "6px", objectFit: "cover" }}
-            />
-            <span style={{ fontSize: "12px", color: "hsl(var(--muted-foreground))", flex: 1 }}>
-              Imagem pronta para envio
-            </span>
+            {pendingFile.type === "image" ? (
+              <img
+                src={pendingFile.url}
+                alt="Preview"
+                style={{ height: "48px", borderRadius: "6px", objectFit: "cover" }}
+              />
+            ) : (
+              <div style={{
+                height: "48px",
+                width: "48px",
+                borderRadius: "6px",
+                background: "hsl(var(--primary) / 0.1)",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                color: "hsl(var(--primary))",
+                flexShrink: 0,
+              }}>
+                {getFileIcon(pendingFile.type)}
+              </div>
+            )}
+            <div style={{ flex: 1, minWidth: 0 }}>
+              <div style={{ fontSize: "12px", fontWeight: 600, color: "hsl(var(--foreground))", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                {pendingFile.name}
+              </div>
+              <div style={{ fontSize: "11px", color: "hsl(var(--muted-foreground))" }}>
+                {pendingFile.type === "image" ? "Imagem" : pendingFile.type === "audio" ? "Áudio" : "Documento"} pronto para envio
+              </div>
+            </div>
             <button
-              onClick={() => setPendingImage(null)}
+              onClick={() => setPendingFile(null)}
               style={{
                 background: "none",
                 border: "none",
@@ -457,7 +668,7 @@ const AIChatDrawer = ({ open, onClose }: { open: boolean; onClose: () => void })
                 fontSize: "18px",
                 padding: "4px",
               }}
-              aria-label="Remover imagem"
+              aria-label="Remover arquivo"
             >
               ✕
             </button>
@@ -468,36 +679,34 @@ const AIChatDrawer = ({ open, onClose }: { open: boolean; onClose: () => void })
           <input
             ref={fileInputRef}
             type="file"
-            accept="image/*"
+            accept={ACCEPT_STRING}
             style={{ display: "none" }}
-            onChange={handleImageSelect}
+            onChange={handleFileSelect}
           />
           <button
             className="ai-chat-upload-btn"
             onClick={() => fileInputRef.current?.click()}
-            disabled={isLoading || isUploadingImage}
-            title="Enviar print do WhatsApp"
+            disabled={isLoading || isUploadingFile}
+            title="Enviar imagem, áudio ou documento"
             style={{
               background: "none",
               border: "none",
               cursor: isLoading ? "not-allowed" : "pointer",
               padding: "6px",
-              color: pendingImage ? "hsl(var(--primary))" : "hsl(var(--muted-foreground))",
+              color: pendingFile ? "hsl(var(--primary))" : "hsl(var(--muted-foreground))",
               display: "flex",
               alignItems: "center",
               opacity: isLoading ? 0.5 : 1,
               flexShrink: 0,
             }}
           >
-            {isUploadingImage ? (
+            {isUploadingFile ? (
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="animate-spin">
                 <circle cx="12" cy="12" r="10" strokeDasharray="32" strokeDashoffset="12" />
               </svg>
             ) : (
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
-                <circle cx="8.5" cy="8.5" r="1.5" />
-                <polyline points="21 15 16 10 5 21" />
+                <path d="M21.44 11.05l-9.19 9.19a6 6 0 01-8.49-8.49l9.19-9.19a4 4 0 015.66 5.66l-9.2 9.19a2 2 0 01-2.83-2.83l8.49-8.48" />
               </svg>
             )}
           </button>
@@ -507,11 +716,11 @@ const AIChatDrawer = ({ open, onClose }: { open: boolean; onClose: () => void })
             value={input}
             onChange={e => setInput(e.target.value)}
             onKeyDown={handleKeyDown}
-            placeholder={pendingImage ? "Descreva o contexto do print..." : "Faça sua pergunta..."}
+            placeholder={getPlaceholder()}
             rows={1}
             disabled={isLoading}
           />
-          <button className="ai-chat-send" onClick={() => sendMessage(input)} disabled={isLoading || (!input.trim() && !pendingImage)}>
+          <button className="ai-chat-send" onClick={() => sendMessage(input)} disabled={isLoading || (!input.trim() && !pendingFile)}>
             <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <line x1="22" y1="2" x2="11" y2="13" />
               <polygon points="22 2 15 22 11 13 2 9 22 2" />
