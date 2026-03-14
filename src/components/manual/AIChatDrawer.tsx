@@ -477,7 +477,7 @@ const AIChatDrawer = ({ open, onClose }: { open: boolean; onClose: () => void })
     } finally {
       setIsLoading(false);
     }
-  }, [input, isLoading, messages, persistMessage, pendingFile]);
+  }, [input, isLoading, messages, persistMessage, pendingFiles]);
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === "Enter" && !e.shiftKey) {
