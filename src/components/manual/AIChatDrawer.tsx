@@ -754,8 +754,8 @@ const AIChatDrawer = ({ open, onClose }: { open: boolean; onClose: () => void })
           {messages.length === 0 && (
             <div className="ai-chat-empty">
               <span className="ai-chat-empty-icon">✦</span>
-              <p>Olá! Sou o Mentor Hallow.</p>
-              <p>Pergunte sobre técnicas de venda, objeções, scripts ou envie <strong>prints, áudios, PDFs e documentos</strong> para análise.</p>
+              <p>Olá! Sou a Di, sua especialista em vendas.</p>
+              <p>Envie <strong>textos, áudios ou imagens</strong>. Peça scripts prontos, tire dúvidas sobre objeções ou solicite análises de propostas. Estou aqui para te apoiar em campo!</p>
               <div className="ai-chat-suggestions">
                 {SUGGESTIONS.map((s, i) => (
                   <button
