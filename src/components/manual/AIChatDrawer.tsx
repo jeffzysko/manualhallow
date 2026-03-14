@@ -4,6 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { clampText } from "@/lib/sanitize";
 import { useAnalytics } from "@/hooks/useAnalytics";
+import { toast } from "sonner";
 
 type ContentPart = 
   | { type: "text"; text?: string }
