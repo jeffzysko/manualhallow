@@ -4,6 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { clampText } from "@/lib/sanitize";
 import { useAnalytics } from "@/hooks/useAnalytics";
+import { toast } from "sonner";
 
 type ContentPart = 
   | { type: "text"; text?: string }
@@ -12,7 +13,7 @@ type ContentPart =
   | { type: "file_url"; file_url: { url: string; mime_type: string; name: string } };
 
 type MsgContent = string | ContentPart[];
-type Msg = { role: "user" | "assistant"; content: MsgContent };
+type Msg = { role: "user" | "assistant"; content: MsgContent; id?: string; rating?: number };
 
 type PendingFile = {
   url: string;
@@ -142,6 +143,36 @@ function getAudioFormat(mimeType: string): string {
     "audio/webm": "webm",
   };
   return map[mimeType] || "mp3";
+}
+
+/** Feedback buttons component */
+function FeedbackButtons({ rating, onRate }: { rating?: number; onRate: (r: number) => void }) {
+  return (
+    <div style={{ display: "flex", gap: "4px", marginTop: "6px" }}>
+      <button
+        onClick={() => onRate(1)}
+        style={{
+          background: rating === 1 ? "hsl(var(--primary) / 0.2)" : "transparent",
+          border: rating === 1 ? "1px solid hsl(var(--primary) / 0.4)" : "1px solid transparent",
+          borderRadius: "6px", padding: "3px 8px", cursor: "pointer",
+          fontSize: "14px", opacity: rating === -1 ? 0.3 : 1,
+          transition: "all 0.2s",
+        }}
+        title="Boa resposta"
+      >👍</button>
+      <button
+        onClick={() => onRate(-1)}
+        style={{
+          background: rating === -1 ? "hsl(var(--destructive) / 0.15)" : "transparent",
+          border: rating === -1 ? "1px solid hsl(var(--destructive) / 0.3)" : "1px solid transparent",
+          borderRadius: "6px", padding: "3px 8px", cursor: "pointer",
+          fontSize: "14px", opacity: rating === 1 ? 0.3 : 1,
+          transition: "all 0.2s",
+        }}
+        title="Resposta ruim"
+      >👎</button>
+    </div>
+  );
 }
 
 const AIChatDrawer = ({ open, onClose }: { open: boolean; onClose: () => void }) => {
@@ -492,6 +523,57 @@ const AIChatDrawer = ({ open, onClose }: { open: boolean; onClose: () => void })
     setMessages([]);
   }, [user]);
 
+  /** Handle feedback (👍/👎) on an assistant message */
+  const handleFeedback = useCallback(async (msgIndex: number, rating: number) => {
+    if (!user) return;
+    const msg = messages[msgIndex];
+    if (!msg || msg.role !== "assistant") return;
+
+    // Find the user question that preceded this answer
+    let question = "";
+    for (let i = msgIndex - 1; i >= 0; i--) {
+      if (messages[i].role === "user") {
+        question = getTextContent(messages[i].content);
+        break;
+      }
+    }
+
+    const answer = getTextContent(msg.content);
+    const { clean } = parseSuggestions(answer);
+
+    // Toggle: if same rating, remove it
+    const newRating = msg.rating === rating ? 0 : rating;
+
+    // Update local state
+    setMessages(prev => prev.map((m, i) => i === msgIndex ? { ...m, rating: newRating } : m));
+
+    try {
+      if (newRating === 0) {
+        // Remove insight if rating cleared
+        if (msg.id) {
+          await supabase.from("chat_insights").delete().eq("id", msg.id);
+        }
+      } else if (msg.id) {
+        // Update existing
+        await supabase.from("chat_insights").update({ rating: newRating }).eq("id", msg.id);
+      } else {
+        // Insert new
+        const { data } = await supabase.from("chat_insights").insert({
+          user_id: user.id,
+          question: question.slice(0, 500),
+          answer: clean.slice(0, 1000),
+          rating: newRating,
+        }).select("id").single();
+        if (data) {
+          setMessages(prev => prev.map((m, i) => i === msgIndex ? { ...m, id: data.id } : m));
+        }
+      }
+      toast.success(newRating === 1 ? "Feedback salvo ✓" : newRating === -1 ? "Feedback salvo ✓" : "Feedback removido");
+    } catch {
+      toast.error("Erro ao salvar feedback");
+    }
+  }, [user, messages]);
+
   // Extract suggestions from the last assistant message
   const lastAssistantSuggestions = useMemo(() => {
     if (isLoading) return [];
@@ -636,6 +718,13 @@ const AIChatDrawer = ({ open, onClose }: { open: boolean; onClose: () => void })
                   </div>
                 ) : (
                   clean && <p>{clean}</p>
+                )}
+                {/* Feedback buttons for assistant messages */}
+                {isAssistant && !isLoading && clean && !clean.startsWith("⚠️") && (
+                  <FeedbackButtons
+                    rating={msg.rating}
+                    onRate={(rating) => handleFeedback(i, rating)}
+                  />
                 )}
               </div>
             );

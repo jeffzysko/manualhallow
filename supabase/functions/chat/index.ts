@@ -744,11 +744,19 @@ Deno.serve(async (req) => {
     // Fetch user onboarding data to personalize AI responses
     let userContext = "";
     if (userId) {
-      const { data: onboarding } = await serviceClient
-        .from("user_onboarding")
-        .select("biggest_challenge, common_objection, confidence_level")
-        .eq("user_id", userId)
-        .maybeSingle();
+      const [{ data: onboarding }, { data: insights }] = await Promise.all([
+        serviceClient
+          .from("user_onboarding")
+          .select("biggest_challenge, common_objection, confidence_level")
+          .eq("user_id", userId)
+          .maybeSingle(),
+        serviceClient
+          .from("chat_insights")
+          .select("question, answer")
+          .eq("rating", 1)
+          .order("created_at", { ascending: false })
+          .limit(10),
+      ]);
 
       if (onboarding) {
         userContext = `\n\n═══════════════════════════════════════════
@@ -759,6 +767,17 @@ PERFIL DO VENDEDOR (coletado no onboarding)
 - Etapa onde mais perde vendas: ${onboarding.confidence_level}
 
 Use essas informações para personalizar suas respostas. Foque em técnicas que ajudem com a dificuldade, objeção e etapa do funil específicas deste vendedor. Quando relevante, mencione que você sabe do gargalo dele e ofereça técnicas direcionadas.`;
+      }
+
+      if (insights && insights.length > 0) {
+        userContext += `\n\n═══════════════════════════════════════════
+RESPOSTAS BEM AVALIADAS (aprendizado adaptativo)
+═══════════════════════════════════════════
+Os vendedores avaliaram positivamente as seguintes interações. Use o mesmo estilo, tom e abordagem quando perguntas similares surgirem:
+
+${insights.map((ins: any, idx: number) => `${idx + 1}. Pergunta: "${ins.question}"\n   Resposta: "${ins.answer.slice(0, 300)}${ins.answer.length > 300 ? '...' : ''}"`).join('\n\n')}
+
+Adapte suas respostas futuras seguindo os padrões dessas interações bem-sucedidas.`;
       }
     }
 
