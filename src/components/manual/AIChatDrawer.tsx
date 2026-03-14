@@ -638,6 +638,13 @@ const AIChatDrawer = ({ open, onClose }: { open: boolean; onClose: () => void })
                 ) : (
                   clean && <p>{clean}</p>
                 )}
+                {/* Feedback buttons for assistant messages */}
+                {isAssistant && !isLoading && clean && !clean.startsWith("⚠️") && (
+                  <FeedbackButtons
+                    rating={msg.rating}
+                    onRate={(rating) => handleFeedback(i, rating)}
+                  />
+                )}
               </div>
             );
           })}
