@@ -184,6 +184,8 @@ const AIChatDrawer = ({ open, onClose }: { open: boolean; onClose: () => void })
   const [pendingFiles, setPendingFiles] = useState<PendingFile[]>([]);
   const [isUploadingFile, setIsUploadingFile] = useState(false);
   const [attachMenuOpen, setAttachMenuOpen] = useState(false);
+  const [isRecording, setIsRecording] = useState(false);
+  const [recordingDuration, setRecordingDuration] = useState(0);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -191,6 +193,9 @@ const AIChatDrawer = ({ open, onClose }: { open: boolean; onClose: () => void })
   const audioInputRef = useRef<HTMLInputElement>(null);
   const docInputRef = useRef<HTMLInputElement>(null);
   const attachMenuRef = useRef<HTMLDivElement>(null);
+  const mediaRecorderRef = useRef<MediaRecorder | null>(null);
+  const audioChunksRef = useRef<Blob[]>([]);
+  const recordingTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   // Load history from DB
   useEffect(() => {
@@ -346,6 +351,102 @@ const AIChatDrawer = ({ open, onClose }: { open: boolean; onClose: () => void })
       if (docInputRef.current) docInputRef.current.value = "";
     }
   }, [user, pendingFiles]);
+
+  // ── Audio Recording ──
+  const startRecording = useCallback(async () => {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      const mimeType = MediaRecorder.isTypeSupported("audio/webm;codecs=opus")
+        ? "audio/webm;codecs=opus"
+        : "audio/webm";
+      const recorder = new MediaRecorder(stream, { mimeType });
+      audioChunksRef.current = [];
+
+      recorder.ondataavailable = (e) => {
+        if (e.data.size > 0) audioChunksRef.current.push(e.data);
+      };
+
+      recorder.onstop = async () => {
+        stream.getTracks().forEach(t => t.stop());
+        if (recordingTimerRef.current) clearInterval(recordingTimerRef.current);
+        setRecordingDuration(0);
+
+        const blob = new Blob(audioChunksRef.current, { type: mimeType });
+        if (blob.size < 1000) return; // too short
+
+        setIsUploadingFile(true);
+        try {
+          if (!user) throw new Error("Não autenticado");
+          const ext = mimeType.includes("webm") ? "webm" : "ogg";
+          const path = `${user.id}/${Date.now()}-voice.${ext}`;
+          const file = new File([blob], `gravacao.${ext}`, { type: mimeType });
+
+          const { error } = await supabase.storage
+            .from("chat-images")
+            .upload(path, file, { contentType: mimeType });
+          if (error) throw error;
+
+          const { data: urlData } = supabase.storage
+            .from("chat-images")
+            .getPublicUrl(path);
+
+          const base64 = await fileToBase64(file);
+
+          const pending: PendingFile = {
+            url: urlData.publicUrl,
+            type: "audio",
+            name: `Gravação de voz`,
+            mimeType,
+            base64,
+          };
+          setPendingFiles([pending]);
+          // Auto-send the voice message
+          setTimeout(() => {
+            const voiceText = "🎤 Áudio gravado para análise";
+            // We'll trigger send via a ref-based approach
+            sendMessageRef.current?.(voiceText);
+          }, 100);
+        } catch (err) {
+          console.error("Upload error:", err);
+          toast.error("Erro ao enviar gravação. Tente novamente.");
+        } finally {
+          setIsUploadingFile(false);
+        }
+      };
+
+      recorder.start(250);
+      mediaRecorderRef.current = recorder;
+      setIsRecording(true);
+      setRecordingDuration(0);
+      recordingTimerRef.current = setInterval(() => {
+        setRecordingDuration(d => d + 1);
+      }, 1000);
+    } catch (err) {
+      console.error("Mic access error:", err);
+      toast.error("Não foi possível acessar o microfone. Verifique as permissões.");
+    }
+  }, [user]);
+
+  const stopRecording = useCallback(() => {
+    if (mediaRecorderRef.current && mediaRecorderRef.current.state !== "inactive") {
+      mediaRecorderRef.current.stop();
+    }
+    setIsRecording(false);
+  }, []);
+
+  const cancelRecording = useCallback(() => {
+    if (mediaRecorderRef.current && mediaRecorderRef.current.state !== "inactive") {
+      mediaRecorderRef.current.stream.getTracks().forEach(t => t.stop());
+      mediaRecorderRef.current.stop();
+      audioChunksRef.current = []; // clear so onstop does nothing useful
+    }
+    if (recordingTimerRef.current) clearInterval(recordingTimerRef.current);
+    setIsRecording(false);
+    setRecordingDuration(0);
+  }, []);
+
+  // Ref to allow onstop callback to call sendMessage
+  const sendMessageRef = useRef<((text: string) => void) | null>(null);
 
   const sendMessage = useCallback(async (text: string) => {
     const hasPendingFiles = pendingFiles.length > 0;
@@ -509,6 +610,11 @@ const AIChatDrawer = ({ open, onClose }: { open: boolean; onClose: () => void })
       setIsLoading(false);
     }
   }, [input, isLoading, messages, persistMessage, pendingFiles]);
+
+  // Keep ref in sync for audio recording callback
+  useEffect(() => {
+    sendMessageRef.current = sendMessage;
+  }, [sendMessage]);
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === "Enter" && !e.shiftKey) {
@@ -983,22 +1089,97 @@ const AIChatDrawer = ({ open, onClose }: { open: boolean; onClose: () => void })
             </button>
           </div>
 
-          <textarea
-            ref={inputRef}
-            className="ai-chat-input"
-            value={input}
-            onChange={e => setInput(e.target.value)}
-            onKeyDown={handleKeyDown}
-            placeholder={getPlaceholder()}
-            rows={1}
-            disabled={isLoading}
-          />
-          <button className="ai-chat-send" onClick={() => sendMessage(input)} disabled={isLoading || (!input.trim() && pendingFiles.length === 0)}>
-            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <line x1="22" y1="2" x2="11" y2="13" />
-              <polygon points="22 2 15 22 11 13 2 9 22 2" />
-            </svg>
-          </button>
+          {/* Recording UI */}
+          {isRecording ? (
+            <div style={{
+              flex: 1, display: "flex", alignItems: "center", gap: "10px",
+              padding: "0 8px",
+            }}>
+              <button
+                onClick={cancelRecording}
+                style={{
+                  background: "none", border: "none", cursor: "pointer",
+                  color: "hsl(var(--destructive))", fontSize: "20px", padding: "4px",
+                  flexShrink: 0,
+                }}
+                title="Cancelar gravação"
+              >✕</button>
+              <div style={{
+                flex: 1, display: "flex", alignItems: "center", gap: "8px",
+              }}>
+                <span style={{
+                  width: "10px", height: "10px", borderRadius: "50%",
+                  background: "hsl(var(--destructive))",
+                  animation: "pulse 1.2s infinite",
+                  flexShrink: 0,
+                }} />
+                <span style={{
+                  fontSize: "14px", color: "hsl(var(--foreground))",
+                  fontVariantNumeric: "tabular-nums",
+                }}>
+                  {Math.floor(recordingDuration / 60).toString().padStart(2, "0")}:{(recordingDuration % 60).toString().padStart(2, "0")}
+                </span>
+                <span style={{ fontSize: "13px", color: "hsl(var(--muted-foreground))" }}>
+                  Gravando...
+                </span>
+              </div>
+              <button
+                onClick={stopRecording}
+                style={{
+                  background: "linear-gradient(135deg, #A47B3B, #D4A853)",
+                  border: "none", borderRadius: "50%",
+                  width: "38px", height: "38px",
+                  display: "flex", alignItems: "center", justifyContent: "center",
+                  cursor: "pointer",
+                  boxShadow: "0 4px 12px rgba(164,123,59,0.4)",
+                  flexShrink: 0,
+                }}
+                title="Enviar gravação"
+              >
+                <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                  <line x1="22" y1="2" x2="11" y2="13" />
+                  <polygon points="22 2 15 22 11 13 2 9 22 2" />
+                </svg>
+              </button>
+            </div>
+          ) : (
+            <>
+              <textarea
+                ref={inputRef}
+                className="ai-chat-input"
+                value={input}
+                onChange={e => setInput(e.target.value)}
+                onKeyDown={handleKeyDown}
+                placeholder={getPlaceholder()}
+                rows={1}
+                disabled={isLoading}
+              />
+              {/* Show send button when there's text/files, mic button when empty */}
+              {(input.trim() || pendingFiles.length > 0) ? (
+                <button className="ai-chat-send" onClick={() => sendMessage(input)} disabled={isLoading}>
+                  <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <line x1="22" y1="2" x2="11" y2="13" />
+                    <polygon points="22 2 15 22 11 13 2 9 22 2" />
+                  </svg>
+                </button>
+              ) : (
+                <button
+                  className="ai-chat-send"
+                  onClick={startRecording}
+                  disabled={isLoading || isUploadingFile}
+                  title="Gravar áudio"
+                  style={{ color: "hsl(var(--primary))" }}
+                >
+                  <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z" />
+                    <path d="M19 10v2a7 7 0 0 1-14 0v-2" />
+                    <line x1="12" y1="19" x2="12" y2="23" />
+                    <line x1="8" y1="23" x2="16" y2="23" />
+                  </svg>
+                </button>
+              )}
+            </>
+          )}
         </div>
       </div>
     </div>
