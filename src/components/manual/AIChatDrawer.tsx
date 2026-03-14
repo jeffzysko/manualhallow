@@ -145,6 +145,36 @@ function getAudioFormat(mimeType: string): string {
   return map[mimeType] || "mp3";
 }
 
+/** Feedback buttons component */
+function FeedbackButtons({ rating, onRate }: { rating?: number; onRate: (r: number) => void }) {
+  return (
+    <div style={{ display: "flex", gap: "4px", marginTop: "6px" }}>
+      <button
+        onClick={() => onRate(1)}
+        style={{
+          background: rating === 1 ? "hsl(var(--primary) / 0.2)" : "transparent",
+          border: rating === 1 ? "1px solid hsl(var(--primary) / 0.4)" : "1px solid transparent",
+          borderRadius: "6px", padding: "3px 8px", cursor: "pointer",
+          fontSize: "14px", opacity: rating === -1 ? 0.3 : 1,
+          transition: "all 0.2s",
+        }}
+        title="Boa resposta"
+      >👍</button>
+      <button
+        onClick={() => onRate(-1)}
+        style={{
+          background: rating === -1 ? "hsl(var(--destructive) / 0.15)" : "transparent",
+          border: rating === -1 ? "1px solid hsl(var(--destructive) / 0.3)" : "1px solid transparent",
+          borderRadius: "6px", padding: "3px 8px", cursor: "pointer",
+          fontSize: "14px", opacity: rating === 1 ? 0.3 : 1,
+          transition: "all 0.2s",
+        }}
+        title="Resposta ruim"
+      >👎</button>
+    </div>
+  );
+}
+
 const AIChatDrawer = ({ open, onClose }: { open: boolean; onClose: () => void }) => {
   const { user } = useAuth();
   const [messages, setMessages] = useState<Msg[]>([]);
