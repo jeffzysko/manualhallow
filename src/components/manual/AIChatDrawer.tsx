@@ -611,6 +611,11 @@ const AIChatDrawer = ({ open, onClose }: { open: boolean; onClose: () => void })
     }
   }, [input, isLoading, messages, persistMessage, pendingFiles]);
 
+  // Keep ref in sync for audio recording callback
+  useEffect(() => {
+    sendMessageRef.current = sendMessage;
+  }, [sendMessage]);
+
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
