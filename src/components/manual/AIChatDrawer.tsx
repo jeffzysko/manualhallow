@@ -215,6 +215,18 @@ const AIChatDrawer = ({ open, onClose }: { open: boolean; onClose: () => void })
     if (open) setTimeout(() => inputRef.current?.focus(), 300);
   }, [open]);
 
+  // Close attach menu on outside click
+  useEffect(() => {
+    if (!attachMenuOpen) return;
+    const handleClick = (e: MouseEvent) => {
+      if (attachMenuRef.current && !attachMenuRef.current.contains(e.target as Node)) {
+        setAttachMenuOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClick);
+    return () => document.removeEventListener("mousedown", handleClick);
+  }, [attachMenuOpen]);
+
   const persistMessage = useCallback(async (role: "user" | "assistant", content: string, fileInfo?: { type: string; url?: string; name?: string; mimeType?: string }) => {
     if (!user) return;
     let stored = content;
