@@ -184,6 +184,8 @@ const AIChatDrawer = ({ open, onClose }: { open: boolean; onClose: () => void })
   const [pendingFiles, setPendingFiles] = useState<PendingFile[]>([]);
   const [isUploadingFile, setIsUploadingFile] = useState(false);
   const [attachMenuOpen, setAttachMenuOpen] = useState(false);
+  const [isRecording, setIsRecording] = useState(false);
+  const [recordingDuration, setRecordingDuration] = useState(0);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -191,6 +193,9 @@ const AIChatDrawer = ({ open, onClose }: { open: boolean; onClose: () => void })
   const audioInputRef = useRef<HTMLInputElement>(null);
   const docInputRef = useRef<HTMLInputElement>(null);
   const attachMenuRef = useRef<HTMLDivElement>(null);
+  const mediaRecorderRef = useRef<MediaRecorder | null>(null);
+  const audioChunksRef = useRef<Blob[]>([]);
+  const recordingTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   // Load history from DB
   useEffect(() => {
