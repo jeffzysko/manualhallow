@@ -698,7 +698,7 @@ const AIChatDrawer = ({ open, onClose }: { open: boolean; onClose: () => void })
           <input ref={audioInputRef} type="file" accept="audio/mpeg,audio/mp3,audio/wav,audio/ogg,audio/m4a,audio/x-m4a,audio/mp4,audio/webm" style={{ display: "none" }} onChange={handleFileSelect} />
           <input ref={docInputRef} type="file" accept="application/pdf,text/plain,text/csv,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" style={{ display: "none" }} onChange={handleFileSelect} />
 
-          {/* WhatsApp-style attach button + popup */}
+          {/* WhatsApp-style attach menu v2 */}
           <div style={{ position: "relative", flexShrink: 0 }} ref={attachMenuRef}>
             {attachMenuOpen && (
               <div style={{
