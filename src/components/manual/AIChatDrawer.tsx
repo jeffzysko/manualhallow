@@ -152,9 +152,14 @@ const AIChatDrawer = ({ open, onClose }: { open: boolean; onClose: () => void })
   const [historyLoaded, setHistoryLoaded] = useState(false);
   const [pendingFile, setPendingFile] = useState<PendingFile | null>(null);
   const [isUploadingFile, setIsUploadingFile] = useState(false);
+  const [attachMenuOpen, setAttachMenuOpen] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const imageInputRef = useRef<HTMLInputElement>(null);
+  const audioInputRef = useRef<HTMLInputElement>(null);
+  const docInputRef = useRef<HTMLInputElement>(null);
+  const attachMenuRef = useRef<HTMLDivElement>(null);
 
   // Load history from DB
   useEffect(() => {
