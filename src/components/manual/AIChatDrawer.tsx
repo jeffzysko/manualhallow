@@ -484,7 +484,7 @@ const AIChatDrawer = ({ open, onClose }: { open: boolean; onClose: () => void })
       userContent = sanitized;
     }
 
-    const userMsg: Msg = { role: "user", content: userContent };
+    const userMsg: Msg = { role: "user", content: userContent, timestamp: new Date().toISOString() };
     setInput("");
     const currentPendingFiles = [...pendingFiles];
     setPendingFiles([]);
