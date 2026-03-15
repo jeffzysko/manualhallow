@@ -11,6 +11,7 @@ import { useFavorites } from "@/hooks/useFavorites";
 import { useReadingProgress } from "@/hooks/useReadingProgress";
 import { FavoritesContext } from "@/contexts/FavoritesContext";
 import { usePullToRefresh } from "@/hooks/usePullToRefresh";
+import { useAIChat } from "@/contexts/AIChatContext";
 
 import ChapterSkeleton from "@/components/manual/ChapterSkeleton";
 
