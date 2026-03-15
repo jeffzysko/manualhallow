@@ -806,6 +806,43 @@ Adapte suas respostas futuras seguindo os padrões dessas interações bem-suced
     // Resolve file_url parts (fetch documents and convert to base64 for AI)
     const resolvedMessages = await resolveFileParts(messages);
 
+    // Inject time-gap markers between messages for context-change detection
+    const messagesWithTimeGaps: any[] = [];
+    for (let i = 0; i < resolvedMessages.length; i++) {
+      const msg = resolvedMessages[i];
+      if (i > 0 && msg.timestamp && resolvedMessages[i - 1].timestamp) {
+        const prev = new Date(resolvedMessages[i - 1].timestamp).getTime();
+        const curr = new Date(msg.timestamp).getTime();
+        const diffMs = curr - prev;
+        const diffMin = Math.round(diffMs / 60000);
+        if (diffMin >= 10) {
+          const label = diffMin >= 1440
+            ? `${Math.round(diffMin / 1440)} dia(s)`
+            : diffMin >= 60
+              ? `${Math.round(diffMin / 60)} hora(s)`
+              : `${diffMin} minutos`;
+          messagesWithTimeGaps.push({
+            role: "user",
+            content: `[⏱ ${label} desde a última mensagem]`,
+          });
+        }
+      }
+      // Strip timestamp before sending to AI
+      const { timestamp: _, ...cleanMsg } = msg;
+      messagesWithTimeGaps.push(cleanMsg);
+    }
+
+    // Merge consecutive same-role messages (after gap injection)
+    const finalMessages: any[] = [];
+    for (const m of messagesWithTimeGaps) {
+      const last = finalMessages[finalMessages.length - 1];
+      if (last && last.role === m.role && typeof last.content === "string" && typeof m.content === "string") {
+        last.content += "\n" + m.content;
+      } else {
+        finalMessages.push({ ...m });
+      }
+    }
+
     const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",
       headers: {
@@ -816,7 +853,7 @@ Adapte suas respostas futuras seguindo os padrões dessas interações bem-suced
         model: "google/gemini-2.5-pro",
         messages: [
           { role: "system", content: SYSTEM_PROMPT + userContext },
-          ...resolvedMessages,
+          ...finalMessages,
         ],
         stream: true,
       }),
