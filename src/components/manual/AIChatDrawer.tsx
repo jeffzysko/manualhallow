@@ -754,7 +754,7 @@ const AIChatDrawer = ({ open, onClose }: { open: boolean; onClose: () => void })
         <div className="ai-chat-messages">
           {messages.length === 0 && (
             <div className="ai-chat-empty">
-              <span className="ai-chat-empty-icon">✦</span>
+              <img src={diAvatar} alt="Di" className="ai-chat-empty-avatar" />
               <p>Olá! Sou a Di, sua especialista em vendas.</p>
               <p>Envie <strong>textos, áudios ou imagens</strong>. Peça scripts prontos, tire dúvidas sobre objeções ou solicite análises de propostas. Estou aqui para te apoiar em campo!</p>
               <div className="ai-chat-suggestions">
