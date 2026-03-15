@@ -5,10 +5,12 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "@/contexts/AuthContext";
+import { AIChatProvider } from "@/contexts/AIChatContext";
 import ProtectedRoute from "./components/ProtectedRoute";
 import OfflineBanner from "./components/OfflineBanner";
 import PWAUpdatePrompt from "./components/PWAUpdatePrompt";
 import { useOfflineSync } from "./hooks/useOfflineSync";
+import GlobalAIChat from "./components/manual/GlobalAIChat";
 
 // Lazy-load all route pages for smaller initial bundle
 const ManualPage = lazy(() => import("./pages/ManualPage"));
@@ -22,10 +24,10 @@ const NotFound = lazy(() => import("./pages/NotFound"));
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      staleTime: 5 * 60 * 1000,     // 5 min — avoid unnecessary refetches
-      gcTime: 10 * 60 * 1000,        // 10 min garbage collection
-      retry: 1,                       // single retry on failure
-      refetchOnWindowFocus: false,    // don't refetch on tab switch
+      staleTime: 5 * 60 * 1000,
+      gcTime: 10 * 60 * 1000,
+      retry: 1,
+      refetchOnWindowFocus: false,
     },
   },
 });
@@ -45,26 +47,29 @@ const App = () => (
   <QueryClientProvider client={queryClient}>
     <AuthProvider>
       <SyncProvider>
-        <TooltipProvider>
-          <Toaster />
-          <Sonner />
-          <OfflineBanner />
-          <PWAUpdatePrompt />
-          <BrowserRouter>
-            <Suspense fallback={<PageFallback />}>
-              <Routes>
-                <Route path="/" element={<ProtectedRoute><ManualPage /></ProtectedRoute>} />
-                <Route path="/auth" element={<AuthPage />} />
-                <Route path="/reset-password" element={<ResetPasswordPage />} />
-                <Route path="/onboarding" element={<ProtectedRoute><OnboardingPage /></ProtectedRoute>} />
-                <Route path="/pwa-install" element={<ProtectedRoute><PWAInstallPage /></ProtectedRoute>} />
-                <Route path="/admin" element={<ProtectedRoute><AdminPage /></ProtectedRoute>} />
-                {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-                <Route path="*" element={<NotFound />} />
-              </Routes>
-            </Suspense>
-          </BrowserRouter>
-        </TooltipProvider>
+        <AIChatProvider>
+          <TooltipProvider>
+            <Toaster />
+            <Sonner />
+            <OfflineBanner />
+            <PWAUpdatePrompt />
+            <BrowserRouter>
+              <Suspense fallback={<PageFallback />}>
+                <Routes>
+                  <Route path="/" element={<ProtectedRoute><ManualPage /></ProtectedRoute>} />
+                  <Route path="/auth" element={<AuthPage />} />
+                  <Route path="/reset-password" element={<ResetPasswordPage />} />
+                  <Route path="/onboarding" element={<ProtectedRoute><OnboardingPage /></ProtectedRoute>} />
+                  <Route path="/pwa-install" element={<ProtectedRoute><PWAInstallPage /></ProtectedRoute>} />
+                  <Route path="/admin" element={<ProtectedRoute><AdminPage /></ProtectedRoute>} />
+                  {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+                  <Route path="*" element={<NotFound />} />
+                </Routes>
+              </Suspense>
+              <GlobalAIChat />
+            </BrowserRouter>
+          </TooltipProvider>
+        </AIChatProvider>
       </SyncProvider>
     </AuthProvider>
   </QueryClientProvider>

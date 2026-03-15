@@ -11,6 +11,7 @@ import { useFavorites } from "@/hooks/useFavorites";
 import { useReadingProgress } from "@/hooks/useReadingProgress";
 import { FavoritesContext } from "@/contexts/FavoritesContext";
 import { usePullToRefresh } from "@/hooks/usePullToRefresh";
+import { useAIChat } from "@/contexts/AIChatContext";
 
 import ChapterSkeleton from "@/components/manual/ChapterSkeleton";
 
@@ -18,7 +19,6 @@ import ChapterSkeleton from "@/components/manual/ChapterSkeleton";
 const SearchOverlay = lazy(() => import("@/components/manual/SearchOverlay"));
 const FavoritesOverlay = lazy(() => import("@/components/manual/FavoritesOverlay"));
 const NotesDrawer = lazy(() => import("@/components/manual/NotesDrawer"));
-const AIChatDrawer = lazy(() => import("@/components/manual/AIChatDrawer"));
 
 
 const Chapter1Content = lazy(() => import("@/components/manual/chapters/Chapter1Content"));
@@ -38,7 +38,7 @@ const ManualPage = () => {
   const [scriptsMode, setScriptsMode] = useState(false);
   const [scrollProgress, setScrollProgress] = useState(0);
   const [notesOpen, setNotesOpen] = useState(false);
-  const [aiChatOpen, setAiChatOpen] = useState(false);
+  const { openAIChat } = useAIChat();
   
   const { user, signOut } = useAuth();
   const { favorites, isFavorite, toggleFavorite } = useFavorites();
@@ -135,7 +135,7 @@ const ManualPage = () => {
             />
           )}
           {notesOpen && <NotesDrawer open={notesOpen} onClose={() => setNotesOpen(false)} />}
-          {aiChatOpen && <AIChatDrawer open={aiChatOpen} onClose={() => setAiChatOpen(false)} />}
+          
           
         </Suspense>
 
@@ -196,7 +196,7 @@ const ManualPage = () => {
             if (!user) { routerNavigate("/auth"); return; }
             setNotesOpen(true);
           }}
-          onOpenAI={() => setAiChatOpen(true)}
+          onOpenAI={openAIChat}
         />
       </div>
     </FavoritesContext.Provider>
