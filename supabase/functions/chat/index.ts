@@ -649,6 +649,25 @@ FIM DO CONTEÚDO DO MANUAL
 9. **Motive rápido** — Se inseguro, 1 frase de encorajamento + o script. Não faça discurso motivacional
 10. **Emojis** — Máx 1-2 por resposta
 
+═══════════════════════════════════════════
+DETECÇÃO DE MUDANÇA DE CONTEXTO
+═══════════════════════════════════════════
+
+**REGRA CRÍTICA**: Cada mensagem do vendedor pode ser sobre um CLIENTE DIFERENTE ou uma SITUAÇÃO DIFERENTE, mesmo na mesma conversa. Preste muita atenção a:
+
+1. **Marcadores de tempo**: Você receberá marcadores "[⏱ X horas/minutos atrás]" entre mensagens. Se passou mais de 30 minutos, ASSUMA que pode ser um novo contexto/cliente.
+
+2. **Sinais de mudança de assunto**: Se o vendedor muda de objeção, perfil de cliente, tamanho de piscina, ou menciona um nome diferente → trate como NOVO ATENDIMENTO. NÃO misture informações do cliente anterior.
+
+3. **Como agir na mudança**:
+   - NÃO referencie informações de mensagens anteriores que claramente eram sobre outro cliente
+   - Trate cada novo contexto com frescor — como se fosse a primeira pergunta sobre AQUELE cliente
+   - Se não tem certeza se é o mesmo cliente, pergunte: "Isso é sobre o mesmo cliente ou é um novo atendimento?"
+
+4. **Quando é o MESMO contexto**: Se o vendedor continua falando do mesmo cliente (mesmo nome, mesma objeção, evolução natural), aí sim use o histórico recente para dar continuidade.
+
+═══════════════════════════════════════════
+
 **FORMATO PADRÃO DE RESPOSTA:**
 [1-2 frases de diagnóstico/contexto]
 **Manda isso agora:**
@@ -787,6 +806,43 @@ Adapte suas respostas futuras seguindo os padrões dessas interações bem-suced
     // Resolve file_url parts (fetch documents and convert to base64 for AI)
     const resolvedMessages = await resolveFileParts(messages);
 
+    // Inject time-gap markers between messages for context-change detection
+    const messagesWithTimeGaps: any[] = [];
+    for (let i = 0; i < resolvedMessages.length; i++) {
+      const msg = resolvedMessages[i];
+      if (i > 0 && msg.timestamp && resolvedMessages[i - 1].timestamp) {
+        const prev = new Date(resolvedMessages[i - 1].timestamp).getTime();
+        const curr = new Date(msg.timestamp).getTime();
+        const diffMs = curr - prev;
+        const diffMin = Math.round(diffMs / 60000);
+        if (diffMin >= 10) {
+          const label = diffMin >= 1440
+            ? `${Math.round(diffMin / 1440)} dia(s)`
+            : diffMin >= 60
+              ? `${Math.round(diffMin / 60)} hora(s)`
+              : `${diffMin} minutos`;
+          messagesWithTimeGaps.push({
+            role: "user",
+            content: `[⏱ ${label} desde a última mensagem]`,
+          });
+        }
+      }
+      // Strip timestamp before sending to AI
+      const { timestamp: _, ...cleanMsg } = msg;
+      messagesWithTimeGaps.push(cleanMsg);
+    }
+
+    // Merge consecutive same-role messages (after gap injection)
+    const finalMessages: any[] = [];
+    for (const m of messagesWithTimeGaps) {
+      const last = finalMessages[finalMessages.length - 1];
+      if (last && last.role === m.role && typeof last.content === "string" && typeof m.content === "string") {
+        last.content += "\n" + m.content;
+      } else {
+        finalMessages.push({ ...m });
+      }
+    }
+
     const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",
       headers: {
@@ -797,7 +853,7 @@ Adapte suas respostas futuras seguindo os padrões dessas interações bem-suced
         model: "google/gemini-2.5-pro",
         messages: [
           { role: "system", content: SYSTEM_PROMPT + userContext },
-          ...resolvedMessages,
+          ...finalMessages,
         ],
         stream: true,
       }),
