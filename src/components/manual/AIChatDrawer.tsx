@@ -203,7 +203,7 @@ const AIChatDrawer = ({ open, onClose }: { open: boolean; onClose: () => void })
     if (!open || !user || historyLoaded) return;
     supabase
       .from("chat_messages")
-      .select("role, content")
+      .select("role, content, created_at")
       .eq("user_id", user.id)
       .order("created_at", { ascending: true })
       .limit(50)
@@ -211,6 +211,7 @@ const AIChatDrawer = ({ open, onClose }: { open: boolean; onClose: () => void })
         if (data && data.length > 0) {
           setMessages(data.map(d => {
             const role = d.role as "user" | "assistant";
+            const timestamp = d.created_at;
             if (d.content.startsWith("{")) {
               try {
                 const parsed = JSON.parse(d.content);
@@ -219,25 +220,25 @@ const AIChatDrawer = ({ open, onClose }: { open: boolean; onClose: () => void })
                     { type: "text", text: parsed.text || "" },
                     { type: "image_url", image_url: { url: parsed.image_url } },
                   ];
-                  return { role, content: parts };
+                  return { role, content: parts, timestamp };
                 }
                 if (parsed.audio) {
                   const parts: MsgContent = [
                     { type: "text", text: parsed.text || "" },
                     { type: "input_audio", input_audio: { data: "", format: "mp3" } },
                   ];
-                  return { role, content: parts };
+                  return { role, content: parts, timestamp };
                 }
                 if (parsed.file_url) {
                   const parts: MsgContent = [
                     { type: "text", text: parsed.text || "" },
                     { type: "file_url", file_url: { url: parsed.file_url, mime_type: parsed.mime_type || "", name: parsed.file_name || "Documento" } },
                   ];
-                  return { role, content: parts };
+                  return { role, content: parts, timestamp };
                 }
               } catch { /* not JSON */ }
             }
-            return { role, content: d.content };
+            return { role, content: d.content, timestamp };
           }));
         }
         setHistoryLoaded(true);
