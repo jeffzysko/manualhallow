@@ -18,10 +18,13 @@ export default function PWAUpdatePrompt() {
   } = useRegisterSW({
     onRegisteredSW(swUrl, registration) {
       if (registration) {
-        // Check for updates every 60 seconds
-        setInterval(() => {
-          registration.update();
-        }, 60 * 1000);
+        // Check for updates only when returning to the tab (not on a timer)
+        const checkUpdate = () => {
+          if (document.visibilityState === "visible") {
+            registration.update();
+          }
+        };
+        document.addEventListener("visibilitychange", checkUpdate);
       }
     },
     onOfflineReady() {
