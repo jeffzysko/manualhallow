@@ -506,6 +506,7 @@ const AIChatDrawer = ({ open, onClose }: { open: boolean; onClose: () => void })
     const historyMsgs = messages.map(m => ({
       role: m.role,
       content: typeof m.content === "string" ? m.content : getTextContent(m.content),
+      timestamp: m.timestamp,
     })).filter(m => typeof m.content === "string" && m.content.trim().length > 0);
 
     // For the current message, send the full multimodal content
