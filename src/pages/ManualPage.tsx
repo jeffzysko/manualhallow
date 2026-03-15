@@ -38,7 +38,7 @@ const ManualPage = () => {
   const [scriptsMode, setScriptsMode] = useState(false);
   const [scrollProgress, setScrollProgress] = useState(0);
   const [notesOpen, setNotesOpen] = useState(false);
-  const [aiChatOpen, setAiChatOpen] = useState(false);
+  const { openAIChat } = useAIChat();
   
   const { user, signOut } = useAuth();
   const { favorites, isFavorite, toggleFavorite } = useFavorites();
