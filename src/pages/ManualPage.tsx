@@ -135,7 +135,7 @@ const ManualPage = () => {
             />
           )}
           {notesOpen && <NotesDrawer open={notesOpen} onClose={() => setNotesOpen(false)} />}
-          {aiChatOpen && <AIChatDrawer open={aiChatOpen} onClose={() => setAiChatOpen(false)} />}
+          
           
         </Suspense>
 
