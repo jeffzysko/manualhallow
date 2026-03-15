@@ -732,7 +732,7 @@ const AIChatDrawer = ({ open, onClose }: { open: boolean; onClose: () => void })
       <div className="ai-chat-drawer" onClick={e => e.stopPropagation()}>
         <div className="ai-chat-header">
           <div className="ai-chat-header-left">
-            <span className="ai-chat-icon">✨</span>
+            <img src={diAvatar} alt="Di" className="ai-chat-avatar" />
             <span className="ai-chat-title">Di - Especialista em Vendas</span>
           </div>
           <div className="ai-chat-header-right">
