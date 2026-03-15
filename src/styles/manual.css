@@ -2260,6 +2260,22 @@ body { overflow-x: hidden; }
 
 /* ===== AI CHAT DRAWER ===== */
 .ai-chat-overlay {
+  /* Re-declare design tokens so the drawer works outside .manual-page */
+  --bg:          #09090F;
+  --bg2:         #0F1018;
+  --card:        #13151F;
+  --card2:       #1A1D2B;
+  --border:      rgba(201,169,106,0.18);
+  --border2:     rgba(255,255,255,0.06);
+  --gold:        #C9A96A;
+  --gold-light:  #E2C88A;
+  --gold-dim:    rgba(201,169,106,0.12);
+  --white:       #F4F0E8;
+  --gray:        #9E9A92;
+  --gray2:       #8A8680;
+  --red:         #E05C5C;
+  --red-dim:     rgba(224,92,92,0.12);
+
   position: fixed; inset: 0; z-index: 9999;
   background: rgba(0,0,0,0.6); backdrop-filter: blur(4px);
   display: flex; align-items: flex-end; justify-content: center;
