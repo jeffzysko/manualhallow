@@ -2284,6 +2284,7 @@ body { overflow-x: hidden; }
 }
 .ai-chat-header-left { display: flex; align-items: center; gap: 10px; }
 .ai-chat-icon { color: var(--gold); font-size: 18px; }
+.ai-chat-avatar { width: 36px; height: 36px; border-radius: 50%; object-fit: cover; border: 2px solid var(--gold); box-shadow: 0 0 12px rgba(212,175,55,0.25); }
 .ai-chat-title { color: var(--white); font-size: 15px; font-weight: 600; letter-spacing: 0.5px; }
 .ai-chat-close {
   background: none; border: none; color: var(--gray); font-size: 20px;
