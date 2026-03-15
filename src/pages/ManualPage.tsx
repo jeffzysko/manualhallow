@@ -196,7 +196,7 @@ const ManualPage = () => {
             if (!user) { routerNavigate("/auth"); return; }
             setNotesOpen(true);
           }}
-          onOpenAI={() => setAiChatOpen(true)}
+          onOpenAI={openAIChat}
         />
       </div>
     </FavoritesContext.Provider>
