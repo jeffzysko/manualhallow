@@ -1390,10 +1390,28 @@ const AIChatDrawer = ({ open, onClose }: { open: boolean; onClose: () => void })
             <div className="ai-chat-msg ai-chat-msg--assistant">
               <img src={diAvatar} alt="Di" className="ai-chat-msg-avatar" />
               <div className="ai-chat-msg-content">
-                <div className="ai-chat-typing">
-                  <span /><span /><span />
-                </div>
-                <div className="ai-chat-msg-time" style={{ marginTop: 2 }}>digitando...</div>
+                {isProcessingAudio ? (
+                  <>
+                    <div className="ai-chat-audio-processing">
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="hsl(var(--primary))" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="ai-chat-audio-icon">
+                        <path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/>
+                        <path d="M19 10v2a7 7 0 0 1-14 0v-2"/>
+                        <line x1="12" x2="12" y1="19" y2="22"/>
+                      </svg>
+                      <div className="ai-chat-audio-bars">
+                        <span/><span/><span/><span/><span/>
+                      </div>
+                    </div>
+                    <div className="ai-chat-msg-time" style={{ marginTop: 2 }}>transcrevendo áudio...</div>
+                  </>
+                ) : (
+                  <>
+                    <div className="ai-chat-typing">
+                      <span /><span /><span />
+                    </div>
+                    <div className="ai-chat-msg-time" style={{ marginTop: 2 }}>digitando...</div>
+                  </>
+                )}
               </div>
             </div>
           )}
