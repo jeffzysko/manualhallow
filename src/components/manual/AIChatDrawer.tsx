@@ -1028,6 +1028,11 @@ const AIChatDrawer = ({ open, onClose }: { open: boolean; onClose: () => void })
                     <circle cx="11" cy="11" r="8" /><line x1="21" y1="21" x2="16.65" y2="16.65" />
                   </svg>
                 </button>
+                <button className="ai-chat-header-btn" onClick={handleOpenHistory} aria-label="Histórico" title="Histórico de conversas">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <circle cx="12" cy="12" r="10" /><polyline points="12 6 12 12 16 14" />
+                  </svg>
+                </button>
                 <button className="ai-chat-clear" onClick={handleClearHistory} aria-label="Limpar conversa" title="Limpar conversa">
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                     <polyline points="3 6 5 6 21 6" /><path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2" />
