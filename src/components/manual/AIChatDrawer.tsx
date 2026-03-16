@@ -775,25 +775,10 @@ const AIChatDrawer = ({ open, onClose }: { open: boolean; onClose: () => void })
     }
   }, [user, messages]);
 
-  /** Toggle an emoji reaction on a message */
-  const handleReaction = useCallback((msgIndex: number, emoji: string) => {
-    setMessages(prev => prev.map((m, i) => {
-      if (i !== msgIndex) return m;
-      const reactions = { ...(m.reactions || {}) };
-      reactions[emoji] = !reactions[emoji];
-      return { ...m, reactions };
-    }));
-  }, []);
-
   /** Swipe touch handlers */
   const handleTouchStart = useCallback((e: ReactTouchEvent, idx: number) => {
     const touch = e.touches[0];
     swipeStartRef.current = { x: touch.clientX, y: touch.clientY, idx };
-    // Long-press for reactions
-    longPressTimerRef.current = setTimeout(() => {
-      setReactionMenuIdx(idx);
-      swipeStartRef.current = null;
-    }, 500);
   }, []);
 
   const handleTouchMove = useCallback((e: ReactTouchEvent) => {
