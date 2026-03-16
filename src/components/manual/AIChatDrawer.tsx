@@ -885,6 +885,8 @@ const AIChatDrawer = ({ open, onClose }: { open: boolean; onClose: () => void })
           {messages.map((msg, i) => {
             const isAssistant = msg.role === "assistant";
             const text = getTextContent(msg.content);
+            // Filter by search query
+            if (searchQuery && !text.toLowerCase().includes(searchQuery.toLowerCase())) return null;
             const imageUrls = getImageUrls(msg.content);
             const attachedFiles = getAttachedFiles(msg.content);
             const { clean } = isAssistant ? parseSuggestions(text) : { clean: text };
