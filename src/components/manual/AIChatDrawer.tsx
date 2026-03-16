@@ -307,6 +307,7 @@ const AIChatDrawer = ({ open, onClose }: { open: boolean; onClose: () => void })
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const audioChunksRef = useRef<Blob[]>([]);
   const recordingTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const recordingCancelledRef = useRef(false);
 
   // Load history from DB
   useEffect(() => {
