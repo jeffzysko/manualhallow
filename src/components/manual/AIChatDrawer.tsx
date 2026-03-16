@@ -1170,12 +1170,31 @@ const AIChatDrawer = ({ open, onClose }: { open: boolean; onClose: () => void })
               {lastAssistantSuggestions.map((s, i) => (
                 <button
                   key={i}
-                  className="ai-chat-suggestion"
+                  className="ai-chat-suggestion ai-chat-suggestion--dynamic"
                   onClick={() => sendMessage(s)}
                 >
-                  {s}
+                  💬 {s}
                 </button>
               ))}
+            </div>
+          )}
+
+          {/* Quick actions when conversation is active */}
+          {!isLoading && messages.length > 0 && !roleplayActive && (
+            <div className="ai-chat-dynamic-suggestions">
+              <button className="ai-chat-suggestion ai-chat-suggestion--action" onClick={startRoleplay}>
+                🎭 Simular atendimento
+              </button>
+              <button className="ai-chat-suggestion ai-chat-suggestion--action" onClick={startConversationAnalysis}>
+                📸 Analisar conversa
+              </button>
+            </div>
+          )}
+          {!isLoading && roleplayActive && (
+            <div className="ai-chat-dynamic-suggestions">
+              <button className="ai-chat-suggestion ai-chat-suggestion--action ai-chat-suggestion--stop" onClick={stopRoleplay}>
+                ✋ Encerrar roleplay e receber feedback
+              </button>
             </div>
           )}
 
