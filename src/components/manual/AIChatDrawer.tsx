@@ -594,7 +594,7 @@ const AIChatDrawer = ({ open, onClose }: { open: boolean; onClose: () => void })
                 if (last?.role === "assistant") {
                   return prev.map((m, i) => i === prev.length - 1 ? { ...m, content: snapshot } : m);
                 }
-                return [...prev, { role: "assistant", content: snapshot }];
+                return [...prev, { role: "assistant" as const, content: snapshot, timestamp: new Date().toISOString() }];
               });
             }
           } catch {
