@@ -16,17 +16,6 @@ export default function PWAUpdatePrompt() {
     needRefresh: [needRefresh],
     updateServiceWorker,
   } = useRegisterSW({
-    onRegisteredSW(swUrl, registration) {
-      if (registration) {
-        // Check for updates only when returning to the tab (not on a timer)
-        const checkUpdate = () => {
-          if (document.visibilityState === "visible") {
-            registration.update();
-          }
-        };
-        document.addEventListener("visibilitychange", checkUpdate);
-      }
-    },
     onOfflineReady() {
       console.log("[PWA] App ready for offline use");
     },
