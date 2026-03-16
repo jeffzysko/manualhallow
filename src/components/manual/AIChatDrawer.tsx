@@ -307,6 +307,7 @@ const AIChatDrawer = ({ open, onClose }: { open: boolean; onClose: () => void })
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const audioChunksRef = useRef<Blob[]>([]);
   const recordingTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const recordingCancelledRef = useRef(false);
 
   // Load history from DB
   useEffect(() => {
@@ -473,6 +474,7 @@ const AIChatDrawer = ({ open, onClose }: { open: boolean; onClose: () => void })
         : "audio/webm";
       const recorder = new MediaRecorder(stream, { mimeType });
       audioChunksRef.current = [];
+      recordingCancelledRef.current = false;
 
       recorder.ondataavailable = (e) => {
         if (e.data.size > 0) audioChunksRef.current.push(e.data);
@@ -482,6 +484,11 @@ const AIChatDrawer = ({ open, onClose }: { open: boolean; onClose: () => void })
         stream.getTracks().forEach(t => t.stop());
         if (recordingTimerRef.current) clearInterval(recordingTimerRef.current);
         setRecordingDuration(0);
+
+        if (recordingCancelledRef.current) {
+          recordingCancelledRef.current = false;
+          return;
+        }
 
         const blob = new Blob(audioChunksRef.current, { type: mimeType });
         if (blob.size < 1000) return; // too short
@@ -547,10 +554,11 @@ const AIChatDrawer = ({ open, onClose }: { open: boolean; onClose: () => void })
   }, []);
 
   const cancelRecording = useCallback(() => {
+    recordingCancelledRef.current = true;
     if (mediaRecorderRef.current && mediaRecorderRef.current.state !== "inactive") {
       mediaRecorderRef.current.stream.getTracks().forEach(t => t.stop());
       mediaRecorderRef.current.stop();
-      audioChunksRef.current = []; // clear so onstop does nothing useful
+      audioChunksRef.current = [];
     }
     if (recordingTimerRef.current) clearInterval(recordingTimerRef.current);
     setIsRecording(false);
