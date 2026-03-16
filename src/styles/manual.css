@@ -2350,6 +2350,18 @@ body { overflow-x: hidden; }
 .ai-chat-md strong { color: var(--gold-light); }
 .ai-chat-md code { background: rgba(255,255,255,0.06); padding: 2px 6px; border-radius: 4px; font-size: 13px; }
 
+/* WhatsApp-style message meta (timestamp + read receipt) */
+.ai-chat-msg-meta {
+  display: flex; align-items: center; justify-content: flex-end;
+  gap: 3px; margin-top: 4px;
+}
+.ai-chat-msg-time {
+  font-size: 10px; color: var(--gray2); opacity: 0.8;
+  font-variant-numeric: tabular-nums; line-height: 1;
+}
+.ai-chat-msg--user .ai-chat-msg-meta { justify-content: flex-end; }
+.ai-chat-msg--assistant .ai-chat-msg-meta { justify-content: flex-start; }
+
 .ai-chat-typing { display: flex; gap: 4px; padding: 4px 0; }
 .ai-chat-typing span {
   width: 6px; height: 6px; border-radius: 50%; background: var(--gray);
