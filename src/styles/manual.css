@@ -2420,6 +2420,28 @@ body { overflow-x: hidden; }
 .ai-chat-new-context:hover { background: rgba(201,169,106,0.12); border-color: var(--gold); }
 .ai-chat-new-context-label { white-space: nowrap; }
 @media (max-width: 380px) { .ai-chat-new-context-label { display: none; } }
+
+/* Context separator divider */
+.ai-chat-context-separator {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px 8px;
+  margin: 8px 0;
+}
+.ai-chat-context-separator-line {
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--gold-dim, rgba(201,169,106,0.35)), transparent);
+}
+.ai-chat-context-separator-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--gold);
+  white-space: nowrap;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
 .ai-chat-clear {
   background: none; border: none; color: var(--gray); cursor: pointer;
   padding: 4px 6px; border-radius: 6px; display: flex; align-items: center;

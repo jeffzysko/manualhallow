@@ -796,6 +796,17 @@ const AIChatDrawer = ({ open, onClose }: { open: boolean; onClose: () => void })
             const attachedFiles = getAttachedFiles(msg.content);
             const { clean } = isAssistant ? parseSuggestions(text) : { clean: text };
 
+            // Render context separator as a visual divider
+            if (text.includes("🔄 NOVO ATENDIMENTO")) {
+              return (
+                <div key={i} className="ai-chat-context-separator">
+                  <div className="ai-chat-context-separator-line" />
+                  <span className="ai-chat-context-separator-label">🔄 Novo Atendimento</span>
+                  <div className="ai-chat-context-separator-line" />
+                </div>
+              );
+            }
+
             return (
               <div key={i} className={`ai-chat-msg ai-chat-msg--${msg.role}`}>
                 {imageUrls.length > 0 && (
@@ -845,7 +856,6 @@ const AIChatDrawer = ({ open, onClose }: { open: boolean; onClose: () => void })
                 ) : (
                   clean && <p>{clean}</p>
                 )}
-                {/* Feedback buttons for assistant messages */}
                 {isAssistant && !isLoading && clean && !clean.startsWith("⚠️") && (
                   <FeedbackButtons
                     rating={msg.rating}
