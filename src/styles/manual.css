@@ -2298,7 +2298,7 @@ body { overflow-x: hidden; }
   padding: 16px 20px; border-bottom: 1px solid var(--border2);
   flex-shrink: 0; gap: 8px;
 }
-.ai-chat-header-left { display: flex; align-items: center; gap: 10px; flex-shrink: 0; min-width: 0; }
+.ai-chat-header-left { display: flex; align-items: center; gap: 10px; flex: 1; min-width: 0; }
 .ai-chat-avatar-wrap { position: relative; flex-shrink: 0; }
 .ai-chat-online-dot {
   position: absolute; bottom: 0; right: 0;
@@ -2500,7 +2500,7 @@ body { overflow-x: hidden; }
 
 
 /* Header actions */
-.ai-chat-header-right { display: flex; align-items: center; gap: 6px; }
+.ai-chat-header-right { display: flex; align-items: center; gap: 6px; flex-shrink: 0; margin-left: 8px; }
 .ai-chat-header-btn {
   background: none; border: none; color: var(--gray); cursor: pointer;
   padding: 4px 6px; border-radius: 6px; display: flex; align-items: center;
@@ -2515,7 +2515,7 @@ body { overflow-x: hidden; }
 }
 .ai-chat-new-context:hover { background: rgba(201,169,106,0.12); border-color: var(--gold); }
 .ai-chat-new-context-label { white-space: nowrap; }
-@media (max-width: 480px) { .ai-chat-new-context-label { display: none; } }
+@media (max-width: 520px) { .ai-chat-new-context-label { display: none; } }
 
 /* Chat search bar */
 .ai-chat-search-bar {
@@ -2760,6 +2760,22 @@ body { overflow-x: hidden; }
     border-radius: 0;
     padding-top: env(safe-area-inset-top, 0px);
   }
+  .ai-chat-header { padding: 12px 10px; gap: 6px; }
+  .ai-chat-header-left { gap: 8px; min-width: 0; }
+  .ai-chat-avatar { width: 32px; height: 32px; }
+  .ai-chat-title { font-size: 12px; letter-spacing: 0.2px; }
+  .ai-chat-status-text { font-size: 10px; }
+  .ai-chat-header-right { gap: 2px; margin-left: 6px; }
+  .ai-chat-header-btn,
+  .ai-chat-clear,
+  .ai-chat-close,
+  .ai-chat-new-context {
+    min-width: 32px;
+    min-height: 32px;
+    padding: 4px;
+    justify-content: center;
+  }
+  .ai-chat-new-context { border-radius: 8px; }
   .ai-chat-msg { max-width: 92%; }
   .ai-chat-suggestion { font-size: 12px; padding: 6px 12px; }
 }
