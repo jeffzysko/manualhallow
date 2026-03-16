@@ -1000,7 +1000,7 @@ const AIChatDrawer = ({ open, onClose }: { open: boolean; onClose: () => void })
               <span className="ai-chat-online-dot" />
             </div>
             <div className="ai-chat-header-info">
-              <span className="ai-chat-title">Di - Especialista<br />em Vendas</span>
+              <span className="ai-chat-title">Di - Especialista em Vendas</span>
               <span className="ai-chat-status-text">online</span>
             </div>
           </div>
