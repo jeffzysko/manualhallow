@@ -786,10 +786,6 @@ const AIChatDrawer = ({ open, onClose }: { open: boolean; onClose: () => void })
     const touch = e.touches[0];
     const dx = touch.clientX - swipeStartRef.current.x;
     const dy = touch.clientY - swipeStartRef.current.y;
-    // Cancel long press on any movement
-    if (Math.abs(dx) > 5 || Math.abs(dy) > 5) {
-      if (longPressTimerRef.current) { clearTimeout(longPressTimerRef.current); longPressTimerRef.current = null; }
-    }
     // Only horizontal swipe
     if (Math.abs(dy) > Math.abs(dx)) return;
     const idx = swipeStartRef.current.idx;
