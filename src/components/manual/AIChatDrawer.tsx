@@ -617,7 +617,7 @@ const AIChatDrawer = ({ open, onClose }: { open: boolean; onClose: () => void })
           });
           persistMessage("assistant", parts[0]);
           await new Promise(r => setTimeout(r, 800));
-          setMessages(prev => [...prev, { role: "assistant", content: parts[1] }]);
+          setMessages(prev => [...prev, { role: "assistant", content: parts[1], timestamp: new Date().toISOString() }]);
           persistMessage("assistant", parts[1]);
         } else {
           persistMessage("assistant", assistantSoFar);
