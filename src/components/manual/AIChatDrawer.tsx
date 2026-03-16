@@ -1076,6 +1076,24 @@ const AIChatDrawer = ({ open, onClose }: { open: boolean; onClose: () => void })
           </div>
         )}
 
+        {/* Reply-to preview */}
+        {replyTo && (
+          <div className="ai-chat-reply-preview">
+            <div className="ai-chat-reply-preview-bar" />
+            <div className="ai-chat-reply-preview-content">
+              <span className="ai-chat-reply-preview-name">
+                {replyTo.role === "assistant" ? "Di" : "Você"}
+              </span>
+              <span className="ai-chat-reply-preview-text">{replyTo.text}</span>
+            </div>
+            <button
+              className="ai-chat-reply-preview-close"
+              onClick={() => setReplyTo(null)}
+              aria-label="Cancelar resposta"
+            >✕</button>
+          </div>
+        )}
+
         <div className="ai-chat-input-area">
           {/* Hidden file inputs for each type */}
           <input ref={imageInputRef} type="file" accept="image/jpeg,image/png,image/webp,image/gif" multiple style={{ display: "none" }} onChange={handleFileSelect} />
