@@ -44,7 +44,13 @@ function validateMessages(messages: unknown): any[] | null {
           // Validate audio format
           const validFormats = ["mp3", "wav", "ogg", "m4a", "mp4", "webm"];
           const format = validFormats.includes(part.input_audio.format) ? part.input_audio.format : "mp3";
+          // Store as input_audio for now; resolveFileParts will convert to Gemini-compatible format
           parts.push({ type: "input_audio", input_audio: { data: part.input_audio.data, format } });
+        } else if (part.type === "audio_url" && part.audio_url?.url && typeof part.audio_url.url === "string") {
+          // Audio sent as URL reference (fallback path)
+          if (part.audio_url.url.startsWith("https://")) {
+            parts.push({ type: "audio_url", audio_url: { url: part.audio_url.url, mime_type: part.audio_url.mime_type || "audio/webm" } });
+          }
         } else if (part.type === "file_url" && part.file_url?.url && typeof part.file_url.url === "string") {
           // For documents (PDF, etc.) - fetch and convert to base64 for the AI
           if (part.file_url.url.startsWith("https://")) {
