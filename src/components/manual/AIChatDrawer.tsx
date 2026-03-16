@@ -809,6 +809,61 @@ const AIChatDrawer = ({ open, onClose }: { open: boolean; onClose: () => void })
     }
   }, [user, messages]);
 
+  /** Toggle an emoji reaction on a message */
+  const handleReaction = useCallback((msgIndex: number, emoji: string) => {
+    setMessages(prev => prev.map((m, i) => {
+      if (i !== msgIndex) return m;
+      const reactions = { ...(m.reactions || {}) };
+      reactions[emoji] = !reactions[emoji];
+      return { ...m, reactions };
+    }));
+  }, []);
+
+  /** Swipe touch handlers */
+  const handleTouchStart = useCallback((e: ReactTouchEvent, idx: number) => {
+    const touch = e.touches[0];
+    swipeStartRef.current = { x: touch.clientX, y: touch.clientY, idx };
+    // Long-press for reactions
+    longPressTimerRef.current = setTimeout(() => {
+      setReactionMenuIdx(idx);
+      swipeStartRef.current = null;
+    }, 500);
+  }, []);
+
+  const handleTouchMove = useCallback((e: ReactTouchEvent) => {
+    if (!swipeStartRef.current) return;
+    const touch = e.touches[0];
+    const dx = touch.clientX - swipeStartRef.current.x;
+    const dy = touch.clientY - swipeStartRef.current.y;
+    // Cancel long press on any movement
+    if (Math.abs(dx) > 5 || Math.abs(dy) > 5) {
+      if (longPressTimerRef.current) { clearTimeout(longPressTimerRef.current); longPressTimerRef.current = null; }
+    }
+    // Only horizontal swipe
+    if (Math.abs(dy) > Math.abs(dx)) return;
+    const idx = swipeStartRef.current.idx;
+    const clamped = Math.max(-60, Math.min(60, dx));
+    if (Math.abs(clamped) > 10) {
+      setSwipeOffset({ idx, offset: clamped });
+    }
+  }, []);
+
+  const handleTouchEnd = useCallback(() => {
+    if (longPressTimerRef.current) { clearTimeout(longPressTimerRef.current); longPressTimerRef.current = null; }
+    if (swipeOffset && Math.abs(swipeOffset.offset) >= 40) {
+      // Trigger reply
+      const msg = messages[swipeOffset.idx];
+      if (msg) {
+        const text = getTextContent(msg.content);
+        const { clean } = msg.role === "assistant" ? parseSuggestions(text) : { clean: text };
+        setReplyTo({ index: swipeOffset.idx, role: msg.role, text: clean.slice(0, 120) });
+        inputRef.current?.focus();
+      }
+    }
+    setSwipeOffset(null);
+    swipeStartRef.current = null;
+  }, [swipeOffset, messages]);
+
   // Extract suggestions from the last assistant message
   const lastAssistantSuggestions = useMemo(() => {
     if (isLoading) return [];
