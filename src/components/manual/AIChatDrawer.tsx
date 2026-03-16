@@ -778,6 +778,7 @@ const AIChatDrawer = ({ open, onClose }: { open: boolean; onClose: () => void })
       setMessages(prev => [...prev, { role: "assistant", content: errMsg, timestamp: new Date().toISOString() }]);
     } finally {
       setIsLoading(false);
+      setIsProcessingAudio(false);
     }
   }, [input, isLoading, messages, persistMessage, pendingFiles, replyTo]);
 
