@@ -1182,7 +1182,7 @@ const AIChatDrawer = ({ open, onClose }: { open: boolean; onClose: () => void })
 
           {/* Quick actions when conversation is active */}
           {!isLoading && messages.length > 0 && !roleplayActive && (
-            <div className="ai-chat-dynamic-suggestions">
+            <div className="ai-chat-dynamic-suggestions ai-chat-dynamic-suggestions--actions">
               <button className="ai-chat-suggestion ai-chat-suggestion--action" onClick={startRoleplay}>
                 🎭 Simular atendimento
               </button>
@@ -1192,7 +1192,7 @@ const AIChatDrawer = ({ open, onClose }: { open: boolean; onClose: () => void })
             </div>
           )}
           {!isLoading && roleplayActive && (
-            <div className="ai-chat-dynamic-suggestions">
+            <div className="ai-chat-dynamic-suggestions ai-chat-dynamic-suggestions--actions">
               <button className="ai-chat-suggestion ai-chat-suggestion--action ai-chat-suggestion--stop" onClick={stopRoleplay}>
                 ✋ Encerrar roleplay e receber feedback
               </button>
