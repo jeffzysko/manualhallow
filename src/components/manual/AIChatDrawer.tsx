@@ -236,6 +236,49 @@ function FeedbackButtons({ rating, onRate }: { rating?: number; onRate: (r: numb
   );
 }
 
+const REACTION_EMOJIS = ["👍", "❤️", "😂", "🔥", "👏"];
+
+/** Emoji reactions bar shown on long-press */
+function ReactionBar({ reactions, onReact, onClose }: { reactions?: Record<string, boolean>; onReact: (emoji: string) => void; onClose: () => void }) {
+  const ref = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    const handler = (e: MouseEvent) => {
+      if (ref.current && !ref.current.contains(e.target as Node)) onClose();
+    };
+    document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
+  }, [onClose]);
+
+  return (
+    <div className="ai-chat-reactions-bar" ref={ref}>
+      {REACTION_EMOJIS.map(emoji => (
+        <button
+          key={emoji}
+          className={`ai-chat-reaction-btn${reactions?.[emoji] ? " ai-chat-reaction-btn--active" : ""}`}
+          onClick={() => { onReact(emoji); onClose(); }}
+        >
+          {emoji}
+        </button>
+      ))}
+    </div>
+  );
+}
+
+/** Display reactions under a message */
+function ReactionsDisplay({ reactions, onToggle }: { reactions: Record<string, boolean>; onToggle: (emoji: string) => void }) {
+  const active = Object.entries(reactions).filter(([, v]) => v);
+  if (active.length === 0) return null;
+  return (
+    <div className="ai-chat-reactions-display">
+      {active.map(([emoji]) => (
+        <button key={emoji} className="ai-chat-reaction-chip ai-chat-reaction-chip--mine" onClick={() => onToggle(emoji)}>
+          {emoji}
+        </button>
+      ))}
+    </div>
+  );
+}
+
 const AIChatDrawer = ({ open, onClose }: { open: boolean; onClose: () => void }) => {
   const { user } = useAuth();
   const [messages, setMessages] = useState<Msg[]>([]);
