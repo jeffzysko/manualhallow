@@ -842,11 +842,12 @@ const AIChatDrawer = ({ open, onClose }: { open: boolean; onClose: () => void })
     swipeStartRef.current = null;
   }, [swipeOffset, messages]);
 
-  // Extract suggestions from the last assistant message
+  // Extract suggestions from the last assistant message (use stored suggestions first)
   const lastAssistantSuggestions = useMemo(() => {
     if (isLoading) return [];
     const lastAssistant = [...messages].reverse().find(m => m.role === "assistant");
     if (!lastAssistant) return [];
+    if (lastAssistant.suggestions && lastAssistant.suggestions.length > 0) return lastAssistant.suggestions;
     const text = getTextContent(lastAssistant.content);
     const { suggestions } = parseSuggestions(text);
     return suggestions;
