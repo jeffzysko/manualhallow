@@ -554,10 +554,11 @@ const AIChatDrawer = ({ open, onClose }: { open: boolean; onClose: () => void })
   }, []);
 
   const cancelRecording = useCallback(() => {
+    recordingCancelledRef.current = true;
     if (mediaRecorderRef.current && mediaRecorderRef.current.state !== "inactive") {
       mediaRecorderRef.current.stream.getTracks().forEach(t => t.stop());
       mediaRecorderRef.current.stop();
-      audioChunksRef.current = []; // clear so onstop does nothing useful
+      audioChunksRef.current = [];
     }
     if (recordingTimerRef.current) clearInterval(recordingTimerRef.current);
     setIsRecording(false);
