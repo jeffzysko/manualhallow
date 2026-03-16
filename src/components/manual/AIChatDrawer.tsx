@@ -237,6 +237,8 @@ const AIChatDrawer = ({ open, onClose }: { open: boolean; onClose: () => void })
   const [isRecording, setIsRecording] = useState(false);
   const [recordingDuration, setRecordingDuration] = useState(0);
   const [replyTo, setReplyTo] = useState<{ index: number; role: string; text: string } | null>(null);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [searchOpen, setSearchOpen] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
