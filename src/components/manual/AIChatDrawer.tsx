@@ -626,6 +626,15 @@ const AIChatDrawer = ({ open, onClose }: { open: boolean; onClose: () => void })
     }
   };
 
+  const handleNewContext = useCallback(async () => {
+    if (!user || isLoading) return;
+    const separator = "───── 🔄 NOVO ATENDIMENTO ─────\n[Contexto anterior encerrado. Novo cliente/situação a partir daqui.]";
+    const systemMsg: Msg = { role: "user", content: separator, timestamp: new Date().toISOString() };
+    setMessages(prev => [...prev, systemMsg]);
+    await persistMessage("user", separator);
+    toast.success("Separador inserido — a Di tratará como novo cliente.");
+  }, [user, isLoading, persistMessage]);
+
   const handleClearHistory = useCallback(async () => {
     if (!user) return;
     await supabase.from("chat_messages").delete().eq("user_id", user.id);
