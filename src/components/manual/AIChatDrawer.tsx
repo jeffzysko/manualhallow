@@ -146,6 +146,23 @@ function getAudioFormat(mimeType: string): string {
   return map[mimeType] || "mp3";
 }
 
+/** Format timestamp like WhatsApp (HH:MM) */
+function formatTime(ts?: string): string {
+  if (!ts) return "";
+  const d = new Date(ts);
+  return d.toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" });
+}
+
+/** Double-check icon (WhatsApp read receipt style) */
+function ReadReceipt({ read }: { read: boolean }) {
+  return (
+    <svg width="16" height="11" viewBox="0 0 16 11" fill="none" style={{ flexShrink: 0, marginLeft: 2 }}>
+      <path d="M1 5.5L4 8.5L10.5 2" stroke={read ? "#53BDEB" : "var(--gray2)"} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M5 5.5L8 8.5L14.5 2" stroke={read ? "#53BDEB" : "var(--gray2)"} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
 /** Feedback buttons component */
 function FeedbackButtons({ rating, onRate }: { rating?: number; onRate: (r: number) => void }) {
   return (
@@ -577,7 +594,7 @@ const AIChatDrawer = ({ open, onClose }: { open: boolean; onClose: () => void })
                 if (last?.role === "assistant") {
                   return prev.map((m, i) => i === prev.length - 1 ? { ...m, content: snapshot } : m);
                 }
-                return [...prev, { role: "assistant", content: snapshot }];
+                return [...prev, { role: "assistant" as const, content: snapshot, timestamp: new Date().toISOString() }];
               });
             }
           } catch {
@@ -600,7 +617,7 @@ const AIChatDrawer = ({ open, onClose }: { open: boolean; onClose: () => void })
           });
           persistMessage("assistant", parts[0]);
           await new Promise(r => setTimeout(r, 800));
-          setMessages(prev => [...prev, { role: "assistant", content: parts[1] }]);
+          setMessages(prev => [...prev, { role: "assistant", content: parts[1], timestamp: new Date().toISOString() }]);
           persistMessage("assistant", parts[1]);
         } else {
           persistMessage("assistant", assistantSoFar);
@@ -608,7 +625,7 @@ const AIChatDrawer = ({ open, onClose }: { open: boolean; onClose: () => void })
       }
     } catch (e: any) {
       const errMsg = `⚠️ ${e.message || "Erro inesperado. Tente novamente."}`;
-      setMessages(prev => [...prev, { role: "assistant", content: errMsg }]);
+      setMessages(prev => [...prev, { role: "assistant", content: errMsg, timestamp: new Date().toISOString() }]);
     } finally {
       setIsLoading(false);
     }
@@ -743,8 +760,14 @@ const AIChatDrawer = ({ open, onClose }: { open: boolean; onClose: () => void })
       <div className="ai-chat-drawer" onClick={e => e.stopPropagation()}>
         <div className="ai-chat-header">
           <div className="ai-chat-header-left">
-            <img src={diAvatar} alt="Di" className="ai-chat-avatar" />
-            <span className="ai-chat-title">Di - Especialista em Vendas</span>
+            <div className="ai-chat-avatar-wrap">
+              <img src={diAvatar} alt="Di" className="ai-chat-avatar" />
+              <span className="ai-chat-online-dot" />
+            </div>
+            <div className="ai-chat-header-info">
+              <span className="ai-chat-title">Di - Especialista em Vendas</span>
+              <span className="ai-chat-status-text">online</span>
+            </div>
           </div>
           <div className="ai-chat-header-right">
             {messages.length > 0 && (
@@ -860,6 +883,15 @@ const AIChatDrawer = ({ open, onClose }: { open: boolean; onClose: () => void })
                 ) : (
                   clean && <p>{clean}</p>
                 )}
+                <div className="ai-chat-msg-meta">
+                  <span className="ai-chat-msg-time">{formatTime(msg.timestamp)}</span>
+                  {!isAssistant && (
+                    <ReadReceipt read={
+                      /* Mark as read if there's a subsequent assistant message */
+                      i < messages.length - 1 && messages.slice(i + 1).some(m => m.role === "assistant")
+                    } />
+                  )}
+                </div>
                 {isAssistant && !isLoading && clean && !clean.startsWith("⚠️") && (
                   <FeedbackButtons
                     rating={msg.rating}
@@ -888,8 +920,12 @@ const AIChatDrawer = ({ open, onClose }: { open: boolean; onClose: () => void })
 
           {isLoading && messages[messages.length - 1]?.role !== "assistant" && (
             <div className="ai-chat-msg ai-chat-msg--assistant">
-              <div className="ai-chat-typing">
-                <span /><span /><span />
+              <img src={diAvatar} alt="Di" className="ai-chat-msg-avatar" />
+              <div className="ai-chat-msg-content">
+                <div className="ai-chat-typing">
+                  <span /><span /><span />
+                </div>
+                <div className="ai-chat-msg-time" style={{ marginTop: 2 }}>digitando...</div>
               </div>
             </div>
           )}
