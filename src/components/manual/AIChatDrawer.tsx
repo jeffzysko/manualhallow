@@ -1136,7 +1136,7 @@ const AIChatDrawer = ({ open, onClose }: { open: boolean; onClose: () => void })
             <div className="ai-chat-empty">
               <img src={diAvatar} alt="Di" className="ai-chat-empty-avatar" />
               <p>Olá! Sou a Di, sua especialista em vendas.</p>
-              <p>Envie <strong>textos, áudios ou imagens</strong>. Peça scripts prontos, tire dúvidas sobre objeções ou solicite análises de propostas. Estou aqui para te apoiar em campo!</p>
+              <p>Envie <strong>textos, áudios ou imagens</strong>. <em>Você também pode falar comigo em áudio</em> 🎧 se preferir! Peça scripts prontos, tire dúvidas sobre objeções ou solicite análises de propostas. Estou aqui para te apoiar em campo!</p>
               
               {/* Quick action cards */}
               <div className="ai-chat-quick-actions">
