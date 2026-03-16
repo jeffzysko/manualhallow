@@ -920,8 +920,12 @@ const AIChatDrawer = ({ open, onClose }: { open: boolean; onClose: () => void })
 
           {isLoading && messages[messages.length - 1]?.role !== "assistant" && (
             <div className="ai-chat-msg ai-chat-msg--assistant">
-              <div className="ai-chat-typing">
-                <span /><span /><span />
+              <img src={diAvatar} alt="Di" className="ai-chat-msg-avatar" />
+              <div className="ai-chat-msg-content">
+                <div className="ai-chat-typing">
+                  <span /><span /><span />
+                </div>
+                <div className="ai-chat-msg-time" style={{ marginTop: 2 }}>digitando...</div>
               </div>
             </div>
           )}
