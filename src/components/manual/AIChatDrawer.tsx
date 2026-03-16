@@ -484,6 +484,11 @@ const AIChatDrawer = ({ open, onClose }: { open: boolean; onClose: () => void })
         if (recordingTimerRef.current) clearInterval(recordingTimerRef.current);
         setRecordingDuration(0);
 
+        if (recordingCancelledRef.current) {
+          recordingCancelledRef.current = false;
+          return;
+        }
+
         const blob = new Blob(audioChunksRef.current, { type: mimeType });
         if (blob.size < 1000) return; // too short
 
