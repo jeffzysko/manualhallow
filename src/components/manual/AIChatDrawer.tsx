@@ -14,7 +14,7 @@ type ContentPart =
   | { type: "file_url"; file_url: { url: string; mime_type: string; name: string } };
 
 type MsgContent = string | ContentPart[];
-type Msg = { role: "user" | "assistant"; content: MsgContent; id?: string; rating?: number; timestamp?: string };
+type Msg = { role: "user" | "assistant"; content: MsgContent; id?: string; rating?: number; timestamp?: string; replyTo?: { role: string; text: string } };
 
 type PendingFile = {
   url: string;
@@ -153,6 +153,18 @@ function formatTime(ts?: string): string {
   return d.toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" });
 }
 
+/** Format date label for message grouping (Hoje, Ontem, or dd/mm/yyyy) */
+function formatDateLabel(ts: string): string {
+  const d = new Date(ts);
+  const now = new Date();
+  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  const msgDay = new Date(d.getFullYear(), d.getMonth(), d.getDate());
+  const diff = (today.getTime() - msgDay.getTime()) / (1000 * 60 * 60 * 24);
+  if (diff < 1) return "Hoje";
+  if (diff < 2) return "Ontem";
+  return d.toLocaleDateString("pt-BR", { day: "2-digit", month: "2-digit", year: "numeric" });
+}
+
 /** Double-check icon (WhatsApp read receipt style) */
 function ReadReceipt({ read }: { read: boolean }) {
   return (
@@ -204,6 +216,7 @@ const AIChatDrawer = ({ open, onClose }: { open: boolean; onClose: () => void })
   const [attachMenuOpen, setAttachMenuOpen] = useState(false);
   const [isRecording, setIsRecording] = useState(false);
   const [recordingDuration, setRecordingDuration] = useState(0);
+  const [replyTo, setReplyTo] = useState<{ index: number; role: string; text: string } | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -501,10 +514,16 @@ const AIChatDrawer = ({ open, onClose }: { open: boolean; onClose: () => void })
       userContent = sanitized;
     }
 
-    const userMsg: Msg = { role: "user", content: userContent, timestamp: new Date().toISOString() };
+    const userMsg: Msg = {
+      role: "user",
+      content: userContent,
+      timestamp: new Date().toISOString(),
+      replyTo: replyTo ? { role: replyTo.role, text: replyTo.text } : undefined,
+    };
     setInput("");
     const currentPendingFiles = [...pendingFiles];
     setPendingFiles([]);
+    setReplyTo(null);
     setMessages(prev => [...prev, userMsg]);
     setIsLoading(true);
 
@@ -819,84 +838,137 @@ const AIChatDrawer = ({ open, onClose }: { open: boolean; onClose: () => void })
             const attachedFiles = getAttachedFiles(msg.content);
             const { clean } = isAssistant ? parseSuggestions(text) : { clean: text };
 
+            // Date separator logic
+            let showDateSep = false;
+            if (msg.timestamp) {
+              if (i === 0) {
+                showDateSep = true;
+              } else {
+                const prevTs = messages[i - 1]?.timestamp;
+                if (prevTs) {
+                  const prevDay = new Date(prevTs).toDateString();
+                  const curDay = new Date(msg.timestamp).toDateString();
+                  showDateSep = prevDay !== curDay;
+                }
+              }
+            }
+
             // Render context separator as a visual divider
             if (text.includes("🔄 NOVO ATENDIMENTO")) {
               return (
-                <div key={i} className="ai-chat-context-separator">
-                  <div className="ai-chat-context-separator-line" />
-                  <span className="ai-chat-context-separator-label">🔄 Novo Atendimento</span>
-                  <div className="ai-chat-context-separator-line" />
+                <div key={i}>
+                  {showDateSep && msg.timestamp && (
+                    <div className="ai-chat-date-separator">
+                      <span>{formatDateLabel(msg.timestamp)}</span>
+                    </div>
+                  )}
+                  <div className="ai-chat-context-separator">
+                    <div className="ai-chat-context-separator-line" />
+                    <span className="ai-chat-context-separator-label">🔄 Novo Atendimento</span>
+                    <div className="ai-chat-context-separator-line" />
+                  </div>
                 </div>
               );
             }
 
+            const handleReply = () => {
+              setReplyTo({ index: i, role: msg.role, text: clean.slice(0, 120) });
+              inputRef.current?.focus();
+            };
+
             return (
-              <div key={i} className={`ai-chat-msg ai-chat-msg--${msg.role}`}>
-                {isAssistant && (
-                  <img src={diAvatar} alt="Di" className="ai-chat-msg-avatar" />
-                )}
-                <div className="ai-chat-msg-content">
-                {imageUrls.length > 0 && (
-                  <div style={{ display: "flex", flexWrap: "wrap", gap: "4px", marginBottom: "6px" }}>
-                    {imageUrls.map((url, idx) => (
-                      <img
-                        key={idx}
-                        src={url}
-                        alt="Print enviado"
-                        className="ai-chat-image"
-                        style={{
-                          maxWidth: imageUrls.length > 1 ? "48%" : "100%",
-                          maxHeight: "240px",
-                          borderRadius: "8px",
-                          objectFit: "contain",
-                        }}
-                      />
-                    ))}
+              <div key={i}>
+                {showDateSep && msg.timestamp && (
+                  <div className="ai-chat-date-separator">
+                    <span>{formatDateLabel(msg.timestamp)}</span>
                   </div>
                 )}
-                {attachedFiles.map((af, idx) => (
-                  <div key={idx} style={{
-                    display: "flex",
-                    alignItems: "center",
-                    gap: "8px",
-                    padding: "8px 12px",
-                    borderRadius: "8px",
-                    background: isAssistant ? "hsl(var(--muted) / 0.5)" : "hsl(var(--primary) / 0.15)",
-                    marginBottom: "6px",
-                    fontSize: "13px",
-                  }}>
-                    {getFileIcon(af.type)}
-                    <span style={{ flex: 1, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
-                      {af.name}
-                    </span>
-                    {af.url && (
-                      <a href={af.url} target="_blank" rel="noopener noreferrer" style={{ color: "hsl(var(--primary))", fontSize: "12px", flexShrink: 0 }}>
-                        Abrir
-                      </a>
+                <div
+                  className={`ai-chat-msg ai-chat-msg--${msg.role} ai-chat-msg-animate ai-chat-msg-animate--${msg.role}`}
+                  onDoubleClick={handleReply}
+                >
+                  {isAssistant && (
+                    <img src={diAvatar} alt="Di" className="ai-chat-msg-avatar" />
+                  )}
+                  <div className="ai-chat-msg-content">
+                  {/* Reply quote */}
+                  {msg.replyTo && (
+                    <div className="ai-chat-reply-quote">
+                      <span className="ai-chat-reply-quote-name">
+                        {msg.replyTo.role === "assistant" ? "Di" : "Você"}
+                      </span>
+                      <span className="ai-chat-reply-quote-text">{msg.replyTo.text}</span>
+                    </div>
+                  )}
+                  {imageUrls.length > 0 && (
+                    <div style={{ display: "flex", flexWrap: "wrap", gap: "4px", marginBottom: "6px" }}>
+                      {imageUrls.map((url, idx) => (
+                        <img
+                          key={idx}
+                          src={url}
+                          alt="Print enviado"
+                          className="ai-chat-image"
+                          style={{
+                            maxWidth: imageUrls.length > 1 ? "48%" : "100%",
+                            maxHeight: "240px",
+                            borderRadius: "8px",
+                            objectFit: "contain",
+                          }}
+                        />
+                      ))}
+                    </div>
+                  )}
+                  {attachedFiles.map((af, idx) => (
+                    <div key={idx} style={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "8px",
+                      padding: "8px 12px",
+                      borderRadius: "8px",
+                      background: isAssistant ? "hsl(var(--muted) / 0.5)" : "hsl(var(--primary) / 0.15)",
+                      marginBottom: "6px",
+                      fontSize: "13px",
+                    }}>
+                      {getFileIcon(af.type)}
+                      <span style={{ flex: 1, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                        {af.name}
+                      </span>
+                      {af.url && (
+                        <a href={af.url} target="_blank" rel="noopener noreferrer" style={{ color: "hsl(var(--primary))", fontSize: "12px", flexShrink: 0 }}>
+                          Abrir
+                        </a>
+                      )}
+                    </div>
+                  ))}
+                  {isAssistant ? (
+                    <div className="ai-chat-md">
+                      <ReactMarkdown>{clean}</ReactMarkdown>
+                    </div>
+                  ) : (
+                    clean && <p>{clean}</p>
+                  )}
+                  <div className="ai-chat-msg-meta">
+                    <span className="ai-chat-msg-time">{formatTime(msg.timestamp)}</span>
+                    {!isAssistant && (
+                      <ReadReceipt read={
+                        i < messages.length - 1 && messages.slice(i + 1).some(m => m.role === "assistant")
+                      } />
                     )}
                   </div>
-                ))}
-                {isAssistant ? (
-                  <div className="ai-chat-md">
-                    <ReactMarkdown>{clean}</ReactMarkdown>
-                  </div>
-                ) : (
-                  clean && <p>{clean}</p>
-                )}
-                <div className="ai-chat-msg-meta">
-                  <span className="ai-chat-msg-time">{formatTime(msg.timestamp)}</span>
-                  {!isAssistant && (
-                    <ReadReceipt read={
-                      i < messages.length - 1 && messages.slice(i + 1).some(m => m.role === "assistant")
-                    } />
+                  {isAssistant && !isLoading && clean && !clean.startsWith("⚠️") && (
+                    <FeedbackButtons
+                      rating={msg.rating}
+                      onRate={(rating) => handleFeedback(i, rating)}
+                    />
                   )}
-                </div>
-                {isAssistant && !isLoading && clean && !clean.startsWith("⚠️") && (
-                  <FeedbackButtons
-                    rating={msg.rating}
-                    onRate={(rating) => handleFeedback(i, rating)}
-                  />
-                )}
+                  {/* Reply button */}
+                  <button className="ai-chat-reply-btn" onClick={handleReply} title="Responder" aria-label="Responder">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <polyline points="9 17 4 12 9 7" />
+                      <path d="M20 18v-2a4 4 0 0 0-4-4H4" />
+                    </svg>
+                  </button>
+                  </div>
                 </div>
               </div>
             );
@@ -1001,6 +1073,24 @@ const AIChatDrawer = ({ open, onClose }: { open: boolean; onClose: () => void })
                 </button>
               </div>
             ))}
+          </div>
+        )}
+
+        {/* Reply-to preview */}
+        {replyTo && (
+          <div className="ai-chat-reply-preview">
+            <div className="ai-chat-reply-preview-bar" />
+            <div className="ai-chat-reply-preview-content">
+              <span className="ai-chat-reply-preview-name">
+                {replyTo.role === "assistant" ? "Di" : "Você"}
+              </span>
+              <span className="ai-chat-reply-preview-text">{replyTo.text}</span>
+            </div>
+            <button
+              className="ai-chat-reply-preview-close"
+              onClick={() => setReplyTo(null)}
+              aria-label="Cancelar resposta"
+            >✕</button>
           </div>
         )}
 
