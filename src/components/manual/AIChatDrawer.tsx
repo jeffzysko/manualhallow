@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect, useCallback, useMemo } from "react";
+import { useState, useRef, useEffect, useCallback, useMemo, TouchEvent as ReactTouchEvent } from "react";
 import diAvatar from "@/assets/di-avatar.png";
 import ReactMarkdown from "react-markdown";
 import { supabase } from "@/integrations/supabase/client";
@@ -14,7 +14,7 @@ type ContentPart =
   | { type: "file_url"; file_url: { url: string; mime_type: string; name: string } };
 
 type MsgContent = string | ContentPart[];
-type Msg = { role: "user" | "assistant"; content: MsgContent; id?: string; rating?: number; timestamp?: string; replyTo?: { role: string; text: string } };
+type Msg = { role: "user" | "assistant"; content: MsgContent; id?: string; rating?: number; timestamp?: string; replyTo?: { role: string; text: string }; reactions?: Record<string, boolean> };
 
 type PendingFile = {
   url: string;
@@ -236,6 +236,49 @@ function FeedbackButtons({ rating, onRate }: { rating?: number; onRate: (r: numb
   );
 }
 
+const REACTION_EMOJIS = ["👍", "❤️", "😂", "🔥", "👏"];
+
+/** Emoji reactions bar shown on long-press */
+function ReactionBar({ reactions, onReact, onClose }: { reactions?: Record<string, boolean>; onReact: (emoji: string) => void; onClose: () => void }) {
+  const ref = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    const handler = (e: MouseEvent) => {
+      if (ref.current && !ref.current.contains(e.target as Node)) onClose();
+    };
+    document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
+  }, [onClose]);
+
+  return (
+    <div className="ai-chat-reactions-bar" ref={ref}>
+      {REACTION_EMOJIS.map(emoji => (
+        <button
+          key={emoji}
+          className={`ai-chat-reaction-btn${reactions?.[emoji] ? " ai-chat-reaction-btn--active" : ""}`}
+          onClick={() => { onReact(emoji); onClose(); }}
+        >
+          {emoji}
+        </button>
+      ))}
+    </div>
+  );
+}
+
+/** Display reactions under a message */
+function ReactionsDisplay({ reactions, onToggle }: { reactions: Record<string, boolean>; onToggle: (emoji: string) => void }) {
+  const active = Object.entries(reactions).filter(([, v]) => v);
+  if (active.length === 0) return null;
+  return (
+    <div className="ai-chat-reactions-display">
+      {active.map(([emoji]) => (
+        <button key={emoji} className="ai-chat-reaction-chip ai-chat-reaction-chip--mine" onClick={() => onToggle(emoji)}>
+          {emoji}
+        </button>
+      ))}
+    </div>
+  );
+}
+
 const AIChatDrawer = ({ open, onClose }: { open: boolean; onClose: () => void }) => {
   const { user } = useAuth();
   const [messages, setMessages] = useState<Msg[]>([]);
@@ -250,6 +293,10 @@ const AIChatDrawer = ({ open, onClose }: { open: boolean; onClose: () => void })
   const [replyTo, setReplyTo] = useState<{ index: number; role: string; text: string } | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [searchOpen, setSearchOpen] = useState(false);
+  const [reactionMenuIdx, setReactionMenuIdx] = useState<number | null>(null);
+  const longPressTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const swipeStartRef = useRef<{ x: number; y: number; idx: number } | null>(null);
+  const [swipeOffset, setSwipeOffset] = useState<{ idx: number; offset: number } | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -762,6 +809,61 @@ const AIChatDrawer = ({ open, onClose }: { open: boolean; onClose: () => void })
     }
   }, [user, messages]);
 
+  /** Toggle an emoji reaction on a message */
+  const handleReaction = useCallback((msgIndex: number, emoji: string) => {
+    setMessages(prev => prev.map((m, i) => {
+      if (i !== msgIndex) return m;
+      const reactions = { ...(m.reactions || {}) };
+      reactions[emoji] = !reactions[emoji];
+      return { ...m, reactions };
+    }));
+  }, []);
+
+  /** Swipe touch handlers */
+  const handleTouchStart = useCallback((e: ReactTouchEvent, idx: number) => {
+    const touch = e.touches[0];
+    swipeStartRef.current = { x: touch.clientX, y: touch.clientY, idx };
+    // Long-press for reactions
+    longPressTimerRef.current = setTimeout(() => {
+      setReactionMenuIdx(idx);
+      swipeStartRef.current = null;
+    }, 500);
+  }, []);
+
+  const handleTouchMove = useCallback((e: ReactTouchEvent) => {
+    if (!swipeStartRef.current) return;
+    const touch = e.touches[0];
+    const dx = touch.clientX - swipeStartRef.current.x;
+    const dy = touch.clientY - swipeStartRef.current.y;
+    // Cancel long press on any movement
+    if (Math.abs(dx) > 5 || Math.abs(dy) > 5) {
+      if (longPressTimerRef.current) { clearTimeout(longPressTimerRef.current); longPressTimerRef.current = null; }
+    }
+    // Only horizontal swipe
+    if (Math.abs(dy) > Math.abs(dx)) return;
+    const idx = swipeStartRef.current.idx;
+    const clamped = Math.max(-60, Math.min(60, dx));
+    if (Math.abs(clamped) > 10) {
+      setSwipeOffset({ idx, offset: clamped });
+    }
+  }, []);
+
+  const handleTouchEnd = useCallback(() => {
+    if (longPressTimerRef.current) { clearTimeout(longPressTimerRef.current); longPressTimerRef.current = null; }
+    if (swipeOffset && Math.abs(swipeOffset.offset) >= 40) {
+      // Trigger reply
+      const msg = messages[swipeOffset.idx];
+      if (msg) {
+        const text = getTextContent(msg.content);
+        const { clean } = msg.role === "assistant" ? parseSuggestions(text) : { clean: text };
+        setReplyTo({ index: swipeOffset.idx, role: msg.role, text: clean.slice(0, 120) });
+        inputRef.current?.focus();
+      }
+    }
+    setSwipeOffset(null);
+    swipeStartRef.current = null;
+  }, [swipeOffset, messages]);
+
   // Extract suggestions from the last assistant message
   const lastAssistantSuggestions = useMemo(() => {
     if (isLoading) return [];
@@ -948,90 +1050,119 @@ const AIChatDrawer = ({ open, onClose }: { open: boolean; onClose: () => void })
                   </div>
                 )}
                 <div
-                  className={`ai-chat-msg ai-chat-msg--${msg.role} ai-chat-msg-animate ai-chat-msg-animate--${msg.role}`}
-                  onDoubleClick={handleReply}
+                  className="ai-chat-swipe-wrapper"
+                  data-role={msg.role}
+                  onTouchStart={e => handleTouchStart(e, i)}
+                  onTouchMove={handleTouchMove}
+                  onTouchEnd={handleTouchEnd}
                 >
-                  {isAssistant && (
-                    <img src={diAvatar} alt="Di" className="ai-chat-msg-avatar" />
-                  )}
-                  <div className="ai-chat-msg-content">
-                  {/* Reply quote */}
-                  {msg.replyTo && (
-                    <div className="ai-chat-reply-quote">
-                      <span className="ai-chat-reply-quote-name">
-                        {msg.replyTo.role === "assistant" ? "Di" : "Você"}
-                      </span>
-                      <span className="ai-chat-reply-quote-text">{msg.replyTo.text}</span>
-                    </div>
-                  )}
-                  {imageUrls.length > 0 && (
-                    <div style={{ display: "flex", flexWrap: "wrap", gap: "4px", marginBottom: "6px" }}>
-                      {imageUrls.map((url, idx) => (
-                        <img
-                          key={idx}
-                          src={url}
-                          alt="Print enviado"
-                          className="ai-chat-image"
-                          style={{
-                            maxWidth: imageUrls.length > 1 ? "48%" : "100%",
-                            maxHeight: "240px",
-                            borderRadius: "8px",
-                            objectFit: "contain",
-                          }}
-                        />
-                      ))}
-                    </div>
-                  )}
-                  {attachedFiles.map((af, idx) => (
-                    <div key={idx} style={{
-                      display: "flex",
-                      alignItems: "center",
-                      gap: "8px",
-                      padding: "8px 12px",
-                      borderRadius: "8px",
-                      background: isAssistant ? "hsl(var(--muted) / 0.5)" : "hsl(var(--primary) / 0.15)",
-                      marginBottom: "6px",
-                      fontSize: "13px",
-                    }}>
-                      {getFileIcon(af.type)}
-                      <span style={{ flex: 1, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
-                        {af.name}
-                      </span>
-                      {af.url && (
-                        <a href={af.url} target="_blank" rel="noopener noreferrer" style={{ color: "hsl(var(--primary))", fontSize: "12px", flexShrink: 0 }}>
-                          Abrir
-                        </a>
-                      )}
-                    </div>
-                  ))}
-                  {isAssistant ? (
-                    <div className="ai-chat-md">
-                      <ReactMarkdown>{clean}</ReactMarkdown>
-                    </div>
-                  ) : (
-                    clean && <p>{clean}</p>
-                  )}
-                  <div className="ai-chat-msg-meta">
-                    <span className="ai-chat-msg-time">{formatTime(msg.timestamp)}</span>
-                    {!isAssistant && (
-                      <ReadReceipt read={
-                        i < messages.length - 1 && messages.slice(i + 1).some(m => m.role === "assistant")
-                      } />
-                    )}
-                  </div>
-                  {isAssistant && !isLoading && clean && !clean.startsWith("⚠️") && (
-                    <FeedbackButtons
-                      rating={msg.rating}
-                      onRate={(rating) => handleFeedback(i, rating)}
-                    />
-                  )}
-                  {/* Reply button */}
-                  <button className="ai-chat-reply-btn" onClick={handleReply} title="Responder" aria-label="Responder">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                      <polyline points="9 17 4 12 9 7" />
-                      <path d="M20 18v-2a4 4 0 0 0-4-4H4" />
+                  {/* Swipe reply indicator */}
+                  <div className={`ai-chat-swipe-indicator${swipeOffset?.idx === i && Math.abs(swipeOffset.offset) >= 30 ? " ai-chat-swipe-indicator--visible" : ""}`}>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <polyline points="9 17 4 12 9 7" /><path d="M20 18v-2a4 4 0 0 0-4-4H4" />
                     </svg>
-                  </button>
+                  </div>
+                  <div
+                    className="ai-chat-swipe-inner"
+                    style={{ transform: swipeOffset?.idx === i ? `translateX(${swipeOffset.offset}px)` : undefined }}
+                  >
+                    <div
+                      className={`ai-chat-msg ai-chat-msg--${msg.role} ai-chat-msg-animate ai-chat-msg-animate--${msg.role}`}
+                      onDoubleClick={handleReply}
+                    >
+                      {/* Emoji reaction bar */}
+                      {reactionMenuIdx === i && (
+                        <ReactionBar
+                          reactions={msg.reactions}
+                          onReact={(emoji) => handleReaction(i, emoji)}
+                          onClose={() => setReactionMenuIdx(null)}
+                        />
+                      )}
+                      {isAssistant && (
+                        <img src={diAvatar} alt="Di" className="ai-chat-msg-avatar" />
+                      )}
+                      <div className="ai-chat-msg-content">
+                      {/* Reply quote */}
+                      {msg.replyTo && (
+                        <div className="ai-chat-reply-quote">
+                          <span className="ai-chat-reply-quote-name">
+                            {msg.replyTo.role === "assistant" ? "Di" : "Você"}
+                          </span>
+                          <span className="ai-chat-reply-quote-text">{msg.replyTo.text}</span>
+                        </div>
+                      )}
+                      {imageUrls.length > 0 && (
+                        <div style={{ display: "flex", flexWrap: "wrap", gap: "4px", marginBottom: "6px" }}>
+                          {imageUrls.map((url, idx) => (
+                            <img
+                              key={idx}
+                              src={url}
+                              alt="Print enviado"
+                              className="ai-chat-image"
+                              style={{
+                                maxWidth: imageUrls.length > 1 ? "48%" : "100%",
+                                maxHeight: "240px",
+                                borderRadius: "8px",
+                                objectFit: "contain",
+                              }}
+                            />
+                          ))}
+                        </div>
+                      )}
+                      {attachedFiles.map((af, idx) => (
+                        <div key={idx} style={{
+                          display: "flex",
+                          alignItems: "center",
+                          gap: "8px",
+                          padding: "8px 12px",
+                          borderRadius: "8px",
+                          background: isAssistant ? "hsl(var(--muted) / 0.5)" : "hsl(var(--primary) / 0.15)",
+                          marginBottom: "6px",
+                          fontSize: "13px",
+                        }}>
+                          {getFileIcon(af.type)}
+                          <span style={{ flex: 1, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                            {af.name}
+                          </span>
+                          {af.url && (
+                            <a href={af.url} target="_blank" rel="noopener noreferrer" style={{ color: "hsl(var(--primary))", fontSize: "12px", flexShrink: 0 }}>
+                              Abrir
+                            </a>
+                          )}
+                        </div>
+                      ))}
+                      {isAssistant ? (
+                        <div className="ai-chat-md">
+                          <ReactMarkdown>{clean}</ReactMarkdown>
+                        </div>
+                      ) : (
+                        clean && <p>{clean}</p>
+                      )}
+                      <div className="ai-chat-msg-meta">
+                        <span className="ai-chat-msg-time">{formatTime(msg.timestamp)}</span>
+                        {!isAssistant && (
+                          <ReadReceipt read={
+                            i < messages.length - 1 && messages.slice(i + 1).some(m => m.role === "assistant")
+                          } />
+                        )}
+                      </div>
+                      {/* Emoji reactions display */}
+                      {msg.reactions && <ReactionsDisplay reactions={msg.reactions} onToggle={(emoji) => handleReaction(i, emoji)} />}
+                      {isAssistant && !isLoading && clean && !clean.startsWith("⚠️") && (
+                        <FeedbackButtons
+                          rating={msg.rating}
+                          onRate={(rating) => handleFeedback(i, rating)}
+                        />
+                      )}
+                      {/* Reply button */}
+                      <button className="ai-chat-reply-btn" onClick={handleReply} title="Responder" aria-label="Responder">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                          <polyline points="9 17 4 12 9 7" />
+                          <path d="M20 18v-2a4 4 0 0 0-4-4H4" />
+                        </svg>
+                      </button>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -1343,9 +1474,19 @@ const AIChatDrawer = ({ open, onClose }: { open: boolean; onClose: () => void })
                 }}>
                   {Math.floor(recordingDuration / 60).toString().padStart(2, "0")}:{(recordingDuration % 60).toString().padStart(2, "0")}
                 </span>
-                <span style={{ fontSize: "13px", color: "hsl(var(--muted-foreground))" }}>
-                  Gravando...
-                </span>
+                {/* Waveform visualization */}
+                <div className="ai-chat-waveform">
+                  {Array.from({ length: 20 }).map((_, idx) => (
+                    <div
+                      key={idx}
+                      className="ai-chat-waveform-bar"
+                      style={{
+                        animationDelay: `${idx * 0.05}s`,
+                        animationDuration: `${0.4 + Math.random() * 0.4}s`,
+                      }}
+                    />
+                  ))}
+                </div>
               </div>
               <button
                 onClick={stopRecording}
