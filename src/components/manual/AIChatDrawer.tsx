@@ -866,6 +866,7 @@ const AIChatDrawer = ({ open, onClose }: { open: boolean; onClose: () => void })
                     onRate={(rating) => handleFeedback(i, rating)}
                   />
                 )}
+                </div>
               </div>
             );
           })}
