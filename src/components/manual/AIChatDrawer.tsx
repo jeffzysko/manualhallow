@@ -1017,14 +1017,6 @@ const AIChatDrawer = ({ open, onClose }: { open: boolean; onClose: () => void })
                       className={`ai-chat-msg ai-chat-msg--${msg.role} ai-chat-msg-animate ai-chat-msg-animate--${msg.role}`}
                       onDoubleClick={handleReply}
                     >
-                      {/* Emoji reaction bar */}
-                      {reactionMenuIdx === i && (
-                        <ReactionBar
-                          reactions={msg.reactions}
-                          onReact={(emoji) => handleReaction(i, emoji)}
-                          onClose={() => setReactionMenuIdx(null)}
-                        />
-                      )}
                       {isAssistant && (
                         <img src={diAvatar} alt="Di" className="ai-chat-msg-avatar" />
                       )}
