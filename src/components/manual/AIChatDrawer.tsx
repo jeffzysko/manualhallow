@@ -644,6 +644,7 @@ const AIChatDrawer = ({ open, onClose }: { open: boolean; onClose: () => void })
       }
 
       if (assistantSoFar) {
+        playNotificationSound();
         const parts = splitParts(assistantSoFar);
         if (parts.length === 2) {
           setMessages(prev => {
