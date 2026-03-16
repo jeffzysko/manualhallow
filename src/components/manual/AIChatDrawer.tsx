@@ -708,7 +708,27 @@ const AIChatDrawer = ({ open, onClose }: { open: boolean; onClose: () => void })
     } finally {
       setIsLoading(false);
     }
-  }, [input, isLoading, messages, persistMessage, pendingFiles]);
+  }, [input, isLoading, messages, persistMessage, pendingFiles, replyTo]);
+
+  // ── Roleplay Mode ──
+  const startRoleplay = useCallback(async () => {
+    if (isLoading) return;
+    setRoleplayActive(true);
+    const roleplayMsg = "🎭 MODO ROLEPLAY: Quero treinar uma simulação. Aja como um CLIENTE REAL que está interessado em comprar uma piscina. Crie um perfil fictício (nome, situação, objeções) e comece a conversa como se estivesse mandando mensagem no WhatsApp. Eu vou responder como vendedor e você me dá feedback depois.";
+    sendMessage(roleplayMsg);
+  }, [isLoading, sendMessage]);
+
+  const stopRoleplay = useCallback(() => {
+    setRoleplayActive(false);
+    const stopMsg = "🎭 FIM DO ROLEPLAY. Agora me dê um feedback completo: o que fiz bem, o que errei, e como melhorar. Dê uma nota de 1-10.";
+    sendMessage(stopMsg);
+  }, [sendMessage]);
+
+  // ── Quick Conversation Analysis ──
+  const startConversationAnalysis = useCallback(() => {
+    imageInputRef.current?.click();
+    setInput("Analise essa conversa com o cliente. Me diga o que fiz certo, o que errei e me dê o script da próxima resposta.");
+  }, []);
 
   // Keep ref in sync for audio recording callback
   useEffect(() => {
