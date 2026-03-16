@@ -242,6 +242,26 @@ function FeedbackButtons({ rating, onRate }: { rating?: number; onRate: (r: numb
 const AIChatDrawer = ({ open, onClose }: { open: boolean; onClose: () => void }) => {
   const { user } = useAuth();
   const [messages, setMessages] = useState<Msg[]>([]);
+
+  // Lock body scroll when drawer is open
+  useEffect(() => {
+    if (open) {
+      const scrollY = window.scrollY;
+      document.body.style.position = 'fixed';
+      document.body.style.top = `-${scrollY}px`;
+      document.body.style.left = '0';
+      document.body.style.right = '0';
+      document.body.style.overflow = 'hidden';
+      return () => {
+        document.body.style.position = '';
+        document.body.style.top = '';
+        document.body.style.left = '';
+        document.body.style.right = '';
+        document.body.style.overflow = '';
+        window.scrollTo(0, scrollY);
+      };
+    }
+  }, [open]);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [historyLoaded, setHistoryLoaded] = useState(false);
