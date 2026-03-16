@@ -474,6 +474,7 @@ const AIChatDrawer = ({ open, onClose }: { open: boolean; onClose: () => void })
         : "audio/webm";
       const recorder = new MediaRecorder(stream, { mimeType });
       audioChunksRef.current = [];
+      recordingCancelledRef.current = false;
 
       recorder.ondataavailable = (e) => {
         if (e.data.size > 0) audioChunksRef.current.push(e.data);
