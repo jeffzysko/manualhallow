@@ -904,6 +904,16 @@ const AIChatDrawer = ({ open, onClose }: { open: boolean; onClose: () => void })
             </div>
           </div>
           <div className="ai-chat-header-right">
+            {/* Roleplay indicator */}
+            {roleplayActive && (
+              <button
+                className="ai-chat-roleplay-badge"
+                onClick={stopRoleplay}
+                title="Encerrar roleplay e receber feedback"
+              >
+                🎭 Roleplay
+              </button>
+            )}
             {messages.length > 0 && (
               <>
                 <button className="ai-chat-new-context" onClick={handleNewContext} aria-label="Novo atendimento" title="Novo atendimento">
