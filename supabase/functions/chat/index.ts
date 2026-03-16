@@ -867,8 +867,17 @@ Adapte suas respostas futuras seguindo os padrões dessas interações bem-suced
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     if (!LOVABLE_API_KEY) throw new Error("LOVABLE_API_KEY is not configured");
 
-    // Resolve file_url parts (fetch documents and convert to base64 for AI)
+    // Resolve file_url, input_audio and audio_url parts for Gemini-compatible format
     const resolvedMessages = await resolveFileParts(messages);
+
+    // Log multimodal content types for debugging
+    for (const m of resolvedMessages) {
+      if (Array.isArray(m.content)) {
+        const types = m.content.map((p: any) => p.type);
+        const hasAudio = m.content.some((p: any) => p.type === "image_url" && p.image_url?.url?.startsWith("data:audio/"));
+        if (hasAudio) console.log(`[AUDIO] Resolved audio in message (role=${m.role}), part types: ${types.join(", ")}`);
+      }
+    }
 
     // Inject time-gap markers between messages for context-change detection
     const messagesWithTimeGaps: any[] = [];
