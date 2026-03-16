@@ -14,7 +14,7 @@ type ContentPart =
   | { type: "file_url"; file_url: { url: string; mime_type: string; name: string } };
 
 type MsgContent = string | ContentPart[];
-type Msg = { role: "user" | "assistant"; content: MsgContent; id?: string; rating?: number; timestamp?: string; replyTo?: { role: string; text: string } };
+type Msg = { role: "user" | "assistant"; content: MsgContent; id?: string; rating?: number; timestamp?: string; replyTo?: { role: string; text: string }; suggestions?: string[] };
 
 type PendingFile = {
   url: string;
@@ -253,6 +253,7 @@ const AIChatDrawer = ({ open, onClose }: { open: boolean; onClose: () => void })
   const [replyTo, setReplyTo] = useState<{ index: number; role: string; text: string } | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [searchOpen, setSearchOpen] = useState(false);
+  const [roleplayActive, setRoleplayActive] = useState(false);
   const swipeStartRef = useRef<{ x: number; y: number; idx: number } | null>(null);
   const [swipeOffset, setSwipeOffset] = useState<{ idx: number; offset: number } | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -671,21 +672,33 @@ const AIChatDrawer = ({ open, onClose }: { open: boolean; onClose: () => void })
 
       if (assistantSoFar) {
         playNotificationSound();
+        const { clean, suggestions } = parseSuggestions(assistantSoFar);
         const parts = splitParts(assistantSoFar);
         if (parts.length === 2) {
+          const { clean: clean1 } = parseSuggestions(parts[0]);
           setMessages(prev => {
             const updated = [...prev];
             const lastIdx = updated.length - 1;
             if (updated[lastIdx]?.role === "assistant") {
-              updated[lastIdx] = { ...updated[lastIdx], content: parts[0] };
+              updated[lastIdx] = { ...updated[lastIdx], content: clean1 };
             }
             return updated;
           });
           persistMessage("assistant", parts[0]);
           await new Promise(r => setTimeout(r, 800));
-          setMessages(prev => [...prev, { role: "assistant", content: parts[1], timestamp: new Date().toISOString() }]);
+          const { clean: clean2, suggestions: sug2 } = parseSuggestions(parts[1]);
+          setMessages(prev => [...prev, { role: "assistant", content: clean2, timestamp: new Date().toISOString(), suggestions: sug2.length > 0 ? sug2 : suggestions }]);
           persistMessage("assistant", parts[1]);
         } else {
+          // Update final message with clean content and suggestions
+          setMessages(prev => {
+            const updated = [...prev];
+            const lastIdx = updated.length - 1;
+            if (updated[lastIdx]?.role === "assistant") {
+              updated[lastIdx] = { ...updated[lastIdx], content: clean, suggestions: suggestions.length > 0 ? suggestions : undefined };
+            }
+            return updated;
+          });
           persistMessage("assistant", assistantSoFar);
         }
       }
@@ -695,7 +708,27 @@ const AIChatDrawer = ({ open, onClose }: { open: boolean; onClose: () => void })
     } finally {
       setIsLoading(false);
     }
-  }, [input, isLoading, messages, persistMessage, pendingFiles]);
+  }, [input, isLoading, messages, persistMessage, pendingFiles, replyTo]);
+
+  // ── Roleplay Mode ──
+  const startRoleplay = useCallback(async () => {
+    if (isLoading) return;
+    setRoleplayActive(true);
+    const roleplayMsg = "🎭 MODO ROLEPLAY: Quero treinar uma simulação. Aja como um CLIENTE REAL que está interessado em comprar uma piscina. Crie um perfil fictício (nome, situação, objeções) e comece a conversa como se estivesse mandando mensagem no WhatsApp. Eu vou responder como vendedor e você me dá feedback depois.";
+    sendMessage(roleplayMsg);
+  }, [isLoading, sendMessage]);
+
+  const stopRoleplay = useCallback(() => {
+    setRoleplayActive(false);
+    const stopMsg = "🎭 FIM DO ROLEPLAY. Agora me dê um feedback completo: o que fiz bem, o que errei, e como melhorar. Dê uma nota de 1-10.";
+    sendMessage(stopMsg);
+  }, [sendMessage]);
+
+  // ── Quick Conversation Analysis ──
+  const startConversationAnalysis = useCallback(() => {
+    imageInputRef.current?.click();
+    setInput("Analise essa conversa com o cliente. Me diga o que fiz certo, o que errei e me dê o script da próxima resposta.");
+  }, []);
 
   // Keep ref in sync for audio recording callback
   useEffect(() => {
@@ -809,11 +842,12 @@ const AIChatDrawer = ({ open, onClose }: { open: boolean; onClose: () => void })
     swipeStartRef.current = null;
   }, [swipeOffset, messages]);
 
-  // Extract suggestions from the last assistant message
+  // Extract suggestions from the last assistant message (use stored suggestions first)
   const lastAssistantSuggestions = useMemo(() => {
     if (isLoading) return [];
     const lastAssistant = [...messages].reverse().find(m => m.role === "assistant");
     if (!lastAssistant) return [];
+    if (lastAssistant.suggestions && lastAssistant.suggestions.length > 0) return lastAssistant.suggestions;
     const text = getTextContent(lastAssistant.content);
     const { suggestions } = parseSuggestions(text);
     return suggestions;
@@ -870,6 +904,16 @@ const AIChatDrawer = ({ open, onClose }: { open: boolean; onClose: () => void })
             </div>
           </div>
           <div className="ai-chat-header-right">
+            {/* Roleplay indicator */}
+            {roleplayActive && (
+              <button
+                className="ai-chat-roleplay-badge"
+                onClick={stopRoleplay}
+                title="Encerrar roleplay e receber feedback"
+              >
+                🎭 Roleplay
+              </button>
+            )}
             {messages.length > 0 && (
               <>
                 <button className="ai-chat-new-context" onClick={handleNewContext} aria-label="Novo atendimento" title="Novo atendimento">
@@ -927,6 +971,21 @@ const AIChatDrawer = ({ open, onClose }: { open: boolean; onClose: () => void })
               <img src={diAvatar} alt="Di" className="ai-chat-empty-avatar" />
               <p>Olá! Sou a Di, sua especialista em vendas.</p>
               <p>Envie <strong>textos, áudios ou imagens</strong>. Peça scripts prontos, tire dúvidas sobre objeções ou solicite análises de propostas. Estou aqui para te apoiar em campo!</p>
+              
+              {/* Quick action cards */}
+              <div className="ai-chat-quick-actions">
+                <button className="ai-chat-quick-action" onClick={startRoleplay}>
+                  <span className="ai-chat-quick-action-icon">🎭</span>
+                  <span className="ai-chat-quick-action-label">Modo Roleplay</span>
+                  <span className="ai-chat-quick-action-desc">Simular atendimento com cliente fictício</span>
+                </button>
+                <button className="ai-chat-quick-action" onClick={startConversationAnalysis}>
+                  <span className="ai-chat-quick-action-icon">📸</span>
+                  <span className="ai-chat-quick-action-label">Analisar Conversa</span>
+                  <span className="ai-chat-quick-action-desc">Envie print de WhatsApp para coaching</span>
+                </button>
+              </div>
+
               <div className="ai-chat-suggestions">
                 {SUGGESTIONS.map((s, i) => (
                   <button
@@ -1111,12 +1170,31 @@ const AIChatDrawer = ({ open, onClose }: { open: boolean; onClose: () => void })
               {lastAssistantSuggestions.map((s, i) => (
                 <button
                   key={i}
-                  className="ai-chat-suggestion"
+                  className="ai-chat-suggestion ai-chat-suggestion--dynamic"
                   onClick={() => sendMessage(s)}
                 >
-                  {s}
+                  💬 {s}
                 </button>
               ))}
+            </div>
+          )}
+
+          {/* Quick actions when conversation is active */}
+          {!isLoading && messages.length > 0 && !roleplayActive && (
+            <div className="ai-chat-dynamic-suggestions">
+              <button className="ai-chat-suggestion ai-chat-suggestion--action" onClick={startRoleplay}>
+                🎭 Simular atendimento
+              </button>
+              <button className="ai-chat-suggestion ai-chat-suggestion--action" onClick={startConversationAnalysis}>
+                📸 Analisar conversa
+              </button>
+            </div>
+          )}
+          {!isLoading && roleplayActive && (
+            <div className="ai-chat-dynamic-suggestions">
+              <button className="ai-chat-suggestion ai-chat-suggestion--action ai-chat-suggestion--stop" onClick={stopRoleplay}>
+                ✋ Encerrar roleplay e receber feedback
+              </button>
             </div>
           )}
 
