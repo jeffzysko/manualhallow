@@ -514,10 +514,16 @@ const AIChatDrawer = ({ open, onClose }: { open: boolean; onClose: () => void })
       userContent = sanitized;
     }
 
-    const userMsg: Msg = { role: "user", content: userContent, timestamp: new Date().toISOString() };
+    const userMsg: Msg = {
+      role: "user",
+      content: userContent,
+      timestamp: new Date().toISOString(),
+      replyTo: replyTo ? { role: replyTo.role, text: replyTo.text } : undefined,
+    };
     setInput("");
     const currentPendingFiles = [...pendingFiles];
     setPendingFiles([]);
+    setReplyTo(null);
     setMessages(prev => [...prev, userMsg]);
     setIsLoading(true);
 
