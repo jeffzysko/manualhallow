@@ -236,7 +236,49 @@ function FeedbackButtons({ rating, onRate }: { rating?: number; onRate: (r: numb
   );
 }
 
+/** TTS using Web Speech API */
+function useTTS() {
+  const [speakingIdx, setSpeakingIdx] = useState<number | null>(null);
+  const synthRef = useRef(window.speechSynthesis);
 
+  const speak = useCallback((text: string, idx: number) => {
+    const synth = synthRef.current;
+    synth.cancel();
+    if (speakingIdx === idx) {
+      setSpeakingIdx(null);
+      return;
+    }
+    // Strip markdown
+    const clean = text
+      .replace(/[#*_~`>\[\]()!]/g, "")
+      .replace(/\n+/g, ". ")
+      .trim();
+    const utterance = new SpeechSynthesisUtterance(clean);
+    utterance.lang = "pt-BR";
+    utterance.rate = 1.05;
+    utterance.pitch = 1.0;
+    // Try to find a pt-BR voice
+    const voices = synth.getVoices();
+    const ptVoice = voices.find(v => v.lang.startsWith("pt-BR")) || voices.find(v => v.lang.startsWith("pt"));
+    if (ptVoice) utterance.voice = ptVoice;
+    utterance.onend = () => setSpeakingIdx(null);
+    utterance.onerror = () => setSpeakingIdx(null);
+    synth.speak(utterance);
+    setSpeakingIdx(idx);
+  }, [speakingIdx]);
+
+  const stop = useCallback(() => {
+    synthRef.current.cancel();
+    setSpeakingIdx(null);
+  }, []);
+
+  // Cleanup on unmount
+  useEffect(() => {
+    return () => { synthRef.current.cancel(); };
+  }, []);
+
+  return { speakingIdx, speak, stopTTS: stop };
+}
 
 
 const AIChatDrawer = ({ open, onClose }: { open: boolean; onClose: () => void }) => {
