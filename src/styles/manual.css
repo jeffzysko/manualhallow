@@ -2361,7 +2361,7 @@ body { overflow-x: hidden; }
   font-variant-numeric: tabular-nums; line-height: 1;
 }
 .ai-chat-msg--user .ai-chat-msg-meta { justify-content: flex-end; }
-.ai-chat-msg--assistant .ai-chat-msg-meta { justify-content: flex-start; }
+.ai-chat-msg--assistant .ai-chat-msg-meta { justify-content: flex-end; }
 
 .ai-chat-typing { display: flex; gap: 4px; padding: 4px 0; }
 .ai-chat-typing span {
