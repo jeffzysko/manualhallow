@@ -198,7 +198,7 @@ function playNotificationSound() {
 /** Feedback buttons component */
 function FeedbackButtons({ rating, onRate }: { rating?: number; onRate: (r: number) => void }) {
   return (
-    <div style={{ display: "flex", gap: "6px", marginTop: "8px" }}>
+    <>
       <button
         onClick={() => onRate(1)}
         style={{
