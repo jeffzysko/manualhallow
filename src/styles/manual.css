@@ -2515,7 +2515,7 @@ body { overflow-x: hidden; }
 }
 .ai-chat-new-context:hover { background: rgba(201,169,106,0.12); border-color: var(--gold); }
 .ai-chat-new-context-label { white-space: nowrap; }
-@media (max-width: 380px) { .ai-chat-new-context-label { display: none; } }
+@media (max-width: 480px) { .ai-chat-new-context-label { display: none; } }
 
 /* Chat search bar */
 .ai-chat-search-bar {
