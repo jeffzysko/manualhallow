@@ -809,6 +809,10 @@ const AIChatDrawer = ({ open, onClose }: { open: boolean; onClose: () => void })
 
             return (
               <div key={i} className={`ai-chat-msg ai-chat-msg--${msg.role}`}>
+                {isAssistant && (
+                  <img src={diAvatar} alt="Di" className="ai-chat-msg-avatar" />
+                )}
+                <div className="ai-chat-msg-content">
                 {imageUrls.length > 0 && (
                   <div style={{ display: "flex", flexWrap: "wrap", gap: "4px", marginBottom: "6px" }}>
                     {imageUrls.map((url, idx) => (
