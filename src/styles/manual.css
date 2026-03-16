@@ -2761,14 +2761,12 @@ body { overflow-x: hidden; }
   .ai-chat-header-right { gap: 2px; margin-left: 6px; }
   .ai-chat-header-btn,
   .ai-chat-clear,
-  .ai-chat-close,
-  .ai-chat-new-context {
+  .ai-chat-close {
     min-width: 32px;
     min-height: 32px;
     padding: 4px;
     justify-content: center;
   }
-  .ai-chat-new-context { border-radius: 8px; }
   .ai-chat-msg { max-width: 92%; }
   .ai-chat-suggestion { font-size: 12px; padding: 6px 12px; }
 }
