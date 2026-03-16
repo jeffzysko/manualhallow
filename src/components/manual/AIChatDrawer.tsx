@@ -146,6 +146,23 @@ function getAudioFormat(mimeType: string): string {
   return map[mimeType] || "mp3";
 }
 
+/** Format timestamp like WhatsApp (HH:MM) */
+function formatTime(ts?: string): string {
+  if (!ts) return "";
+  const d = new Date(ts);
+  return d.toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" });
+}
+
+/** Double-check icon (WhatsApp read receipt style) */
+function ReadReceipt({ read }: { read: boolean }) {
+  return (
+    <svg width="16" height="11" viewBox="0 0 16 11" fill="none" style={{ flexShrink: 0, marginLeft: 2 }}>
+      <path d="M1 5.5L4 8.5L10.5 2" stroke={read ? "#53BDEB" : "var(--gray2)"} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M5 5.5L8 8.5L14.5 2" stroke={read ? "#53BDEB" : "var(--gray2)"} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
 /** Feedback buttons component */
 function FeedbackButtons({ rating, onRate }: { rating?: number; onRate: (r: number) => void }) {
   return (
