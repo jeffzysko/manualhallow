@@ -797,8 +797,6 @@ const AIChatDrawer = ({ open, onClose }: { open: boolean; onClose: () => void })
 
   const handleTouchEnd = useCallback(() => {
     if (swipeOffset && Math.abs(swipeOffset.offset) >= 40) {
-    if (swipeOffset && Math.abs(swipeOffset.offset) >= 40) {
-      // Trigger reply
       const msg = messages[swipeOffset.idx];
       if (msg) {
         const text = getTextContent(msg.content);
