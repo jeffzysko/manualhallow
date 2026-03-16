@@ -3179,19 +3179,21 @@ body { overflow-x: hidden; }
   to { transform: rotate(360deg); }
 }
 
-/* TTS Button */
+/* TTS Button — distinct golden accent style */
 .ai-chat-tts-btn {
-  display: flex; align-items: center; gap: 4px;
-  background: rgba(255,255,255,0.04);
-  border: 1px solid rgba(255,255,255,0.08);
-  border-radius: 20px; padding: 4px 12px; cursor: pointer;
-  font-size: 13px; color: var(--gray);
+  display: flex; align-items: center; gap: 5px;
+  background: linear-gradient(135deg, rgba(201,169,106,0.15), rgba(164,123,59,0.1));
+  border: 1px solid rgba(201,169,106,0.35);
+  border-radius: 20px; padding: 4px 14px; cursor: pointer;
+  font-size: 13px; color: var(--gold, #C9A96A);
   transition: all 0.2s;
+  box-shadow: 0 2px 8px rgba(201,169,106,0.1);
 }
 .ai-chat-tts-btn:hover {
-  background: rgba(201,169,106,0.12);
-  border-color: rgba(201,169,106,0.3);
-  color: var(--gold, #C9A96A);
+  background: linear-gradient(135deg, rgba(201,169,106,0.25), rgba(164,123,59,0.18));
+  border-color: rgba(201,169,106,0.55);
+  box-shadow: 0 3px 12px rgba(201,169,106,0.2);
+  transform: translateY(-1px);
 }
 
 /* History Panel */
