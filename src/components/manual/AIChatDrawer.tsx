@@ -1248,12 +1248,34 @@ const AIChatDrawer = ({ open, onClose }: { open: boolean; onClose: () => void })
                           } />
                         )}
                       </div>
-                      {/* Emoji reactions display */}
+                      {/* TTS + Feedback */}
                       {isAssistant && !isLoading && clean && !clean.startsWith("⚠️") && (
-                        <FeedbackButtons
-                          rating={msg.rating}
-                          onRate={(rating) => handleFeedback(i, rating)}
-                        />
+                        <div style={{ display: "flex", alignItems: "center", gap: "6px", marginTop: "8px" }}>
+                          <button
+                            onClick={() => speak(clean, i)}
+                            className="ai-chat-tts-btn"
+                            title={speakingIdx === i ? "Parar leitura" : "Ouvir resposta"}
+                            aria-label={speakingIdx === i ? "Parar leitura" : "Ouvir resposta"}
+                          >
+                            {speakingIdx === i ? (
+                              <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+                                <rect x="6" y="4" width="4" height="16" rx="1" />
+                                <rect x="14" y="4" width="4" height="16" rx="1" />
+                              </svg>
+                            ) : (
+                              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5" />
+                                <path d="M19.07 4.93a10 10 0 0 1 0 14.14" />
+                                <path d="M15.54 8.46a5 5 0 0 1 0 7.07" />
+                              </svg>
+                            )}
+                            <span style={{ fontSize: "11px", fontWeight: 600 }}>{speakingIdx === i ? "Parar" : "Ouvir"}</span>
+                          </button>
+                          <FeedbackButtons
+                            rating={msg.rating}
+                            onRate={(rating) => handleFeedback(i, rating)}
+                          />
+                        </div>
                       )}
                       {/* Reply button */}
                       <button className="ai-chat-reply-btn" onClick={handleReply} title="Responder" aria-label="Responder">
