@@ -2763,7 +2763,7 @@ body { overflow-x: hidden; }
   .ai-chat-header { padding: 12px 10px; gap: 6px; }
   .ai-chat-header-left { gap: 8px; min-width: 0; }
   .ai-chat-avatar { width: 32px; height: 32px; }
-  .ai-chat-title { font-size: 12px; letter-spacing: 0.2px; }
+  .ai-chat-title { font-size: 13px; letter-spacing: 0.2px; line-height: 1.25; }
   .ai-chat-status-text { font-size: 10px; }
   .ai-chat-header-right { gap: 2px; margin-left: 6px; }
   .ai-chat-header-btn,
