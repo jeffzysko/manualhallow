@@ -2435,7 +2435,7 @@ body { overflow-x: hidden; }
   text-transform: uppercase;
 }
 .ai-chat-dynamic-suggestions--actions::before {
-  content: "⚡ Ferramentas de treino:";
+  content: "🚀 Ações rápidas:";
 }
 .ai-chat-suggestion--dynamic {
   border-color: rgba(191,163,107,0.25) !important;
