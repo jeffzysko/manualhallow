@@ -568,6 +568,7 @@ const AIChatDrawer = ({ open, onClose }: { open: boolean; onClose: () => void })
       replyTo: replyTo ? { role: replyTo.role, text: replyTo.text } : undefined,
     };
     setInput("");
+    if (inputRef.current) inputRef.current.style.height = "auto";
     const currentPendingFiles = [...pendingFiles];
     setPendingFiles([]);
     setReplyTo(null);
@@ -1527,7 +1528,13 @@ const AIChatDrawer = ({ open, onClose }: { open: boolean; onClose: () => void })
                 ref={inputRef}
                 className="ai-chat-input"
                 value={input}
-                onChange={e => setInput(e.target.value)}
+                onChange={e => {
+                  setInput(e.target.value);
+                  // Auto-resize textarea
+                  const ta = e.target;
+                  ta.style.height = "auto";
+                  ta.style.height = Math.min(ta.scrollHeight, 160) + "px";
+                }}
                 onKeyDown={handleKeyDown}
                 placeholder={getPlaceholder()}
                 rows={1}

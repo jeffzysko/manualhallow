@@ -2393,9 +2393,10 @@ body { overflow-x: hidden; }
 }
 .ai-chat-input {
   flex: 1; background: var(--card); color: var(--white); border: 1px solid var(--border2);
-  border-radius: 12px; padding: 10px 14px; font-size: 16px; font-family: inherit;
-  resize: none; min-height: 42px; max-height: 120px; line-height: 1.4;
-  outline: none; transition: border-color 0.15s;
+  border-radius: 16px; padding: 10px 14px; font-size: 16px; font-family: inherit;
+  resize: none; min-height: 42px; max-height: 160px; line-height: 1.45;
+  outline: none; transition: border-color 0.15s, height 0.15s ease;
+  overflow-y: auto; word-wrap: break-word;
 }
 .ai-chat-input:focus { border-color: var(--gold); }
 .ai-chat-input::placeholder { color: var(--gray2); }
@@ -2426,6 +2427,12 @@ body { overflow-x: hidden; }
 .ai-chat-dynamic-suggestions {
   display: flex; flex-wrap: wrap; gap: 6px; padding: 4px 16px 12px;
   animation: fadeInUp 0.3s ease;
+}
+.ai-chat-dynamic-suggestions::before {
+  content: "💡 Sugestões para continuar:";
+  display: block; width: 100%; font-size: 11px; font-weight: 600;
+  color: var(--gray); margin-bottom: 4px; letter-spacing: 0.02em;
+  text-transform: uppercase;
 }
 .ai-chat-suggestion--dynamic {
   border-color: rgba(191,163,107,0.25) !important;
