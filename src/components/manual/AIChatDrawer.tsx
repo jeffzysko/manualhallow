@@ -293,6 +293,10 @@ const AIChatDrawer = ({ open, onClose }: { open: boolean; onClose: () => void })
   const [replyTo, setReplyTo] = useState<{ index: number; role: string; text: string } | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [searchOpen, setSearchOpen] = useState(false);
+  const [reactionMenuIdx, setReactionMenuIdx] = useState<number | null>(null);
+  const longPressTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const swipeStartRef = useRef<{ x: number; y: number; idx: number } | null>(null);
+  const [swipeOffset, setSwipeOffset] = useState<{ idx: number; offset: number } | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
