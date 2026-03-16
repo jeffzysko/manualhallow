@@ -198,29 +198,40 @@ function playNotificationSound() {
 /** Feedback buttons component */
 function FeedbackButtons({ rating, onRate }: { rating?: number; onRate: (r: number) => void }) {
   return (
-    <div style={{ display: "flex", gap: "4px", marginTop: "6px" }}>
+    <div style={{ display: "flex", gap: "6px", marginTop: "8px" }}>
       <button
         onClick={() => onRate(1)}
         style={{
-          background: rating === 1 ? "hsl(var(--primary) / 0.2)" : "transparent",
-          border: rating === 1 ? "1px solid hsl(var(--primary) / 0.4)" : "1px solid transparent",
-          borderRadius: "6px", padding: "3px 8px", cursor: "pointer",
-          fontSize: "14px", opacity: rating === -1 ? 0.3 : 1,
-          transition: "all 0.2s",
+          background: rating === 1 ? "rgba(92,184,138,0.18)" : "rgba(255,255,255,0.04)",
+          border: rating === 1 ? "1px solid rgba(92,184,138,0.5)" : "1px solid rgba(255,255,255,0.08)",
+          borderRadius: "20px", padding: "4px 12px", cursor: "pointer",
+          fontSize: "13px", opacity: rating === -1 ? 0.35 : 1,
+          transition: "all 0.2s", display: "flex", alignItems: "center", gap: "4px",
+          color: rating === 1 ? "#5CB88A" : "var(--gray)",
         }}
         title="Boa resposta"
-      >👍</button>
+      >
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3" />
+        </svg>
+        <span style={{ fontSize: "11px", fontWeight: 600 }}>Útil</span>
+      </button>
       <button
         onClick={() => onRate(-1)}
         style={{
-          background: rating === -1 ? "hsl(var(--destructive) / 0.15)" : "transparent",
-          border: rating === -1 ? "1px solid hsl(var(--destructive) / 0.3)" : "1px solid transparent",
-          borderRadius: "6px", padding: "3px 8px", cursor: "pointer",
-          fontSize: "14px", opacity: rating === 1 ? 0.3 : 1,
-          transition: "all 0.2s",
+          background: rating === -1 ? "rgba(224,92,92,0.15)" : "rgba(255,255,255,0.04)",
+          border: rating === -1 ? "1px solid rgba(224,92,92,0.4)" : "1px solid rgba(255,255,255,0.08)",
+          borderRadius: "20px", padding: "4px 12px", cursor: "pointer",
+          fontSize: "13px", opacity: rating === 1 ? 0.35 : 1,
+          transition: "all 0.2s", display: "flex", alignItems: "center", gap: "4px",
+          color: rating === -1 ? "#E05C5C" : "var(--gray)",
         }}
         title="Resposta ruim"
-      >👎</button>
+      >
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M10 15v4a3 3 0 0 0 3 3l4-9V2H5.72a2 2 0 0 0-2 1.7l-1.38 9a2 2 0 0 0 2 2.3zm7-13h2.67A2.31 2.31 0 0 1 22 4v7a2.31 2.31 0 0 1-2.33 2H17" />
+        </svg>
+      </button>
     </div>
   );
 }
