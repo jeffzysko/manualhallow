@@ -284,6 +284,11 @@ function useTTS() {
 const AIChatDrawer = ({ open, onClose }: { open: boolean; onClose: () => void }) => {
   const { user } = useAuth();
   const [messages, setMessages] = useState<Msg[]>([]);
+  const [historyOpen, setHistoryOpen] = useState(false);
+  const [historySearch, setHistorySearch] = useState("");
+  const [historyConversations, setHistoryConversations] = useState<{ date: string; messages: Msg[] }[]>([]);
+  const [historyLoading, setHistoryLoading] = useState(false);
+  const { speakingIdx, speak, stopTTS } = useTTS();
 
   // Lock body scroll when drawer is open
   useEffect(() => {
