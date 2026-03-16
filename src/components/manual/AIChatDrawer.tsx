@@ -672,21 +672,33 @@ const AIChatDrawer = ({ open, onClose }: { open: boolean; onClose: () => void })
 
       if (assistantSoFar) {
         playNotificationSound();
+        const { clean, suggestions } = parseSuggestions(assistantSoFar);
         const parts = splitParts(assistantSoFar);
         if (parts.length === 2) {
+          const { clean: clean1 } = parseSuggestions(parts[0]);
           setMessages(prev => {
             const updated = [...prev];
             const lastIdx = updated.length - 1;
             if (updated[lastIdx]?.role === "assistant") {
-              updated[lastIdx] = { ...updated[lastIdx], content: parts[0] };
+              updated[lastIdx] = { ...updated[lastIdx], content: clean1 };
             }
             return updated;
           });
           persistMessage("assistant", parts[0]);
           await new Promise(r => setTimeout(r, 800));
-          setMessages(prev => [...prev, { role: "assistant", content: parts[1], timestamp: new Date().toISOString() }]);
+          const { clean: clean2, suggestions: sug2 } = parseSuggestions(parts[1]);
+          setMessages(prev => [...prev, { role: "assistant", content: clean2, timestamp: new Date().toISOString(), suggestions: sug2.length > 0 ? sug2 : suggestions }]);
           persistMessage("assistant", parts[1]);
         } else {
+          // Update final message with clean content and suggestions
+          setMessages(prev => {
+            const updated = [...prev];
+            const lastIdx = updated.length - 1;
+            if (updated[lastIdx]?.role === "assistant") {
+              updated[lastIdx] = { ...updated[lastIdx], content: clean, suggestions: suggestions.length > 0 ? suggestions : undefined };
+            }
+            return updated;
+          });
           persistMessage("assistant", assistantSoFar);
         }
       }
