@@ -642,6 +642,8 @@ const AIChatDrawer = ({ open, onClose }: { open: boolean; onClose: () => void })
     setReplyTo(null);
     setMessages(prev => [...prev, userMsg]);
     setIsLoading(true);
+    const hasAudio = pendingFiles.some(f => f.type === "audio");
+    if (hasAudio) setIsProcessingAudio(true);
 
     // Persist with first file info for backwards compat
     const firstFile = currentPendingFiles[0];
