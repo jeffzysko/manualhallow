@@ -568,6 +568,7 @@ const AIChatDrawer = ({ open, onClose }: { open: boolean; onClose: () => void })
       replyTo: replyTo ? { role: replyTo.role, text: replyTo.text } : undefined,
     };
     setInput("");
+    if (inputRef.current) inputRef.current.style.height = "auto";
     const currentPendingFiles = [...pendingFiles];
     setPendingFiles([]);
     setReplyTo(null);
