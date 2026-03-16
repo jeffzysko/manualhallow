@@ -1474,9 +1474,19 @@ const AIChatDrawer = ({ open, onClose }: { open: boolean; onClose: () => void })
                 }}>
                   {Math.floor(recordingDuration / 60).toString().padStart(2, "0")}:{(recordingDuration % 60).toString().padStart(2, "0")}
                 </span>
-                <span style={{ fontSize: "13px", color: "hsl(var(--muted-foreground))" }}>
-                  Gravando...
-                </span>
+                {/* Waveform visualization */}
+                <div className="ai-chat-waveform">
+                  {Array.from({ length: 20 }).map((_, idx) => (
+                    <div
+                      key={idx}
+                      className="ai-chat-waveform-bar"
+                      style={{
+                        animationDelay: `${idx * 0.05}s`,
+                        animationDuration: `${0.4 + Math.random() * 0.4}s`,
+                      }}
+                    />
+                  ))}
+                </div>
               </div>
               <button
                 onClick={stopRecording}
