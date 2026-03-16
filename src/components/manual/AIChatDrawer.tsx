@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect, useCallback, useMemo } from "react";
+import { useState, useRef, useEffect, useCallback, useMemo, TouchEvent as ReactTouchEvent } from "react";
 import diAvatar from "@/assets/di-avatar.png";
 import ReactMarkdown from "react-markdown";
 import { supabase } from "@/integrations/supabase/client";
