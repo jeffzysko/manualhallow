@@ -3178,3 +3178,70 @@ body { overflow-x: hidden; }
 @keyframes ptr-spin {
   to { transform: rotate(360deg); }
 }
+
+/* TTS Button */
+.ai-chat-tts-btn {
+  display: flex; align-items: center; gap: 4px;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 20px; padding: 4px 12px; cursor: pointer;
+  font-size: 13px; color: var(--gray);
+  transition: all 0.2s;
+}
+.ai-chat-tts-btn:hover {
+  background: rgba(201,169,106,0.12);
+  border-color: rgba(201,169,106,0.3);
+  color: var(--gold, #C9A96A);
+}
+
+/* History Panel */
+.ai-chat-history-panel {
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: var(--bg, #09090f);
+  z-index: 20;
+  display: flex; flex-direction: column;
+  animation: msgSlideInLeft 0.2s ease-out;
+}
+.ai-chat-history-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--border2);
+}
+.ai-chat-history-search {
+  display: flex; align-items: center; gap: 8px;
+  padding: 8px 16px;
+  border-bottom: 1px solid var(--border2);
+  background: var(--card);
+}
+.ai-chat-history-list {
+  flex: 1; overflow-y: auto; padding: 8px;
+}
+.ai-chat-history-item {
+  display: flex; flex-direction: column; align-items: flex-start;
+  width: 100%; padding: 12px 14px;
+  background: var(--card); border: 1px solid var(--border2);
+  border-radius: 12px; cursor: pointer;
+  margin-bottom: 8px; text-align: left;
+  transition: all 0.2s;
+}
+.ai-chat-history-item:hover {
+  border-color: rgba(201,169,106,0.4);
+  background: rgba(201,169,106,0.06);
+}
+.ai-chat-history-item-date {
+  font-size: 11px; font-weight: 700;
+  color: var(--gold, #C9A96A);
+  margin-bottom: 4px;
+  letter-spacing: 0.03em;
+}
+.ai-chat-history-item-preview {
+  font-size: 13px; color: var(--white, #f0e6d2);
+  line-height: 1.4;
+  overflow: hidden; text-overflow: ellipsis;
+  display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
+}
+.ai-chat-history-item-count {
+  font-size: 11px; color: var(--gray);
+  margin-top: 4px;
+}
