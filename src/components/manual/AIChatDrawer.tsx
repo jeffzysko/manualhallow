@@ -625,7 +625,7 @@ const AIChatDrawer = ({ open, onClose }: { open: boolean; onClose: () => void })
       }
     } catch (e: any) {
       const errMsg = `⚠️ ${e.message || "Erro inesperado. Tente novamente."}`;
-      setMessages(prev => [...prev, { role: "assistant", content: errMsg }]);
+      setMessages(prev => [...prev, { role: "assistant", content: errMsg, timestamp: new Date().toISOString() }]);
     } finally {
       setIsLoading(false);
     }
