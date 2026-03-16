@@ -1086,7 +1086,6 @@ const AIChatDrawer = ({ open, onClose }: { open: boolean; onClose: () => void })
                         )}
                       </div>
                       {/* Emoji reactions display */}
-                      {msg.reactions && <ReactionsDisplay reactions={msg.reactions} onToggle={(emoji) => handleReaction(i, emoji)} />}
                       {isAssistant && !isLoading && clean && !clean.startsWith("⚠️") && (
                         <FeedbackButtons
                           rating={msg.rating}
