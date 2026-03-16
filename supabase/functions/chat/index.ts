@@ -44,7 +44,13 @@ function validateMessages(messages: unknown): any[] | null {
           // Validate audio format
           const validFormats = ["mp3", "wav", "ogg", "m4a", "mp4", "webm"];
           const format = validFormats.includes(part.input_audio.format) ? part.input_audio.format : "mp3";
+          // Store as input_audio for now; resolveFileParts will convert to Gemini-compatible format
           parts.push({ type: "input_audio", input_audio: { data: part.input_audio.data, format } });
+        } else if (part.type === "audio_url" && part.audio_url?.url && typeof part.audio_url.url === "string") {
+          // Audio sent as URL reference (fallback path)
+          if (part.audio_url.url.startsWith("https://")) {
+            parts.push({ type: "audio_url", audio_url: { url: part.audio_url.url, mime_type: part.audio_url.mime_type || "audio/webm" } });
+          }
         } else if (part.type === "file_url" && part.file_url?.url && typeof part.file_url.url === "string") {
           // For documents (PDF, etc.) - fetch and convert to base64 for the AI
           if (part.file_url.url.startsWith("https://")) {
@@ -94,7 +100,7 @@ async function fetchFileAsBase64(url: string, mimeType: string): Promise<string>
   return `data:${mimeType};base64,${base64}`;
 }
 
-/** Convert file_url parts to image_url with base64 for the AI gateway */
+/** Convert file_url and input_audio parts to Gemini-compatible format for the AI gateway */
 async function resolveFileParts(messages: any[]): Promise<any[]> {
   const resolved = [];
   for (const m of messages) {
@@ -103,14 +109,45 @@ async function resolveFileParts(messages: any[]): Promise<any[]> {
       for (const part of m.content) {
         if (part.type === "file_url") {
           try {
-            // Fetch and convert to base64 image_url for AI processing
             const dataUri = await fetchFileAsBase64(part.file_url.url, part.file_url.mime_type);
             newParts.push({ type: "image_url", image_url: { url: dataUri } });
-            // Also add context about the file
             newParts.push({ type: "text", text: `[Documento anexado: ${part.file_url.name} (${part.file_url.mime_type})]` });
           } catch (e) {
             console.error("Failed to fetch file:", e);
             newParts.push({ type: "text", text: `[Erro ao processar documento: ${part.file_url.name}]` });
+          }
+        } else if (part.type === "input_audio") {
+          // Convert input_audio (OpenAI format) to image_url with data URI (Gemini-compatible)
+          // Gemini accepts audio as data URI inside the image_url field via OpenAI-compatible API
+          try {
+            const format = part.input_audio.format || "webm";
+            const mimeMap: Record<string, string> = {
+              mp3: "audio/mpeg", wav: "audio/wav", ogg: "audio/ogg",
+              m4a: "audio/mp4", mp4: "audio/mp4", webm: "audio/webm",
+            };
+            const mime = mimeMap[format] || "audio/webm";
+            let base64Data = part.input_audio.data;
+            // Strip data URI prefix if present
+            if (base64Data.includes(",")) {
+              base64Data = base64Data.split(",")[1];
+            }
+            const dataUri = `data:${mime};base64,${base64Data}`;
+            newParts.push({ type: "image_url", image_url: { url: dataUri } });
+            newParts.push({ type: "text", text: "[Áudio de voz do vendedor anexado acima. Transcreva o conteúdo do áudio e responda com base no que foi dito. Se a qualidade estiver ruim, informe o vendedor.]" });
+          } catch (e) {
+            console.error("Failed to process audio:", e);
+            newParts.push({ type: "text", text: "[Erro ao processar áudio. Peça ao vendedor para tentar novamente.]" });
+          }
+        } else if (part.type === "audio_url") {
+          // Fetch audio from URL and convert to data URI for Gemini
+          try {
+            const mime = part.audio_url.mime_type || "audio/webm";
+            const dataUri = await fetchFileAsBase64(part.audio_url.url, mime);
+            newParts.push({ type: "image_url", image_url: { url: dataUri } });
+            newParts.push({ type: "text", text: "[Áudio de voz do vendedor anexado acima. Transcreva o conteúdo do áudio e responda com base no que foi dito. Se a qualidade estiver ruim, informe o vendedor.]" });
+          } catch (e) {
+            console.error("Failed to fetch audio:", e);
+            newParts.push({ type: "text", text: "[Erro ao processar áudio. Peça ao vendedor para tentar novamente.]" });
           }
         } else {
           newParts.push(part);
@@ -830,8 +867,17 @@ Adapte suas respostas futuras seguindo os padrões dessas interações bem-suced
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     if (!LOVABLE_API_KEY) throw new Error("LOVABLE_API_KEY is not configured");
 
-    // Resolve file_url parts (fetch documents and convert to base64 for AI)
+    // Resolve file_url, input_audio and audio_url parts for Gemini-compatible format
     const resolvedMessages = await resolveFileParts(messages);
+
+    // Log multimodal content types for debugging
+    for (const m of resolvedMessages) {
+      if (Array.isArray(m.content)) {
+        const types = m.content.map((p: any) => p.type);
+        const hasAudio = m.content.some((p: any) => p.type === "image_url" && p.image_url?.url?.startsWith("data:audio/"));
+        if (hasAudio) console.log(`[AUDIO] Resolved audio in message (role=${m.role}), part types: ${types.join(", ")}`);
+      }
+    }
 
     // Inject time-gap markers between messages for context-change detection
     const messagesWithTimeGaps: any[] = [];
