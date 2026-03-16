@@ -2507,15 +2507,8 @@ body { overflow-x: hidden; }
   transition: color 0.15s, background 0.15s;
 }
 .ai-chat-header-btn:hover { color: var(--gold); background: var(--gold-dim); }
-.ai-chat-new-context {
-  background: none; border: 1px solid var(--gold-dim, rgba(201,169,106,0.25)); color: var(--gold);
-  cursor: pointer; padding: 4px 10px; border-radius: 6px; display: flex; align-items: center; gap: 5px;
-  font-size: 11px; font-weight: 600; letter-spacing: 0.02em;
-  transition: color 0.15s, background 0.15s, border-color 0.15s;
-}
-.ai-chat-new-context:hover { background: rgba(201,169,106,0.12); border-color: var(--gold); }
-.ai-chat-new-context-label { white-space: nowrap; }
-@media (max-width: 520px) { .ai-chat-new-context-label { display: none; } }
+
+
 
 /* Chat search bar */
 .ai-chat-search-bar {
@@ -2768,14 +2761,12 @@ body { overflow-x: hidden; }
   .ai-chat-header-right { gap: 2px; margin-left: 6px; }
   .ai-chat-header-btn,
   .ai-chat-clear,
-  .ai-chat-close,
-  .ai-chat-new-context {
+  .ai-chat-close {
     min-width: 32px;
     min-height: 32px;
     padding: 4px;
     justify-content: center;
   }
-  .ai-chat-new-context { border-radius: 8px; }
   .ai-chat-msg { max-width: 92%; }
   .ai-chat-suggestion { font-size: 12px; padding: 6px 12px; }
 }
