@@ -2361,7 +2361,7 @@ body { overflow-x: hidden; }
   font-variant-numeric: tabular-nums; line-height: 1;
 }
 .ai-chat-msg--user .ai-chat-msg-meta { justify-content: flex-end; }
-.ai-chat-msg--assistant .ai-chat-msg-meta { justify-content: flex-start; }
+.ai-chat-msg--assistant .ai-chat-msg-meta { justify-content: flex-end; }
 
 .ai-chat-typing { display: flex; gap: 4px; padding: 4px 0; }
 .ai-chat-typing span {
@@ -2507,7 +2507,7 @@ body { overflow-x: hidden; }
 
 /* Reply button on hover */
 .ai-chat-reply-btn {
-  position: absolute; top: 4px; opacity: 0; background: var(--card);
+  position: absolute; top: 50%; transform: translateY(-50%); opacity: 0; background: var(--card);
   border: 1px solid var(--border2); border-radius: 50%; width: 26px; height: 26px;
   display: flex; align-items: center; justify-content: center;
   cursor: pointer; color: var(--gray); transition: opacity 0.15s, color 0.15s;
