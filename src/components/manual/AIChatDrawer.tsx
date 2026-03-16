@@ -765,7 +765,7 @@ const AIChatDrawer = ({ open, onClose }: { open: boolean; onClose: () => void })
     if (pendingFiles.some(f => f.type === "image")) return "Descreva o contexto dos prints...";
     if (pendingFiles.some(f => f.type === "audio")) return "Adicione contexto sobre os áudios...";
     if (pendingFiles.length > 0) return "Pergunte algo sobre os documentos...";
-    return "Faça sua pergunta...";
+    return "Digite uma mensagem...";
   };
 
   const getFileIcon = (type: string) => {
