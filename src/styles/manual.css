@@ -2298,7 +2298,7 @@ body { overflow-x: hidden; }
   padding: 16px 20px; border-bottom: 1px solid var(--border2);
   flex-shrink: 0; gap: 8px;
 }
-.ai-chat-header-left { display: flex; align-items: center; gap: 10px; flex-shrink: 0; min-width: 0; }
+.ai-chat-header-left { display: flex; align-items: center; gap: 10px; flex: 1; min-width: 0; }
 .ai-chat-avatar-wrap { position: relative; flex-shrink: 0; }
 .ai-chat-online-dot {
   position: absolute; bottom: 0; right: 0;
