@@ -885,11 +885,12 @@ const AIChatDrawer = ({ open, onClose }: { open: boolean; onClose: () => void })
                 )}
                 <div className="ai-chat-msg-meta">
                   <span className="ai-chat-msg-time">{formatTime(msg.timestamp)}</span>
-                  {!isAssistant && (
+                  {!isAssistant ? (
                     <ReadReceipt read={
-                      /* Mark as read if there's a subsequent assistant message */
                       i < messages.length - 1 && messages.slice(i + 1).some(m => m.role === "assistant")
                     } />
+                  ) : (
+                    <ReadReceipt read={true} />
                   )}
                 </div>
                 {isAssistant && !isLoading && clean && !clean.startsWith("⚠️") && (
