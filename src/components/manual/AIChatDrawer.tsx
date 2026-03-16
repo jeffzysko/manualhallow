@@ -153,6 +153,18 @@ function formatTime(ts?: string): string {
   return d.toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" });
 }
 
+/** Format date label for message grouping (Hoje, Ontem, or dd/mm/yyyy) */
+function formatDateLabel(ts: string): string {
+  const d = new Date(ts);
+  const now = new Date();
+  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  const msgDay = new Date(d.getFullYear(), d.getMonth(), d.getDate());
+  const diff = (today.getTime() - msgDay.getTime()) / (1000 * 60 * 60 * 24);
+  if (diff < 1) return "Hoje";
+  if (diff < 2) return "Ontem";
+  return d.toLocaleDateString("pt-BR", { day: "2-digit", month: "2-digit", year: "numeric" });
+}
+
 /** Double-check icon (WhatsApp read receipt style) */
 function ReadReceipt({ read }: { read: boolean }) {
   return (
