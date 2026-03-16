@@ -14,7 +14,7 @@ type ContentPart =
   | { type: "file_url"; file_url: { url: string; mime_type: string; name: string } };
 
 type MsgContent = string | ContentPart[];
-type Msg = { role: "user" | "assistant"; content: MsgContent; id?: string; rating?: number; timestamp?: string; replyTo?: { role: string; text: string } };
+type Msg = { role: "user" | "assistant"; content: MsgContent; id?: string; rating?: number; timestamp?: string; replyTo?: { role: string; text: string }; suggestions?: string[] };
 
 type PendingFile = {
   url: string;
