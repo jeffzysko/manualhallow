@@ -1050,90 +1050,119 @@ const AIChatDrawer = ({ open, onClose }: { open: boolean; onClose: () => void })
                   </div>
                 )}
                 <div
-                  className={`ai-chat-msg ai-chat-msg--${msg.role} ai-chat-msg-animate ai-chat-msg-animate--${msg.role}`}
-                  onDoubleClick={handleReply}
+                  className="ai-chat-swipe-wrapper"
+                  data-role={msg.role}
+                  onTouchStart={e => handleTouchStart(e, i)}
+                  onTouchMove={handleTouchMove}
+                  onTouchEnd={handleTouchEnd}
                 >
-                  {isAssistant && (
-                    <img src={diAvatar} alt="Di" className="ai-chat-msg-avatar" />
-                  )}
-                  <div className="ai-chat-msg-content">
-                  {/* Reply quote */}
-                  {msg.replyTo && (
-                    <div className="ai-chat-reply-quote">
-                      <span className="ai-chat-reply-quote-name">
-                        {msg.replyTo.role === "assistant" ? "Di" : "Você"}
-                      </span>
-                      <span className="ai-chat-reply-quote-text">{msg.replyTo.text}</span>
-                    </div>
-                  )}
-                  {imageUrls.length > 0 && (
-                    <div style={{ display: "flex", flexWrap: "wrap", gap: "4px", marginBottom: "6px" }}>
-                      {imageUrls.map((url, idx) => (
-                        <img
-                          key={idx}
-                          src={url}
-                          alt="Print enviado"
-                          className="ai-chat-image"
-                          style={{
-                            maxWidth: imageUrls.length > 1 ? "48%" : "100%",
-                            maxHeight: "240px",
-                            borderRadius: "8px",
-                            objectFit: "contain",
-                          }}
-                        />
-                      ))}
-                    </div>
-                  )}
-                  {attachedFiles.map((af, idx) => (
-                    <div key={idx} style={{
-                      display: "flex",
-                      alignItems: "center",
-                      gap: "8px",
-                      padding: "8px 12px",
-                      borderRadius: "8px",
-                      background: isAssistant ? "hsl(var(--muted) / 0.5)" : "hsl(var(--primary) / 0.15)",
-                      marginBottom: "6px",
-                      fontSize: "13px",
-                    }}>
-                      {getFileIcon(af.type)}
-                      <span style={{ flex: 1, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
-                        {af.name}
-                      </span>
-                      {af.url && (
-                        <a href={af.url} target="_blank" rel="noopener noreferrer" style={{ color: "hsl(var(--primary))", fontSize: "12px", flexShrink: 0 }}>
-                          Abrir
-                        </a>
-                      )}
-                    </div>
-                  ))}
-                  {isAssistant ? (
-                    <div className="ai-chat-md">
-                      <ReactMarkdown>{clean}</ReactMarkdown>
-                    </div>
-                  ) : (
-                    clean && <p>{clean}</p>
-                  )}
-                  <div className="ai-chat-msg-meta">
-                    <span className="ai-chat-msg-time">{formatTime(msg.timestamp)}</span>
-                    {!isAssistant && (
-                      <ReadReceipt read={
-                        i < messages.length - 1 && messages.slice(i + 1).some(m => m.role === "assistant")
-                      } />
-                    )}
-                  </div>
-                  {isAssistant && !isLoading && clean && !clean.startsWith("⚠️") && (
-                    <FeedbackButtons
-                      rating={msg.rating}
-                      onRate={(rating) => handleFeedback(i, rating)}
-                    />
-                  )}
-                  {/* Reply button */}
-                  <button className="ai-chat-reply-btn" onClick={handleReply} title="Responder" aria-label="Responder">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                      <polyline points="9 17 4 12 9 7" />
-                      <path d="M20 18v-2a4 4 0 0 0-4-4H4" />
+                  {/* Swipe reply indicator */}
+                  <div className={`ai-chat-swipe-indicator${swipeOffset?.idx === i && Math.abs(swipeOffset.offset) >= 30 ? " ai-chat-swipe-indicator--visible" : ""}`}>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <polyline points="9 17 4 12 9 7" /><path d="M20 18v-2a4 4 0 0 0-4-4H4" />
                     </svg>
-                  </button>
+                  </div>
+                  <div
+                    className="ai-chat-swipe-inner"
+                    style={{ transform: swipeOffset?.idx === i ? `translateX(${swipeOffset.offset}px)` : undefined }}
+                  >
+                    <div
+                      className={`ai-chat-msg ai-chat-msg--${msg.role} ai-chat-msg-animate ai-chat-msg-animate--${msg.role}`}
+                      onDoubleClick={handleReply}
+                    >
+                      {/* Emoji reaction bar */}
+                      {reactionMenuIdx === i && (
+                        <ReactionBar
+                          reactions={msg.reactions}
+                          onReact={(emoji) => handleReaction(i, emoji)}
+                          onClose={() => setReactionMenuIdx(null)}
+                        />
+                      )}
+                      {isAssistant && (
+                        <img src={diAvatar} alt="Di" className="ai-chat-msg-avatar" />
+                      )}
+                      <div className="ai-chat-msg-content">
+                      {/* Reply quote */}
+                      {msg.replyTo && (
+                        <div className="ai-chat-reply-quote">
+                          <span className="ai-chat-reply-quote-name">
+                            {msg.replyTo.role === "assistant" ? "Di" : "Você"}
+                          </span>
+                          <span className="ai-chat-reply-quote-text">{msg.replyTo.text}</span>
+                        </div>
+                      )}
+                      {imageUrls.length > 0 && (
+                        <div style={{ display: "flex", flexWrap: "wrap", gap: "4px", marginBottom: "6px" }}>
+                          {imageUrls.map((url, idx) => (
+                            <img
+                              key={idx}
+                              src={url}
+                              alt="Print enviado"
+                              className="ai-chat-image"
+                              style={{
+                                maxWidth: imageUrls.length > 1 ? "48%" : "100%",
+                                maxHeight: "240px",
+                                borderRadius: "8px",
+                                objectFit: "contain",
+                              }}
+                            />
+                          ))}
+                        </div>
+                      )}
+                      {attachedFiles.map((af, idx) => (
+                        <div key={idx} style={{
+                          display: "flex",
+                          alignItems: "center",
+                          gap: "8px",
+                          padding: "8px 12px",
+                          borderRadius: "8px",
+                          background: isAssistant ? "hsl(var(--muted) / 0.5)" : "hsl(var(--primary) / 0.15)",
+                          marginBottom: "6px",
+                          fontSize: "13px",
+                        }}>
+                          {getFileIcon(af.type)}
+                          <span style={{ flex: 1, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                            {af.name}
+                          </span>
+                          {af.url && (
+                            <a href={af.url} target="_blank" rel="noopener noreferrer" style={{ color: "hsl(var(--primary))", fontSize: "12px", flexShrink: 0 }}>
+                              Abrir
+                            </a>
+                          )}
+                        </div>
+                      ))}
+                      {isAssistant ? (
+                        <div className="ai-chat-md">
+                          <ReactMarkdown>{clean}</ReactMarkdown>
+                        </div>
+                      ) : (
+                        clean && <p>{clean}</p>
+                      )}
+                      <div className="ai-chat-msg-meta">
+                        <span className="ai-chat-msg-time">{formatTime(msg.timestamp)}</span>
+                        {!isAssistant && (
+                          <ReadReceipt read={
+                            i < messages.length - 1 && messages.slice(i + 1).some(m => m.role === "assistant")
+                          } />
+                        )}
+                      </div>
+                      {/* Emoji reactions display */}
+                      {msg.reactions && <ReactionsDisplay reactions={msg.reactions} onToggle={(emoji) => handleReaction(i, emoji)} />}
+                      {isAssistant && !isLoading && clean && !clean.startsWith("⚠️") && (
+                        <FeedbackButtons
+                          rating={msg.rating}
+                          onRate={(rating) => handleFeedback(i, rating)}
+                        />
+                      )}
+                      {/* Reply button */}
+                      <button className="ai-chat-reply-btn" onClick={handleReply} title="Responder" aria-label="Responder">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                          <polyline points="9 17 4 12 9 7" />
+                          <path d="M20 18v-2a4 4 0 0 0-4-4H4" />
+                        </svg>
+                      </button>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
