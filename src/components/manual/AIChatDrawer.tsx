@@ -311,6 +311,7 @@ const AIChatDrawer = ({ open, onClose }: { open: boolean; onClose: () => void })
   }, [open]);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [isProcessingAudio, setIsProcessingAudio] = useState(false);
   const [historyLoaded, setHistoryLoaded] = useState(false);
   const [pendingFiles, setPendingFiles] = useState<PendingFile[]>([]);
   const [isUploadingFile, setIsUploadingFile] = useState(false);
