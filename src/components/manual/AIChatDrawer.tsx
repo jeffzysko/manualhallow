@@ -823,7 +823,40 @@ const AIChatDrawer = ({ open, onClose }: { open: boolean; onClose: () => void })
     if (!user) return;
     await supabase.from("chat_messages").delete().eq("user_id", user.id);
     setMessages([]);
+    stopTTS();
+  }, [user, stopTTS]);
+
+  /** Load conversation history grouped by date */
+  const loadHistory = useCallback(async () => {
+    if (!user) return;
+    setHistoryLoading(true);
+    try {
+      const { data } = await supabase
+        .from("chat_messages")
+        .select("role, content, created_at")
+        .eq("user_id", user.id)
+        .order("created_at", { ascending: true })
+        .limit(500);
+      if (data) {
+        const groups: Record<string, Msg[]> = {};
+        for (const d of data) {
+          const day = new Date(d.created_at).toLocaleDateString("pt-BR", { day: "2-digit", month: "2-digit", year: "numeric" });
+          if (!groups[day]) groups[day] = [];
+          groups[day].push({ role: d.role as "user" | "assistant", content: d.content, timestamp: d.created_at });
+        }
+        setHistoryConversations(
+          Object.entries(groups).map(([date, msgs]) => ({ date, messages: msgs })).reverse()
+        );
+      }
+    } finally {
+      setHistoryLoading(false);
+    }
   }, [user]);
+
+  const handleOpenHistory = useCallback(() => {
+    setHistoryOpen(true);
+    loadHistory();
+  }, [loadHistory]);
 
   /** Handle feedback (👍/👎) on an assistant message */
   const handleFeedback = useCallback(async (msgIndex: number, rating: number) => {
