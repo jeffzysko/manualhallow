@@ -100,7 +100,7 @@ async function fetchFileAsBase64(url: string, mimeType: string): Promise<string>
   return `data:${mimeType};base64,${base64}`;
 }
 
-/** Convert file_url parts to image_url with base64 for the AI gateway */
+/** Convert file_url and input_audio parts to Gemini-compatible format for the AI gateway */
 async function resolveFileParts(messages: any[]): Promise<any[]> {
   const resolved = [];
   for (const m of messages) {
@@ -109,14 +109,45 @@ async function resolveFileParts(messages: any[]): Promise<any[]> {
       for (const part of m.content) {
         if (part.type === "file_url") {
           try {
-            // Fetch and convert to base64 image_url for AI processing
             const dataUri = await fetchFileAsBase64(part.file_url.url, part.file_url.mime_type);
             newParts.push({ type: "image_url", image_url: { url: dataUri } });
-            // Also add context about the file
             newParts.push({ type: "text", text: `[Documento anexado: ${part.file_url.name} (${part.file_url.mime_type})]` });
           } catch (e) {
             console.error("Failed to fetch file:", e);
             newParts.push({ type: "text", text: `[Erro ao processar documento: ${part.file_url.name}]` });
+          }
+        } else if (part.type === "input_audio") {
+          // Convert input_audio (OpenAI format) to image_url with data URI (Gemini-compatible)
+          // Gemini accepts audio as data URI inside the image_url field via OpenAI-compatible API
+          try {
+            const format = part.input_audio.format || "webm";
+            const mimeMap: Record<string, string> = {
+              mp3: "audio/mpeg", wav: "audio/wav", ogg: "audio/ogg",
+              m4a: "audio/mp4", mp4: "audio/mp4", webm: "audio/webm",
+            };
+            const mime = mimeMap[format] || "audio/webm";
+            let base64Data = part.input_audio.data;
+            // Strip data URI prefix if present
+            if (base64Data.includes(",")) {
+              base64Data = base64Data.split(",")[1];
+            }
+            const dataUri = `data:${mime};base64,${base64Data}`;
+            newParts.push({ type: "image_url", image_url: { url: dataUri } });
+            newParts.push({ type: "text", text: "[Áudio de voz do vendedor anexado acima. Transcreva o conteúdo do áudio e responda com base no que foi dito. Se a qualidade estiver ruim, informe o vendedor.]" });
+          } catch (e) {
+            console.error("Failed to process audio:", e);
+            newParts.push({ type: "text", text: "[Erro ao processar áudio. Peça ao vendedor para tentar novamente.]" });
+          }
+        } else if (part.type === "audio_url") {
+          // Fetch audio from URL and convert to data URI for Gemini
+          try {
+            const mime = part.audio_url.mime_type || "audio/webm";
+            const dataUri = await fetchFileAsBase64(part.audio_url.url, mime);
+            newParts.push({ type: "image_url", image_url: { url: dataUri } });
+            newParts.push({ type: "text", text: "[Áudio de voz do vendedor anexado acima. Transcreva o conteúdo do áudio e responda com base no que foi dito. Se a qualidade estiver ruim, informe o vendedor.]" });
+          } catch (e) {
+            console.error("Failed to fetch audio:", e);
+            newParts.push({ type: "text", text: "[Erro ao processar áudio. Peça ao vendedor para tentar novamente.]" });
           }
         } else {
           newParts.push(part);
