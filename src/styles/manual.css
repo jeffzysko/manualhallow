@@ -2500,7 +2500,7 @@ body { overflow-x: hidden; }
 
 
 /* Header actions */
-.ai-chat-header-right { display: flex; align-items: center; gap: 6px; }
+.ai-chat-header-right { display: flex; align-items: center; gap: 6px; flex-shrink: 0; margin-left: 8px; }
 .ai-chat-header-btn {
   background: none; border: none; color: var(--gray); cursor: pointer;
   padding: 4px 6px; border-radius: 6px; display: flex; align-items: center;
@@ -2515,7 +2515,7 @@ body { overflow-x: hidden; }
 }
 .ai-chat-new-context:hover { background: rgba(201,169,106,0.12); border-color: var(--gold); }
 .ai-chat-new-context-label { white-space: nowrap; }
-@media (max-width: 480px) { .ai-chat-new-context-label { display: none; } }
+@media (max-width: 520px) { .ai-chat-new-context-label { display: none; } }
 
 /* Chat search bar */
 .ai-chat-search-bar {
