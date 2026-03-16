@@ -14,7 +14,7 @@ type ContentPart =
   | { type: "file_url"; file_url: { url: string; mime_type: string; name: string } };
 
 type MsgContent = string | ContentPart[];
-type Msg = { role: "user" | "assistant"; content: MsgContent; id?: string; rating?: number; timestamp?: string; replyTo?: { role: string; text: string }; reactions?: Record<string, boolean> };
+type Msg = { role: "user" | "assistant"; content: MsgContent; id?: string; rating?: number; timestamp?: string; replyTo?: { role: string; text: string } };
 
 type PendingFile = {
   url: string;
@@ -236,48 +236,8 @@ function FeedbackButtons({ rating, onRate }: { rating?: number; onRate: (r: numb
   );
 }
 
-const REACTION_EMOJIS = ["👍", "❤️", "😂", "🔥", "👏"];
 
-/** Emoji reactions bar shown on long-press */
-function ReactionBar({ reactions, onReact, onClose }: { reactions?: Record<string, boolean>; onReact: (emoji: string) => void; onClose: () => void }) {
-  const ref = useRef<HTMLDivElement>(null);
-  useEffect(() => {
-    const handler = (e: MouseEvent) => {
-      if (ref.current && !ref.current.contains(e.target as Node)) onClose();
-    };
-    document.addEventListener("mousedown", handler);
-    return () => document.removeEventListener("mousedown", handler);
-  }, [onClose]);
 
-  return (
-    <div className="ai-chat-reactions-bar" ref={ref}>
-      {REACTION_EMOJIS.map(emoji => (
-        <button
-          key={emoji}
-          className={`ai-chat-reaction-btn${reactions?.[emoji] ? " ai-chat-reaction-btn--active" : ""}`}
-          onClick={() => { onReact(emoji); onClose(); }}
-        >
-          {emoji}
-        </button>
-      ))}
-    </div>
-  );
-}
-
-/** Display reactions under a message */
-function ReactionsDisplay({ reactions, onToggle }: { reactions: Record<string, boolean>; onToggle: (emoji: string) => void }) {
-  const active = Object.entries(reactions).filter(([, v]) => v);
-  if (active.length === 0) return null;
-  return (
-    <div className="ai-chat-reactions-display">
-      {active.map(([emoji]) => (
-        <button key={emoji} className="ai-chat-reaction-chip ai-chat-reaction-chip--mine" onClick={() => onToggle(emoji)}>
-          {emoji}
-        </button>
-      ))}
-    </div>
-  );
-}
 
 const AIChatDrawer = ({ open, onClose }: { open: boolean; onClose: () => void }) => {
   const { user } = useAuth();
@@ -293,8 +253,6 @@ const AIChatDrawer = ({ open, onClose }: { open: boolean; onClose: () => void })
   const [replyTo, setReplyTo] = useState<{ index: number; role: string; text: string } | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [searchOpen, setSearchOpen] = useState(false);
-  const [reactionMenuIdx, setReactionMenuIdx] = useState<number | null>(null);
-  const longPressTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const swipeStartRef = useRef<{ x: number; y: number; idx: number } | null>(null);
   const [swipeOffset, setSwipeOffset] = useState<{ idx: number; offset: number } | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -817,25 +775,10 @@ const AIChatDrawer = ({ open, onClose }: { open: boolean; onClose: () => void })
     }
   }, [user, messages]);
 
-  /** Toggle an emoji reaction on a message */
-  const handleReaction = useCallback((msgIndex: number, emoji: string) => {
-    setMessages(prev => prev.map((m, i) => {
-      if (i !== msgIndex) return m;
-      const reactions = { ...(m.reactions || {}) };
-      reactions[emoji] = !reactions[emoji];
-      return { ...m, reactions };
-    }));
-  }, []);
-
   /** Swipe touch handlers */
   const handleTouchStart = useCallback((e: ReactTouchEvent, idx: number) => {
     const touch = e.touches[0];
     swipeStartRef.current = { x: touch.clientX, y: touch.clientY, idx };
-    // Long-press for reactions
-    longPressTimerRef.current = setTimeout(() => {
-      setReactionMenuIdx(idx);
-      swipeStartRef.current = null;
-    }, 500);
   }, []);
 
   const handleTouchMove = useCallback((e: ReactTouchEvent) => {
@@ -843,10 +786,6 @@ const AIChatDrawer = ({ open, onClose }: { open: boolean; onClose: () => void })
     const touch = e.touches[0];
     const dx = touch.clientX - swipeStartRef.current.x;
     const dy = touch.clientY - swipeStartRef.current.y;
-    // Cancel long press on any movement
-    if (Math.abs(dx) > 5 || Math.abs(dy) > 5) {
-      if (longPressTimerRef.current) { clearTimeout(longPressTimerRef.current); longPressTimerRef.current = null; }
-    }
     // Only horizontal swipe
     if (Math.abs(dy) > Math.abs(dx)) return;
     const idx = swipeStartRef.current.idx;
@@ -857,9 +796,7 @@ const AIChatDrawer = ({ open, onClose }: { open: boolean; onClose: () => void })
   }, []);
 
   const handleTouchEnd = useCallback(() => {
-    if (longPressTimerRef.current) { clearTimeout(longPressTimerRef.current); longPressTimerRef.current = null; }
     if (swipeOffset && Math.abs(swipeOffset.offset) >= 40) {
-      // Trigger reply
       const msg = messages[swipeOffset.idx];
       if (msg) {
         const text = getTextContent(msg.content);
@@ -1078,14 +1015,6 @@ const AIChatDrawer = ({ open, onClose }: { open: boolean; onClose: () => void })
                       className={`ai-chat-msg ai-chat-msg--${msg.role} ai-chat-msg-animate ai-chat-msg-animate--${msg.role}`}
                       onDoubleClick={handleReply}
                     >
-                      {/* Emoji reaction bar */}
-                      {reactionMenuIdx === i && (
-                        <ReactionBar
-                          reactions={msg.reactions}
-                          onReact={(emoji) => handleReaction(i, emoji)}
-                          onClose={() => setReactionMenuIdx(null)}
-                        />
-                      )}
                       {isAssistant && (
                         <img src={diAvatar} alt="Di" className="ai-chat-msg-avatar" />
                       )}
@@ -1155,7 +1084,6 @@ const AIChatDrawer = ({ open, onClose }: { open: boolean; onClose: () => void })
                         )}
                       </div>
                       {/* Emoji reactions display */}
-                      {msg.reactions && <ReactionsDisplay reactions={msg.reactions} onToggle={(emoji) => handleReaction(i, emoji)} />}
                       {isAssistant && !isLoading && clean && !clean.startsWith("⚠️") && (
                         <FeedbackButtons
                           rating={msg.rating}
