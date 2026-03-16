@@ -237,6 +237,8 @@ const AIChatDrawer = ({ open, onClose }: { open: boolean; onClose: () => void })
   const [isRecording, setIsRecording] = useState(false);
   const [recordingDuration, setRecordingDuration] = useState(0);
   const [replyTo, setReplyTo] = useState<{ index: number; role: string; text: string } | null>(null);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [searchOpen, setSearchOpen] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -765,7 +767,7 @@ const AIChatDrawer = ({ open, onClose }: { open: boolean; onClose: () => void })
     if (pendingFiles.some(f => f.type === "image")) return "Descreva o contexto dos prints...";
     if (pendingFiles.some(f => f.type === "audio")) return "Adicione contexto sobre os áudios...";
     if (pendingFiles.length > 0) return "Pergunte algo sobre os documentos...";
-    return "Faça sua pergunta...";
+    return "Digite uma mensagem...";
   };
 
   const getFileIcon = (type: string) => {
@@ -812,6 +814,11 @@ const AIChatDrawer = ({ open, onClose }: { open: boolean; onClose: () => void })
           <div className="ai-chat-header-right">
             {messages.length > 0 && (
               <>
+                <button className="ai-chat-header-btn" onClick={() => { setSearchOpen(!searchOpen); setSearchQuery(""); }} aria-label="Buscar na conversa" title="Buscar na conversa">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <circle cx="11" cy="11" r="8" /><line x1="21" y1="21" x2="16.65" y2="16.65" />
+                  </svg>
+                </button>
                 <button className="ai-chat-new-context" onClick={handleNewContext} aria-label="Novo atendimento" title="Novo atendimento">
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                     <path d="M16 21v-2a4 4 0 00-4-4H5a4 4 0 00-4-4v-2" /><circle cx="8.5" cy="7" r="4" /><line x1="20" y1="8" x2="20" y2="14" /><line x1="23" y1="11" x2="17" y2="11" />
@@ -832,6 +839,29 @@ const AIChatDrawer = ({ open, onClose }: { open: boolean; onClose: () => void })
             </button>
           </div>
         </div>
+
+        {/* Search bar */}
+        {searchOpen && (
+          <div className="ai-chat-search-bar">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0, opacity: 0.5 }}>
+              <circle cx="11" cy="11" r="8" /><line x1="21" y1="21" x2="16.65" y2="16.65" />
+            </svg>
+            <input
+              type="text"
+              className="ai-chat-search-input"
+              placeholder="Buscar na conversa..."
+              value={searchQuery}
+              onChange={e => setSearchQuery(e.target.value)}
+              autoFocus
+            />
+            {searchQuery && (
+              <span className="ai-chat-search-count">
+                {messages.filter(m => getTextContent(m.content).toLowerCase().includes(searchQuery.toLowerCase())).length} encontrada(s)
+              </span>
+            )}
+            <button onClick={() => { setSearchOpen(false); setSearchQuery(""); }} style={{ background: "none", border: "none", color: "var(--gray)", cursor: "pointer", padding: "4px" }}>✕</button>
+          </div>
+        )}
 
         <div className="ai-chat-messages">
           {messages.length === 0 && (
@@ -855,6 +885,8 @@ const AIChatDrawer = ({ open, onClose }: { open: boolean; onClose: () => void })
           {messages.map((msg, i) => {
             const isAssistant = msg.role === "assistant";
             const text = getTextContent(msg.content);
+            // Filter by search query
+            if (searchQuery && !text.toLowerCase().includes(searchQuery.toLowerCase())) return null;
             const imageUrls = getImageUrls(msg.content);
             const attachedFiles = getAttachedFiles(msg.content);
             const { clean } = isAssistant ? parseSuggestions(text) : { clean: text };
