@@ -236,12 +236,59 @@ function FeedbackButtons({ rating, onRate }: { rating?: number; onRate: (r: numb
   );
 }
 
+/** TTS using Web Speech API */
+function useTTS() {
+  const [speakingIdx, setSpeakingIdx] = useState<number | null>(null);
+  const synthRef = useRef(window.speechSynthesis);
 
+  const speak = useCallback((text: string, idx: number) => {
+    const synth = synthRef.current;
+    synth.cancel();
+    if (speakingIdx === idx) {
+      setSpeakingIdx(null);
+      return;
+    }
+    // Strip markdown
+    const clean = text
+      .replace(/[#*_~`>\[\]()!]/g, "")
+      .replace(/\n+/g, ". ")
+      .trim();
+    const utterance = new SpeechSynthesisUtterance(clean);
+    utterance.lang = "pt-BR";
+    utterance.rate = 1.05;
+    utterance.pitch = 1.0;
+    // Try to find a pt-BR voice
+    const voices = synth.getVoices();
+    const ptVoice = voices.find(v => v.lang.startsWith("pt-BR")) || voices.find(v => v.lang.startsWith("pt"));
+    if (ptVoice) utterance.voice = ptVoice;
+    utterance.onend = () => setSpeakingIdx(null);
+    utterance.onerror = () => setSpeakingIdx(null);
+    synth.speak(utterance);
+    setSpeakingIdx(idx);
+  }, [speakingIdx]);
+
+  const stop = useCallback(() => {
+    synthRef.current.cancel();
+    setSpeakingIdx(null);
+  }, []);
+
+  // Cleanup on unmount
+  useEffect(() => {
+    return () => { synthRef.current.cancel(); };
+  }, []);
+
+  return { speakingIdx, speak, stopTTS: stop };
+}
 
 
 const AIChatDrawer = ({ open, onClose }: { open: boolean; onClose: () => void }) => {
   const { user } = useAuth();
   const [messages, setMessages] = useState<Msg[]>([]);
+  const [historyOpen, setHistoryOpen] = useState(false);
+  const [historySearch, setHistorySearch] = useState("");
+  const [historyConversations, setHistoryConversations] = useState<{ date: string; messages: Msg[] }[]>([]);
+  const [historyLoading, setHistoryLoading] = useState(false);
+  const { speakingIdx, speak, stopTTS } = useTTS();
 
   // Lock body scroll when drawer is open
   useEffect(() => {
@@ -776,7 +823,40 @@ const AIChatDrawer = ({ open, onClose }: { open: boolean; onClose: () => void })
     if (!user) return;
     await supabase.from("chat_messages").delete().eq("user_id", user.id);
     setMessages([]);
+    stopTTS();
+  }, [user, stopTTS]);
+
+  /** Load conversation history grouped by date */
+  const loadHistory = useCallback(async () => {
+    if (!user) return;
+    setHistoryLoading(true);
+    try {
+      const { data } = await supabase
+        .from("chat_messages")
+        .select("role, content, created_at")
+        .eq("user_id", user.id)
+        .order("created_at", { ascending: true })
+        .limit(500);
+      if (data) {
+        const groups: Record<string, Msg[]> = {};
+        for (const d of data) {
+          const day = new Date(d.created_at).toLocaleDateString("pt-BR", { day: "2-digit", month: "2-digit", year: "numeric" });
+          if (!groups[day]) groups[day] = [];
+          groups[day].push({ role: d.role as "user" | "assistant", content: d.content, timestamp: d.created_at });
+        }
+        setHistoryConversations(
+          Object.entries(groups).map(([date, msgs]) => ({ date, messages: msgs })).reverse()
+        );
+      }
+    } finally {
+      setHistoryLoading(false);
+    }
   }, [user]);
+
+  const handleOpenHistory = useCallback(() => {
+    setHistoryOpen(true);
+    loadHistory();
+  }, [loadHistory]);
 
   /** Handle feedback (👍/👎) on an assistant message */
   const handleFeedback = useCallback(async (msgIndex: number, rating: number) => {
@@ -948,6 +1028,11 @@ const AIChatDrawer = ({ open, onClose }: { open: boolean; onClose: () => void })
                     <circle cx="11" cy="11" r="8" /><line x1="21" y1="21" x2="16.65" y2="16.65" />
                   </svg>
                 </button>
+                <button className="ai-chat-header-btn" onClick={handleOpenHistory} aria-label="Histórico" title="Histórico de conversas">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <circle cx="12" cy="12" r="10" /><polyline points="12 6 12 12 16 14" />
+                  </svg>
+                </button>
                 <button className="ai-chat-clear" onClick={handleClearHistory} aria-label="Limpar conversa" title="Limpar conversa">
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                     <polyline points="3 6 5 6 21 6" /><path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2" />
@@ -983,6 +1068,63 @@ const AIChatDrawer = ({ open, onClose }: { open: boolean; onClose: () => void })
               </span>
             )}
             <button onClick={() => { setSearchOpen(false); setSearchQuery(""); }} style={{ background: "none", border: "none", color: "var(--gray)", cursor: "pointer", padding: "4px" }}>✕</button>
+          </div>
+         )}
+
+        {/* History Panel */}
+        {historyOpen && (
+          <div className="ai-chat-history-panel">
+            <div className="ai-chat-history-header">
+              <span style={{ fontWeight: 700, fontSize: "15px" }}>📋 Histórico de conversas</span>
+              <button onClick={() => setHistoryOpen(false)} style={{ background: "none", border: "none", color: "var(--gray)", cursor: "pointer", padding: "4px", fontSize: "16px" }}>✕</button>
+            </div>
+            <div className="ai-chat-history-search">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0, opacity: 0.5 }}>
+                <circle cx="11" cy="11" r="8" /><line x1="21" y1="21" x2="16.65" y2="16.65" />
+              </svg>
+              <input
+                type="text"
+                placeholder="Buscar no histórico..."
+                value={historySearch}
+                onChange={e => setHistorySearch(e.target.value)}
+                style={{ flex: 1, background: "none", border: "none", outline: "none", color: "hsl(var(--foreground))", fontSize: "13px" }}
+              />
+            </div>
+            <div className="ai-chat-history-list">
+              {historyLoading ? (
+                <div style={{ textAlign: "center", padding: "32px 0", color: "var(--gray)" }}>Carregando...</div>
+              ) : historyConversations.length === 0 ? (
+                <div style={{ textAlign: "center", padding: "32px 0", color: "var(--gray)" }}>Nenhuma conversa encontrada</div>
+              ) : (
+                historyConversations
+                  .filter(group => {
+                    if (!historySearch) return true;
+                    const q = historySearch.toLowerCase();
+                    return group.messages.some(m => getTextContent(m.content).toLowerCase().includes(q));
+                  })
+                  .map((group, gi) => {
+                    const preview = group.messages.filter(m => m.role === "user").map(m => getTextContent(m.content)).filter(t => t && !t.includes("NOVO ATENDIMENTO"));
+                    const lastUserMsg = preview[preview.length - 1] || "Conversa";
+                    const msgCount = group.messages.length;
+                    return (
+                      <button
+                        key={gi}
+                        className="ai-chat-history-item"
+                        onClick={() => {
+                          // Load this day's messages into main chat
+                          setMessages(group.messages);
+                          setHistoryOpen(false);
+                          setHistorySearch("");
+                        }}
+                      >
+                        <div className="ai-chat-history-item-date">{group.date}</div>
+                        <div className="ai-chat-history-item-preview">{lastUserMsg.slice(0, 80)}{lastUserMsg.length > 80 ? "..." : ""}</div>
+                        <div className="ai-chat-history-item-count">{msgCount} mensagem{msgCount !== 1 ? "s" : ""}</div>
+                      </button>
+                    );
+                  })
+              )}
+            </div>
           </div>
         )}
 
@@ -1163,12 +1305,34 @@ const AIChatDrawer = ({ open, onClose }: { open: boolean; onClose: () => void })
                           } />
                         )}
                       </div>
-                      {/* Emoji reactions display */}
+                      {/* TTS + Feedback */}
                       {isAssistant && !isLoading && clean && !clean.startsWith("⚠️") && (
-                        <FeedbackButtons
-                          rating={msg.rating}
-                          onRate={(rating) => handleFeedback(i, rating)}
-                        />
+                        <div style={{ display: "flex", alignItems: "center", gap: "6px", marginTop: "8px" }}>
+                          <button
+                            onClick={() => speak(clean, i)}
+                            className="ai-chat-tts-btn"
+                            title={speakingIdx === i ? "Parar leitura" : "Ouvir resposta"}
+                            aria-label={speakingIdx === i ? "Parar leitura" : "Ouvir resposta"}
+                          >
+                            {speakingIdx === i ? (
+                              <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+                                <rect x="6" y="4" width="4" height="16" rx="1" />
+                                <rect x="14" y="4" width="4" height="16" rx="1" />
+                              </svg>
+                            ) : (
+                              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5" />
+                                <path d="M19.07 4.93a10 10 0 0 1 0 14.14" />
+                                <path d="M15.54 8.46a5 5 0 0 1 0 7.07" />
+                              </svg>
+                            )}
+                            <span style={{ fontSize: "11px", fontWeight: 600 }}>{speakingIdx === i ? "Parar" : "Ouvir"}</span>
+                          </button>
+                          <FeedbackButtons
+                            rating={msg.rating}
+                            onRate={(rating) => handleFeedback(i, rating)}
+                          />
+                        </div>
                       )}
                       {/* Reply button */}
                       <button className="ai-chat-reply-btn" onClick={handleReply} title="Responder" aria-label="Responder">
