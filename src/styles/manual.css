@@ -2760,6 +2760,22 @@ body { overflow-x: hidden; }
     border-radius: 0;
     padding-top: env(safe-area-inset-top, 0px);
   }
+  .ai-chat-header { padding: 12px 10px; gap: 6px; }
+  .ai-chat-header-left { gap: 8px; min-width: 0; }
+  .ai-chat-avatar { width: 32px; height: 32px; }
+  .ai-chat-title { font-size: 12px; letter-spacing: 0.2px; }
+  .ai-chat-status-text { font-size: 10px; }
+  .ai-chat-header-right { gap: 2px; margin-left: 6px; }
+  .ai-chat-header-btn,
+  .ai-chat-clear,
+  .ai-chat-close,
+  .ai-chat-new-context {
+    min-width: 32px;
+    min-height: 32px;
+    padding: 4px;
+    justify-content: center;
+  }
+  .ai-chat-new-context { border-radius: 8px; }
   .ai-chat-msg { max-width: 92%; }
   .ai-chat-suggestion { font-size: 12px; padding: 6px 12px; }
 }
