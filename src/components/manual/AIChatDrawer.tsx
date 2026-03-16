@@ -1069,6 +1069,63 @@ const AIChatDrawer = ({ open, onClose }: { open: boolean; onClose: () => void })
             )}
             <button onClick={() => { setSearchOpen(false); setSearchQuery(""); }} style={{ background: "none", border: "none", color: "var(--gray)", cursor: "pointer", padding: "4px" }}>✕</button>
           </div>
+         )}
+
+        {/* History Panel */}
+        {historyOpen && (
+          <div className="ai-chat-history-panel">
+            <div className="ai-chat-history-header">
+              <span style={{ fontWeight: 700, fontSize: "15px" }}>📋 Histórico de conversas</span>
+              <button onClick={() => setHistoryOpen(false)} style={{ background: "none", border: "none", color: "var(--gray)", cursor: "pointer", padding: "4px", fontSize: "16px" }}>✕</button>
+            </div>
+            <div className="ai-chat-history-search">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0, opacity: 0.5 }}>
+                <circle cx="11" cy="11" r="8" /><line x1="21" y1="21" x2="16.65" y2="16.65" />
+              </svg>
+              <input
+                type="text"
+                placeholder="Buscar no histórico..."
+                value={historySearch}
+                onChange={e => setHistorySearch(e.target.value)}
+                style={{ flex: 1, background: "none", border: "none", outline: "none", color: "hsl(var(--foreground))", fontSize: "13px" }}
+              />
+            </div>
+            <div className="ai-chat-history-list">
+              {historyLoading ? (
+                <div style={{ textAlign: "center", padding: "32px 0", color: "var(--gray)" }}>Carregando...</div>
+              ) : historyConversations.length === 0 ? (
+                <div style={{ textAlign: "center", padding: "32px 0", color: "var(--gray)" }}>Nenhuma conversa encontrada</div>
+              ) : (
+                historyConversations
+                  .filter(group => {
+                    if (!historySearch) return true;
+                    const q = historySearch.toLowerCase();
+                    return group.messages.some(m => getTextContent(m.content).toLowerCase().includes(q));
+                  })
+                  .map((group, gi) => {
+                    const preview = group.messages.filter(m => m.role === "user").map(m => getTextContent(m.content)).filter(t => t && !t.includes("NOVO ATENDIMENTO"));
+                    const lastUserMsg = preview[preview.length - 1] || "Conversa";
+                    const msgCount = group.messages.length;
+                    return (
+                      <button
+                        key={gi}
+                        className="ai-chat-history-item"
+                        onClick={() => {
+                          // Load this day's messages into main chat
+                          setMessages(group.messages);
+                          setHistoryOpen(false);
+                          setHistorySearch("");
+                        }}
+                      >
+                        <div className="ai-chat-history-item-date">{group.date}</div>
+                        <div className="ai-chat-history-item-preview">{lastUserMsg.slice(0, 80)}{lastUserMsg.length > 80 ? "..." : ""}</div>
+                        <div className="ai-chat-history-item-count">{msgCount} mensagem{msgCount !== 1 ? "s" : ""}</div>
+                      </button>
+                    );
+                  })
+              )}
+            </div>
+          </div>
         )}
 
         <div className="ai-chat-messages">
