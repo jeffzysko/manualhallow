@@ -2498,6 +2498,37 @@ body { overflow-x: hidden; }
   border-color: rgba(224,92,92,0.3); color: #E05C5C;
 }
 
+/* Audio processing indicator */
+.ai-chat-audio-processing {
+  display: flex; align-items: center; gap: 8px; padding: 6px 0;
+}
+.ai-chat-audio-icon {
+  animation: audioPulse 1.5s ease-in-out infinite;
+  flex-shrink: 0;
+}
+.ai-chat-audio-bars {
+  display: flex; align-items: center; gap: 3px; height: 20px;
+}
+.ai-chat-audio-bars span {
+  width: 3px; border-radius: 2px;
+  background: hsl(var(--primary));
+  animation: audioBar 1s ease-in-out infinite;
+}
+.ai-chat-audio-bars span:nth-child(1) { height: 8px; animation-delay: 0s; }
+.ai-chat-audio-bars span:nth-child(2) { height: 14px; animation-delay: 0.15s; }
+.ai-chat-audio-bars span:nth-child(3) { height: 18px; animation-delay: 0.3s; }
+.ai-chat-audio-bars span:nth-child(4) { height: 12px; animation-delay: 0.45s; }
+.ai-chat-audio-bars span:nth-child(5) { height: 6px; animation-delay: 0.6s; }
+
+@keyframes audioBar {
+  0%, 100% { transform: scaleY(0.4); opacity: 0.4; }
+  50% { transform: scaleY(1); opacity: 1; }
+}
+@keyframes audioPulse {
+  0%, 100% { opacity: 0.5; transform: scale(0.95); }
+  50% { opacity: 1; transform: scale(1.05); }
+}
+
 
 /* Header actions */
 .ai-chat-header-right { display: flex; align-items: center; gap: 6px; flex-shrink: 0; margin-left: 8px; }
