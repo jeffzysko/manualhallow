@@ -55,7 +55,7 @@ const OnboardingPage = () => {
     );
     if (error) {
       console.error("Onboarding save error:", error);
-      alert("Erro ao salvar. Tente novamente.");
+      toast.error("Erro ao salvar. Tente novamente.");
       setSaving(false);
       return;
     }
